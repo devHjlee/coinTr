@@ -1,5 +1,7 @@
 package com.cointr.websocket;
 
+import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.service.CoinService;
 import com.google.gson.*;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ import static org.thymeleaf.util.StringUtils.substring;
 @Component
 @RequiredArgsConstructor
 public class WebSocketClient {
-
+    private final CoinService coinService;
     private final OkHttpClient client = new OkHttpClient();
     private WebSocket ws = null;
     private enum WsStatus{
@@ -34,7 +36,7 @@ public class WebSocketClient {
     }
     WsStatus status = WsStatus.STOP;
 
-    //@PostConstruct
+    @PostConstruct
     public void connect() throws InterruptedException {
         if(status.equals(WsStatus.START)) {
             return;
@@ -55,16 +57,10 @@ public class WebSocketClient {
         type.add("codes", codesObj);
         root.add(type);
 
-        type = new JsonObject();
-        type.addProperty("type", "trade");
-        type.add("codes", codesObj);
-        root.add(type);
-
-        Request request = new Request.Builder()
+         Request request = new Request.Builder()
                 .url("wss://api.upbit.com/websocket/v1")
                 .addHeader("options", root.toString())
-                //.addHeader("options", "")
-                .build();
+                 .build();
         log.info(root.toString());
         ws = client.newWebSocket(request, new WebSocketListener() {
             @Override
@@ -75,15 +71,18 @@ public class WebSocketClient {
             }
             @Override
             public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
-                //publisher.publishEvent(new OnMessageEvent(bytes.string(StandardCharsets.UTF_8)));
                 JsonObject jsonObject = new Gson().fromJson(bytes.string(StandardCharsets.UTF_8), JsonObject.class);
-                log.info(jsonObject.toString());
+                //log.info(jsonObject.toString());
+                TradeInfoDto tradeInfoDto = new GsonBuilder()
+                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
+                        .create()
+
+                        .fromJson(bytes.string(StandardCharsets.UTF_8), TradeInfoDto.class);
+                log.info(tradeInfoDto.toString());
+                coinService.insertTradeInfo(tradeInfoDto);
             }
             @Override
-            public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-                // Text message received
-                //System.out.println("Received message: " + text);
-            }
+            public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) { }
 
             @Override
             public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
@@ -99,7 +98,6 @@ public class WebSocketClient {
             }
         });
 
-        // Wait for the connection to be established
         client.dispatcher().executorService().awaitTermination(5, TimeUnit.SECONDS);
     }
 

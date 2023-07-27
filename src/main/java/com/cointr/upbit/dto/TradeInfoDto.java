@@ -4,20 +4,22 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
-public class CoinInfoDto {
+public class TradeInfoDto {
     @Comment("마켓 코드")
     String market;
     @Comment("거래 일자")
     String tradeDate;
     @Comment("현재가")
-    Long tradePrice;
+    BigDecimal tradePrice;
     @Comment("누적 거래량(UTC 0시 기준)")
-    Long accTradeVolume;
+    BigDecimal accTradeVolume;
     @Comment("누적 매도량(웹 소켓만 가능)")
-    Long accAskVolume;
+    BigDecimal accAskVolume;
     @Comment("누적 매수량(웹 소켓만 가능)")
-    Long accBidVolume;
+    BigDecimal accBidVolume;
 
 }

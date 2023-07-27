@@ -6,7 +6,15 @@
         select * from coin
     </select>
 
-    <insert id="coinSave" parameterMap="com">
-
+    <insert id="insertTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
+        insert into trade_info (market,trade_date,trade_price,acc_trade_volume) values (#{market},#{tradeDate},#{tradePrice},#{accTradeVolume})
     </insert>
+
+    <update id="updateTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
+        update trade_info
+        set trade_price = #{tradePrice}
+            ,acc_trade_volume = #{accTradeVolume}
+        where market = #{market}
+        and tradeDate = #{tradeDate}
+    </update>
 </mapper>
