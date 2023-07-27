@@ -25,13 +25,11 @@ public class Coin implements Persistable<String> {
     @CreatedDate
     private LocalDateTime createdDate;
     private String koreaName;
-    private String englishName;
 
     @Builder
     public Coin(String id, String koreaName, String englishName){
         this.id = id;
         this.koreaName = koreaName;
-        this.englishName = englishName;
     }
 
     @Override

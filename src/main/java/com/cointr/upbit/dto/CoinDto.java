@@ -9,9 +9,8 @@ import lombok.Setter;
 public class CoinDto {
     String market;
     String koreanName;
-    String englishName;
 
     public Coin toEntity(){
-        return Coin.builder().id(market).koreaName(koreanName).englishName(englishName).build();
+        return Coin.builder().id(market).koreaName(koreanName).build();
     }
 }
