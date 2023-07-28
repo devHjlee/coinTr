@@ -36,6 +36,7 @@ public class WebSocketClient {
     }
     WsStatus status = WsStatus.STOP;
 
+    //todo : 으음.. 여러웹소켓은...?
     @PostConstruct
     public void connect() throws InterruptedException {
         if(status.equals(WsStatus.START)) {
@@ -43,8 +44,8 @@ public class WebSocketClient {
         }
         status = WsStatus.START;
         //List<String> markets = coinCodeRepository.findMarket();
-        //String[] markets = new String[]{"KRW-BTC","KRW-NEO","KRW-STX","KRW-XLM","KRW-HUNT","KRW-MOC","KRW-FCT2","KRW-ETH"};
-        String[] markets = new String[]{"KRW-BTC"};
+        String[] markets = new String[]{"KRW-BTC","KRW-NEO","KRW-STX","KRW-XLM","KRW-HUNT","KRW-MOC","KRW-FCT2","KRW-ETH"};
+        //String[] markets = new String[]{"KRW-BTC"};
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
@@ -63,30 +64,30 @@ public class WebSocketClient {
                  .build();
         log.info(root.toString());
         ws = client.newWebSocket(request, new WebSocketListener() {
+
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull okhttp3.Response response) {
-                // WebSocket connection opened
                 log.info("WebSocket Open!!!");
                 webSocket.send(Objects.requireNonNull(webSocket.request().header("options")));
             }
+
             @Override
             public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
                 JsonObject jsonObject = new Gson().fromJson(bytes.string(StandardCharsets.UTF_8), JsonObject.class);
-                //log.info(jsonObject.toString());
+                jsonObject.addProperty("market",jsonObject.get("code").getAsString());
                 TradeInfoDto tradeInfoDto = new GsonBuilder()
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                         .create()
+                        .fromJson(jsonObject, TradeInfoDto.class);
 
-                        .fromJson(bytes.string(StandardCharsets.UTF_8), TradeInfoDto.class);
-                log.info(tradeInfoDto.toString());
                 coinService.insertTradeInfo(tradeInfoDto);
             }
+
             @Override
             public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) { }
 
             @Override
             public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-                // WebSocket connection closed
                 log.info("Connection closed: " + reason);
             }
 

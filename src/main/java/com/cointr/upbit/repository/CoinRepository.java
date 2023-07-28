@@ -10,7 +10,13 @@ import java.util.List;
 public interface CoinRepository {
     List<CoinDto> findAll();
 
+    List<TradeInfoDto> selectTradeInfo(String market);
+
     int insertTradeInfo(TradeInfoDto tradeInfoDto);
+
+    void insertBulkTradeInfo(List<TradeInfoDto> tradeInfoDtos);
+
+    void deleteTradeInfo();
 
     int updateTradeInfo(TradeInfoDto tradeInfoDto);
 }
