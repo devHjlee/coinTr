@@ -1,12 +1,9 @@
 package com.cointr.upbit.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
-import java.math.BigDecimal;
 
 @Getter
 @Setter

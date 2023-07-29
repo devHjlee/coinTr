@@ -7,7 +7,7 @@
     </select>
 
     <select id="selectTradeInfo" parameterType="java.lang.String" resultType="com.cointr.upbit.dto.TradeInfoDto">
-        select * from trade_info where market = #{market} order by trade_date asc
+        select * from trade_info where market = #{market} order by trade_date desc
     </select>
 
     <insert id="insertTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">

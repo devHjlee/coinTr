@@ -10,13 +10,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+//todo : 코드 다시 작성
 @SpringBootTest
 class CoinServiceTest {
     @Autowired
     private CoinService coinService;
 
     @Test
-    void selectCoins() {
+    void 전체코인목록() {
         List<CoinDto> coinDtoList = coinService.selectCoins();
         for(CoinDto coinDto : coinDtoList) {
             System.out.println(coinDto.getMarket());
@@ -24,14 +25,19 @@ class CoinServiceTest {
     }
 
     @Test
-    void getRSI() {
-        CoinIndex coinIndex = coinService.getRSI("KRW-BTC");
+    void 코인별RSI() {
+        CoinIndex coinIndex = coinService.getRSI("KRW-KNC");
         System.out.println(coinIndex.getRsi());
         System.out.println("dlgudwo");
     }
 
     @Test
-    void dayCandleSave() {
-        coinService.dayCandleSave("KRW-BTC");
+    void 코인별MACD() {
+        coinService.getMACD("KRW-KNC");
+    }
+
+    @Test
+    void 일봉캔들_저장() {
+        coinService.dayCandleSave("KRW-KNC");
     }
 }

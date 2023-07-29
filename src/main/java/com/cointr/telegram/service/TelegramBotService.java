@@ -13,11 +13,12 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 //todo 굳이 서비스로 만들어야하나?
 @Service
 public class TelegramBotService extends TelegramLongPollingBot {
-    @Autowired
-    private CoinService coinService;
+    private final CoinService coinService;
 
-    public TelegramBotService() {
+    public TelegramBotService(CoinService coinService) {
         super(new DefaultBotOptions(),"6019178496:AAHSxoXyh0OQwR37_BOuD-4cixHaO7_fTCY");
+        this.coinService = coinService;
+
     }
 
     @Override

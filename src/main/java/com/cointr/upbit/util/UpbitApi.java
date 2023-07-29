@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -44,11 +45,6 @@ public class UpbitApi {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-    }
-
-    //todo : MACD 구하는 공식 구현
-    public void getMACD() {
-
     }
 
     /**
@@ -101,4 +97,111 @@ public class UpbitApi {
         return ema;
     }
 
+    public void getMACD(List<TradeInfoDto> tradeInfoDtos) {
+//        List<Double> prices = List.of(
+//                100.0, 101.0, 105.0, 102.0, 110.0, 112.0, 115.0, 120.0, 122.0, 118.0,
+//                125.0, 130.0, 135.0, 140.0, 142.0, 138.0, 145.0, 147.0, 150.0, 155.0
+//        );
+        //MA12 = (종가1+~+12) / 12
+        //MA26 = (종가1+~+26) / 26
+        //MACD 라인 = MA12-MA26
+        //MACD 시그널라인 = 9일이동편균선 = MA9 = (종가1+~+9)/9
+        List<Double> prices = tradeInfoDtos.stream().map(TradeInfoDto::getTradePrice)
+                                            .collect(Collectors.toList());
+        int shortTerm = 12;
+        int longTerm = 26;
+        int signalPeriod = 9;
+
+        // MACD 계산
+        List<Double> macdResult = calculateMACD(prices, shortTerm, longTerm, signalPeriod);
+        System.out.println("MACD: " + macdResult.get(0));
+        System.out.println("Signal Line: " + macdResult.get(1));
+        System.out.println("MACD Histogram: " + macdResult.get(2));
+
+    }
+
+
+    public static List<Double> calculateMACD(List<Double> prices, int shortTerm, int longTerm, int signalPeriod) {
+        List<Double> macdResult = new ArrayList<>();
+
+        // 단기 지수 이동 평균 계산
+        List<Double> shortEMA = calculateEWMA(prices, shortTerm);
+
+        // 장기 지수 이동 평균 계산
+        List<Double> longEMA = calculateEWMA(prices, longTerm);
+
+        // MACD Line 계산
+        List<Double> macdLine = new ArrayList<>();
+        for (int i = 0; i < 12; i++) {
+            macdLine.add(shortEMA.get(i) - longEMA.get(i));
+        }
+
+        // Signal Line 계산
+        List<Double> signalLine = calculateEWMA(macdLine, signalPeriod);
+
+        // MACD Histogram 계산
+        List<Double> macdHistogram = new ArrayList<>();
+        for (int i = 0; i < macdLine.size(); i++) {
+             macdHistogram.add(macdLine.get(i) - signalLine.get(i));
+        }
+
+        // MACD Line, Signal Line, MACD Histogram을 결과 리스트에 추가
+        macdResult.add(macdLine.get(macdLine.size() - 1));
+        macdResult.add(signalLine.get(signalLine.size() - 1));
+        macdResult.add(macdHistogram.get(macdHistogram.size() - 1));
+
+        return macdResult;
+    }
+
+    public static List<Double> calculateEWMA(List<Double> prices, int period) {
+        List<Double> ema = new ArrayList<>();
+        double smoothing = 2.0 / (period + 1);
+        double currentEma = prices.get(0);
+
+        for (int i = 1; i < period+1; i++) {
+            double currentPrice = prices.get(i);
+            currentEma = currentPrice * smoothing + currentEma * (1 - smoothing);
+            ema.add(currentEma);
+        }
+
+        return ema;
+    }
+//    private double[] calculateMACD(List<Double> prices) {
+//        int shortTerm = 12;
+//        int longTerm = 26;
+//        int signalPeriod = 9;
+//
+//        double[] macdResult = new double[3];
+//
+//        // 단기 지수 이동 평균 계산
+//        double shortEMA = calculateEMA(prices, shortTerm);
+//
+//        // 장기 지수 이동 평균 계산
+//        double longEMA = calculateEMA(prices, longTerm);
+//
+//        // MACD Line 계산
+//        double macdLine = shortEMA - longEMA;
+//        macdResult[0] = macdLine;
+//
+//        // 시그널 라인 계산
+//        double signalLine = calculateEMA(prices.subList(longTerm - shortTerm, prices.size()), signalPeriod);
+//        macdResult[1] = signalLine;
+//
+//        // MACD Histogram 계산
+//        double histogram = macdLine - signalLine;
+//        macdResult[2] = histogram;
+//
+//        return macdResult;
+//    }
+//
+//    private double calculateEMA(List<Double> prices, int period) {
+//        double smoothing = 2.0 / (period + 1);
+//        double ema = prices.get(0);
+//
+//        for (int i = 1; i < period; i++) {
+//            ema = prices.get(i) * smoothing + ema * (1 - smoothing);
+//        }
+//
+//        return ema;
+//    }
 }

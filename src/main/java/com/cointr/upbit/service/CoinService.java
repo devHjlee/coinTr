@@ -45,6 +45,12 @@ public class CoinService {
         return coinIndex;
     }
 
+    public void getMACD(String market) {
+        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
+        upbitApi.getMACD(tradeInfoDtos);
+    }
+
+
     /**
      * 전체 코인 목록 조회
      * @return CoinDto
