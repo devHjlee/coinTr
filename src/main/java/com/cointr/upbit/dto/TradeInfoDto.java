@@ -27,4 +27,16 @@ public class TradeInfoDto {
     @Comment("누적 매수량(웹 소켓만 가능)")
     double accBidVolume;
 
+    @Comment("RSI")
+    double rsi;
+
+    @Comment("MACD")
+    double macd;
+
+    @Comment("MACD_SIGNAL")
+    double macdSignal;
+
+    @Comment("MACD_HISTOGRAM")
+    double macdSignalHistogram;
+
 }
