@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @Component
 public class UpbitApi {
 
-    public List<CoinDto> coinSaveAll() {
+    public List<CoinDto> getCoinList() {
         RestTemplate restTemplate = new RestTemplate();
         Type listType = new TypeToken<ArrayList<CoinDto>>(){}.getType();
         String url = "https://api.upbit.com/v1/market/all";
@@ -57,6 +57,7 @@ public class UpbitApi {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
 
             jsonObject.addProperty("trade_date",jsonObject.get("candle_date_time_utc").getAsString().replaceAll("-", "").substring(0, 8));
+            jsonObject.addProperty("acc_trade_price",jsonObject.get("candle_acc_trade_price").getAsString());
             jsonObject.addProperty("acc_trade_volume",jsonObject.get("candle_acc_trade_volume").getAsString());
         });
 
@@ -68,29 +69,28 @@ public class UpbitApi {
 
     /**
      * 코인에 대한 RSI 계산
-     * @param tradeInfoDtos
+     * @param tradeInfoDtoList
      * @return double
      */
-    public void getRis(List<TradeInfoDto> tradeInfoDtos){
+    public void getRSI(List<TradeInfoDto> tradeInfoDtoList){
         RelativeStrengthIndex relativeStrengthIndex = new RelativeStrengthIndex();
 
         try {
-            relativeStrengthIndex.calculate(tradeInfoDtos,14);
+            relativeStrengthIndex.calculate(tradeInfoDtoList,14);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println(relativeStrengthIndex.toString());
 
     }
 
     /**
      * 코인에 대한 MACD 계산
-     * @param tradeInfoDtos
+     * @param tradeInfoDtoList
      */
-    public void getMACD(List<TradeInfoDto> tradeInfoDtos) {
+    public void getMACD(List<TradeInfoDto> tradeInfoDtoList) {
         MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence();
         try {
-            macd.calculate(tradeInfoDtos,12,26,9);
+            macd.calculate(tradeInfoDtoList,12,26,9);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -18,6 +18,18 @@ public class TradeInfoDto {
     @Comment("현재가")
     double tradePrice;
 
+    @Comment("시작가")
+    double openingPrice;
+
+    @Comment("고가")
+    double highPrice;
+
+    @Comment("저가")
+    double lowPrice;
+
+    @Comment("누적 거래대금(UTC 0시 기준)")
+    double accTradePrice;
+
     @Comment("누적 거래량(UTC 0시 기준)")
     double accTradeVolume;
 

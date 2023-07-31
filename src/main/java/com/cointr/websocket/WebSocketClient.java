@@ -1,5 +1,6 @@
 package com.cointr.websocket;
 
+import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.service.CoinService;
 import com.google.gson.*;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -43,15 +45,16 @@ public class WebSocketClient {
             return;
         }
         status = WsStatus.START;
-        //List<String> markets = coinCodeRepository.findMarket();
-        String[] markets = new String[]{"KRW-BTC","KRW-NEO","KRW-STX","KRW-XLM","KRW-HUNT","KRW-MOC","KRW-FCT2","KRW-ETH"};
-        //String[] markets = new String[]{"KRW-BTC"};
+        List<CoinDto> markets = coinService.selectCoins();
+
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
-        for (String market : markets) {
-            codesObj.add(market);
+
+        for (CoinDto market : markets) {
+            codesObj.add(market.getMarket());
         }
+
         root.add(new JsonObject());
         root.get(0).getAsJsonObject().addProperty("ticket", UUID.randomUUID().toString());
         type.addProperty("type", "ticker");
@@ -80,7 +83,7 @@ public class WebSocketClient {
                         .create()
                         .fromJson(jsonObject, TradeInfoDto.class);
 
-                coinService.insertTradeInfo(tradeInfoDto);
+                coinService.updateTechnicalIndicator(tradeInfoDto);
             }
 
             @Override

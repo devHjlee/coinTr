@@ -18,7 +18,6 @@ public class MovingAverageConvergenceDivergence {
     private double[] prices;
     private double[] macd;
     private double[] signal;
-
     private double[] diff;
     private int[] crossover;
 
