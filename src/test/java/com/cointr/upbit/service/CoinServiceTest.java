@@ -25,8 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class CoinServiceTest {
     @Autowired
     private CoinService coinService;
-    @Autowired
-    private CoinRepository coinRepository;
 
     @Test
     void 코인전체저장() {
@@ -59,6 +57,11 @@ class CoinServiceTest {
     @Test
     void 코인_ADX() {
         coinService.getBollingerBand("KRW-BTG");
+    }
+
+    @Test
+    void 코인_PSAR() {
+        coinService.getPSAR("KRW-BTG");
     }
 
     @Test

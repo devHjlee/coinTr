@@ -72,4 +72,7 @@ public class TradeInfoDto {
     @Comment("ADX")
     double adx;
 
+    @Comment("PARABOLIC_SAR")
+    double pSar;
+
 }

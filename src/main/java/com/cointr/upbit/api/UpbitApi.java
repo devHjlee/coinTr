@@ -131,4 +131,18 @@ public class UpbitApi {
         }
 
     }
+
+    /**
+     * ParabolicSar 계산
+     * @param tradeInfoDtoList
+     */
+    public void getPSar(List<TradeInfoDto> tradeInfoDtoList) {
+        ParabolicSar pSar = new ParabolicSar();
+        try {
+            pSar.calculate(tradeInfoDtoList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }
