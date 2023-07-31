@@ -27,6 +27,7 @@ public class CoinService {
     public void dayCandleSave(String market) {
 
         List<TradeInfoDto> tradeInfoDtos = upbitApi.getCandle(market);
+        upbitApi.getMACD(tradeInfoDtos);
         coinRepository.insertBulkTradeInfo(tradeInfoDtos);
 
     }

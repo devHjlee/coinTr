@@ -17,12 +17,20 @@
     </insert>
 
     <insert id="insertBulkTradeInfo" parameterType="java.util.List">
-        insert into trade_info (market,trade_date,trade_price,acc_trade_volume)
+        insert into trade_info (market,trade_date,trade_price,rsi,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram,acc_trade_volume)
         values
         <foreach collection="list" item="item" separator=",">
-               (#{item.market},#{item.tradeDate},#{item.tradePrice},#{item.accTradeVolume})
+               (#{item.market},#{item.tradeDate},#{item.tradePrice},#{item.rsi},#{item.macd},#{item.macdEmaShort},#{item.macdEmaLong},#{item.macdSignal},#{item.macdSignalHistogram},#{item.accTradeVolume})
         </foreach>
-        ON DUPLICATE KEY UPDATE trade_price = values (trade_price), acc_trade_volume = values(acc_trade_volume)
+        ON DUPLICATE KEY UPDATE
+                trade_price = values (trade_price)
+                ,acc_trade_volume = values(acc_trade_volume)
+        ,rsi = values(rsi)
+        ,macd = values(macd)
+        ,macd_ema_short = values(macd_ema_short)
+        ,macd_ema_long = values(macd_ema_long)
+        ,macd_signal = values(macd_signal)
+        ,macd_signal_histogram = values(macd_signal_histogram)
     </insert>
 
     <delete id="deleteTradeInfo">

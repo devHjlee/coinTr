@@ -1,6 +1,11 @@
 package com.cointr.upbit.util;
 
 
+import com.cointr.upbit.dto.TradeInfoDto;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Moving Average Convergence/Divergence Oscillator
  */
@@ -17,9 +22,11 @@ public class MovingAverageConvergenceDivergence {
     private double[] diff;
     private int[] crossover;
 
-    public MovingAverageConvergenceDivergence calculate(double[] prices, int fastPeriod, int slowPeriod,
-                                                        int signalPeriod) throws Exception {
-
+    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int fastPeriod, int slowPeriod,
+                          int signalPeriod) throws Exception {
+        double[] prices = tradeInfoDtoList.stream()
+                .mapToDouble(TradeInfoDto::getTradePrice)
+                .toArray();
         this.prices = prices;
         this.macd = new double[prices.length];
         this.signal = new double[prices.length];
@@ -35,13 +42,15 @@ public class MovingAverageConvergenceDivergence {
 
         for (int i = slowPeriod - 1; i < this.prices.length; i++) {
             this.macd[i] = emaShort.getEMA()[i] - emaLong.getEMA()[i];
+            tradeInfoDtoList.get(i).setMacd(this.macd[i]);
+            tradeInfoDtoList.get(i).setMacdEmaShort(emaShort.getEMA()[i]);
+            tradeInfoDtoList.get(i).setMacdEmaLong(emaLong.getEMA()[i]);
         }
 
         ExponentialMovingAverage signalEma = new ExponentialMovingAverage();
         this.signal = signalEma.calculate(this.macd, signalPeriod).getEMA();
 
         for (int i = 0; i < this.macd.length; i++) {
-
             this.diff[i] = this.macd[i] - this.signal[i];
 
             if (this.diff[i] > 0 && this.diff[i - 1] < 0) {
@@ -51,9 +60,10 @@ public class MovingAverageConvergenceDivergence {
             } else {
                 this.crossover[i] = MovingAverageConvergenceDivergence.CROSSOVER_NONE;
             }
+            tradeInfoDtoList.get(i).setMacdSignal(this.signal[i]);
+            tradeInfoDtoList.get(i).setMacdSignalHistogram(this.crossover[i]);
         }
 
-        return this;
     }
 
     public double[] getMACD() {

@@ -12,7 +12,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.ApplicationEventPublisher;
+
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

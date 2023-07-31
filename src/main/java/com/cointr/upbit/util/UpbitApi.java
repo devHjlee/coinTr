@@ -14,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +39,7 @@ public class UpbitApi {
         JsonArray jsonArray = new GsonBuilder().create().fromJson(responseEntity.getBody(),JsonArray.class);
         jsonArray.forEach(jsonElement -> {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-            System.out.println(jsonObject.get("trade_price").getAsString());
+
             jsonObject.addProperty("trade_date",jsonObject.get("candle_date_time_utc").getAsString().replaceAll("-", "").substring(0, 8));
             jsonObject.addProperty("acc_trade_volume",jsonObject.get("candle_acc_trade_volume").getAsString());
         });
@@ -77,47 +79,38 @@ public class UpbitApi {
         double a = (double) 1 / (1 + (day - 1));  // 지수 이동 평균의 정식 공식은 a = 2 / 1 + day 이지만 업비트에서 사용하는 수식은 a = 1 / (1 + (day - 1))
 
         // rsi 계산
-        double au = CollectionUtils.isEmpty(upList)?0:getExpMoveAvg(upList,a);
-        double ad = CollectionUtils.isEmpty(downList)?0:getExpMoveAvg(downList,a);
+        double au = CollectionUtils.isEmpty(upList)?0:getRsiExpMoveAvg(upList,a);
+        double ad = CollectionUtils.isEmpty(downList)?0:getRsiExpMoveAvg(downList,a);
         double rs = au / ad;
         rsi = 100 - (100 / (1 + rs));
         log.info("RSI:"+rsi);
         return rsi;
     }
 
-    private double getExpMoveAvg(List<Double> indexList, double a) {
+    private double getRsiExpMoveAvg(List<Double> indexList, double a) {
         double ema = 0;  // 하락 값의 지수이동평균
-        if (!CollectionUtils.isEmpty(indexList)) {
-            ema = indexList.get(0);
-            if (indexList.size() > 1) {
-                for (int i = 1; i < indexList.size(); i++) {
-                    ema = (indexList.get(i) * a) + (ema * (1 - a));
-                }
+        ema = indexList.get(0);
+        if (indexList.size() > 1) {
+            for (int i = 1; i < indexList.size(); i++) {
+                ema = (indexList.get(i) * a) + (ema * (1 - a));
             }
         }
+
         return ema;
     }
 
+    /**
+     * 코인에 대한 MACD 계산
+     * @param tradeInfoDtos
+     */
     public void getMACD(List<TradeInfoDto> tradeInfoDtos) {
-        List<Double> prices = tradeInfoDtos.stream().map(TradeInfoDto::getTradePrice)
-                                            .collect(Collectors.toList());
-
-        double[] a = new double[prices.size()];
-        for(int i = 0 ; i < prices.size(); i++) {
-            a[i] = prices.get(i);
-        }
-
         MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence();
-
+        tradeInfoDtos.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         try {
-            macd.calculate(a,12,26,9);
-            System.out.println(macd.toString());
+            macd.calculate(tradeInfoDtos,12,26,9);
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        for(double b : macd.getMACD()) {
-//            System.out.println("AAAA"+b);
-//        }
 
     }
 

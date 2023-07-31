@@ -33,6 +33,12 @@ public class TradeInfoDto {
     @Comment("MACD")
     double macd;
 
+    @Comment("MACD_EMA_SHORT")
+    double macdEmaShort;
+
+    @Comment("MACD_EMA_LONG")
+    double macdEmaLong;
+
     @Comment("MACD_SIGNAL")
     double macdSignal;
 
