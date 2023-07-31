@@ -42,22 +42,27 @@ class CoinServiceTest {
     }
 
     @Test
-    void 코인별RSI() {
+    void 코인_RSI() {
         coinService.getRSI("KRW-BTG");
     }
 
     @Test
-    void 코인별MACD() {
+    void 코인_MACD() {
         coinService.getMACD("KRW-BTG");
     }
 
     @Test
-    void 볼린저밴드() {
+    void 코인_볼린저밴드() {
         coinService.getBollingerBand("KRW-BTG");
     }
 
     @Test
-    void 일봉캔들_저장() {
+    void 코인_ADX() {
+        coinService.getBollingerBand("KRW-BTG");
+    }
+
+    @Test
+    void 코인_일봉캔들_저장() {
         coinService.dayCandleSave("KRW-BTG");
     }
 

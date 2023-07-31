@@ -17,6 +17,7 @@ CREATE TABLE trade_info (
                             macd_ema_long double DEFAULT NULL,
                             macd_signal double DEFAULT NULL,
                             macd_signal_histogram double DEFAULT NULL,
+                            adx double DEFAULT NULL,
                             acc_trade_price double DEFAULT NULL,
                             acc_trade_volume double DEFAULT NULL,
                             acc_ask_volume double DEFAULT NULL,

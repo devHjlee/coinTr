@@ -2,10 +2,7 @@ package com.cointr.upbit.api;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.indicators.BollingerBand;
-import com.cointr.upbit.indicators.CommodityChannelIndex;
-import com.cointr.upbit.indicators.MovingAverageConvergenceDivergence;
-import com.cointr.upbit.indicators.RelativeStrengthIndex;
+import com.cointr.upbit.indicators.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -40,6 +37,7 @@ public class UpbitApi {
                 .fromJson(jsonArray, listType);
 
     }
+
     /**
      * UpbitApi 를 통해 코인에 대한 캔들 정보 수신
      * @param market
@@ -67,6 +65,24 @@ public class UpbitApi {
                 .fromJson(jsonArray, listType);
     }
 
+    /**
+     * CommodityChannelIndex 계산
+     * @param tradeInfoDtoList
+     */
+    public void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
+        CommodityChannelIndex cci = new CommodityChannelIndex();
+        try {
+            cci.calculate(tradeInfoDtoList,20);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    /**
+     * 볼린저밴드 계산
+     * @param tradeInfoDtoList
+     */
     public void getBollingerBand(List<TradeInfoDto> tradeInfoDtoList) {
         BollingerBand bollingerBand= new BollingerBand();
         bollingerBand.calculate(tradeInfoDtoList,20,2);
@@ -102,14 +118,17 @@ public class UpbitApi {
 
     }
 
-    public void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
-        CommodityChannelIndex cci = new CommodityChannelIndex();
+    /**
+     * ADX 계산
+     * @param tradeInfoDtoList
+     */
+    public void getADX(List<TradeInfoDto> tradeInfoDtoList) {
+        AverageDirectionalIndex adx = new AverageDirectionalIndex();
         try {
-            cci.calculate(tradeInfoDtoList,20);
+            adx.calculate(tradeInfoDtoList,14);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
 }

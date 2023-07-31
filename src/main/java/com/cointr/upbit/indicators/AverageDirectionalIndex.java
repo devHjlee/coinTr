@@ -1,9 +1,11 @@
 package com.cointr.upbit.indicators;
 
+import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.util.NumberFormatter;
 import com.cointr.upbit.util.TrueRange;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Average Directional Index
@@ -36,15 +38,21 @@ public class AverageDirectionalIndex {
     /**
      * Calculate ADX (Average Directional Index)
      *
-     * @param high
-     * @param low
-     * @param close
+     * @param tradeInfoDtoList
      * @param period
      * @return
      * @throws Exception
      */
-    public AverageDirectionalIndex calculate(double[] high, double[] low, double[] close, int period) throws Exception {
-
+    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int period) throws Exception {
+        double[] close = tradeInfoDtoList.stream()
+                .mapToDouble(TradeInfoDto::getTradePrice)
+                .toArray();
+        double[] high = tradeInfoDtoList.stream()
+                .mapToDouble(TradeInfoDto::getHighPrice)
+                .toArray();
+        double[] low = tradeInfoDtoList.stream()
+                .mapToDouble(TradeInfoDto::getLowPrice)
+                .toArray();
         if (period >= high.length)
             throw new Exception("Given period is larger then given data set");
 
@@ -101,9 +109,10 @@ public class AverageDirectionalIndex {
             this.directionalIndex(i);
             this.averageDirectionalIndex(i);
 
+            tradeInfoDtoList.get(i).setAdx(this.adx[i]);
+
         }
 
-        return this;
     }
 
     public double[] getADX() {

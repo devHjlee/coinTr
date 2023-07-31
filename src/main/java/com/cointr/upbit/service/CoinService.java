@@ -33,6 +33,14 @@ public class CoinService {
     }
 
     /**
+     * 전체 코인 목록 조회
+     * @return CoinDto
+     */
+    public List<CoinDto> selectCoins() {
+        return coinRepository.findAll();
+    }
+
+    /**
      * 코인에 대한 일별 거래내역 저장
      * @param market
      */
@@ -43,14 +51,15 @@ public class CoinService {
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<TradeInfoDto> tradeInfoDtos = upbitApi.getCandle(market);
-        tradeInfoDtos.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
-        if(tradeInfoDtos.size() > 26) {
-            upbitApi.getMACD(tradeInfoDtos);
-            upbitApi.getRSI(tradeInfoDtos);
-            upbitApi.getCCI(tradeInfoDtos);
-            upbitApi.getBollingerBand(tradeInfoDtos);
-            coinRepository.insertBulkTradeInfo(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market);
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+        if(tradeInfoDtoList.size() > 26) {
+            upbitApi.getMACD(tradeInfoDtoList);
+            upbitApi.getRSI(tradeInfoDtoList);
+            upbitApi.getCCI(tradeInfoDtoList);
+            upbitApi.getBollingerBand(tradeInfoDtoList);
+            upbitApi.getADX(tradeInfoDtoList);
+            coinRepository.insertBulkTradeInfo(tradeInfoDtoList);
         }
 
     }
@@ -71,11 +80,16 @@ public class CoinService {
         upbitApi.getMACD(tradeInfoDtoList);
         upbitApi.getCCI(tradeInfoDtoList);
         upbitApi.getBollingerBand(tradeInfoDtoList);
+        upbitApi.getADX(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         coinRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
 
+    /**
+     * 코인에 대한 볼린저밴드
+     * @param market
+     */
     public void getBollingerBand(String market) {
         List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
         upbitApi.getBollingerBand(tradeInfoDtos);
@@ -90,17 +104,22 @@ public class CoinService {
         upbitApi.getRSI(tradeInfoDtos);
     }
 
+    /**
+     * 코인에 대한 MACD
+     * @param market
+     */
     public void getMACD(String market) {
         List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
         upbitApi.getMACD(tradeInfoDtos);
     }
 
     /**
-     * 전체 코인 목록 조회
-     * @return CoinDto
+     * 코인에 대한 ADX
+     * @param market
      */
-    public List<CoinDto> selectCoins() {
-        return coinRepository.findAll();
+    public void getADX(String market) {
+        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
+        upbitApi.getMACD(tradeInfoDtos);
     }
 
     /**

@@ -69,4 +69,7 @@ public class TradeInfoDto {
     @Comment("MACD_HISTOGRAM")
     double macdSignalHistogram;
 
+    @Comment("ADX")
+    double adx;
+
 }
