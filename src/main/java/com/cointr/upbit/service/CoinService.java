@@ -11,7 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -21,14 +23,33 @@ public class CoinService {
     private final UpbitApi upbitApi;
 
     /**
+     * 전체 코인 목록 저장(원화만)
+     */
+    public void coinSaveAll() {
+
+        List<CoinDto> coinDtos = upbitApi.coinSaveAll();
+        coinDtos.stream().filter(x-> !x.getMarket().contains("KRW-")).collect(Collectors.toList()).forEach(coinDtos::remove);
+
+        coinRepository.insertBulkCoin(coinDtos);
+    }
+    /**
      * 코인에 대한 일별 거래내역 저장
      * @param market
      */
     public void dayCandleSave(String market) {
 
+        try {
+            Thread.sleep(80);
+        }  catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<TradeInfoDto> tradeInfoDtos = upbitApi.getCandle(market);
-        upbitApi.getMACD(tradeInfoDtos);
-        coinRepository.insertBulkTradeInfo(tradeInfoDtos);
+        tradeInfoDtos.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+        if(tradeInfoDtos.size() > 100) {
+            upbitApi.getMACD(tradeInfoDtos);
+            upbitApi.getRis(tradeInfoDtos);
+            coinRepository.insertBulkTradeInfo(tradeInfoDtos);
+        }
 
     }
 
@@ -37,13 +58,9 @@ public class CoinService {
      * @param market
      * @return CoinIndex
      */
-    public CoinIndex getRSI(String market) {
+    public void getRSI(String market) {
         List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        CoinIndex coinIndex = new CoinIndex();
-        coinIndex.setMarket(market);
-        coinIndex.setRsi(upbitApi.getRis(tradeInfoDtos));
-
-        return coinIndex;
+        upbitApi.getRis(tradeInfoDtos);
     }
 
     public void getMACD(String market) {

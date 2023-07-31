@@ -28,8 +28,8 @@ public class TelegramBotService extends TelegramLongPollingBot {
             String messageText = update.getMessage().getText();
 
             if(update.getMessage().getText().contains("KRW-")) {
-                CoinIndex coinIndex = coinService.getRSI(messageText);
-                sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
+                //CoinIndex coinIndex = coinService.getRSI(messageText);
+                //sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
             }else {
                 sendMessage(chatId, "Received: " + messageText);
             }

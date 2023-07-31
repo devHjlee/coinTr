@@ -8,6 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface CoinRepository {
+
+    void insertBulkCoin(List<CoinDto> coinDtos);
+
     List<CoinDto> findAll();
 
     List<TradeInfoDto> selectTradeInfo(String market);

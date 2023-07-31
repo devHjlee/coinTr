@@ -17,6 +17,11 @@ class CoinServiceTest {
     private CoinService coinService;
 
     @Test
+    void 코인전체저장() {
+        coinService.coinSaveAll();
+    }
+
+    @Test
     void 전체코인목록() {
         List<CoinDto> coinDtoList = coinService.selectCoins();
         for(CoinDto coinDto : coinDtoList) {
@@ -26,9 +31,7 @@ class CoinServiceTest {
 
     @Test
     void 코인별RSI() {
-        CoinIndex coinIndex = coinService.getRSI("KRW-KNC");
-        System.out.println(coinIndex.getRsi());
-        System.out.println("dlgudwo");
+        coinService.getRSI("KRW-KNC");
     }
 
     @Test
@@ -38,6 +41,10 @@ class CoinServiceTest {
 
     @Test
     void 일봉캔들_저장() {
-        coinService.dayCandleSave("KRW-KNC");
+        List<CoinDto> coinDtoList = coinService.selectCoins();
+        for(CoinDto coin : coinDtoList) {
+            coinService.dayCandleSave(coin.getMarket());
+        }
+
     }
 }
