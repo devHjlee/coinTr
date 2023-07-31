@@ -27,8 +27,6 @@ public class Aroon {
         for (int i = range - 1; i < high.length; i++) {
             HighestHigh highestHigh = new HighestHigh();
             highestHigh.find(high, i - range + 1, range);
-            log.info("START++++++++");
-            log.info(high.toString() +":"+i+":"+highestHigh.getIndex());
             aroonUp[i] = this.calcAroon(range, (i - highestHigh.getIndex()));
         }
         return aroonUp;
