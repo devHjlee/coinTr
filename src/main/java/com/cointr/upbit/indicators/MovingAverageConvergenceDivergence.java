@@ -1,10 +1,9 @@
-package com.cointr.upbit.util;
+package com.cointr.upbit.indicators;
 
 
 import com.cointr.upbit.dto.TradeInfoDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Moving Average Convergence/Divergence Oscillator

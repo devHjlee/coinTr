@@ -1,7 +1,11 @@
-package com.cointr.upbit.util;
+package com.cointr.upbit.api;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.indicators.BollingerBand;
+import com.cointr.upbit.indicators.CommodityChannelIndex;
+import com.cointr.upbit.indicators.MovingAverageConvergenceDivergence;
+import com.cointr.upbit.indicators.RelativeStrengthIndex;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -10,15 +14,11 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -67,8 +67,13 @@ public class UpbitApi {
                 .fromJson(jsonArray, listType);
     }
 
+    public void getBollingerBand(List<TradeInfoDto> tradeInfoDtoList) {
+        BollingerBand bollingerBand= new BollingerBand();
+        bollingerBand.calculate(tradeInfoDtoList,20,2);
+
+    }
     /**
-     * 코인에 대한 RSI 계산
+     * RSI 계산
      * @param tradeInfoDtoList
      * @return double
      */
@@ -84,7 +89,7 @@ public class UpbitApi {
     }
 
     /**
-     * 코인에 대한 MACD 계산
+     * MACD 계산
      * @param tradeInfoDtoList
      */
     public void getMACD(List<TradeInfoDto> tradeInfoDtoList) {
@@ -97,5 +102,14 @@ public class UpbitApi {
 
     }
 
+    public void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
+        CommodityChannelIndex cci = new CommodityChannelIndex();
+        try {
+            cci.calculate(tradeInfoDtoList,20);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

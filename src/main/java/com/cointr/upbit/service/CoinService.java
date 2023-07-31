@@ -1,10 +1,9 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.CoinIndex;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
-import com.cointr.upbit.util.UpbitApi;
+import com.cointr.upbit.api.UpbitApi;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +48,8 @@ public class CoinService {
         if(tradeInfoDtos.size() > 26) {
             upbitApi.getMACD(tradeInfoDtos);
             upbitApi.getRSI(tradeInfoDtos);
+            upbitApi.getCCI(tradeInfoDtos);
+            upbitApi.getBollingerBand(tradeInfoDtos);
             coinRepository.insertBulkTradeInfo(tradeInfoDtos);
         }
 
@@ -68,11 +69,17 @@ public class CoinService {
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.getRSI(tradeInfoDtoList);
         upbitApi.getMACD(tradeInfoDtoList);
+        upbitApi.getCCI(tradeInfoDtoList);
+        upbitApi.getBollingerBand(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         coinRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
 
+    public void getBollingerBand(String market) {
+        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
+        upbitApi.getBollingerBand(tradeInfoDtos);
+    }
     /**
      * 코인에 대한 RSI
      * @param market

@@ -39,6 +39,18 @@ public class TradeInfoDto {
     @Comment("누적 매수량(웹 소켓만 가능)")
     double accBidVolume;
 
+    @Comment("CCI")
+    double cci;
+
+    @Comment("볼린저밴드 평균")
+    double bbAvg;
+
+    @Comment("볼린저밴드 UP")
+    double bbUp;
+
+    @Comment("볼린저밴드 DOWN")
+    double bbDown;
+
     @Comment("RSI")
     double rsi;
 

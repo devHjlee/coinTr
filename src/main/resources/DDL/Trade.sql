@@ -1,23 +1,27 @@
-DROP TABLE TRADE_INFO;
+drop table trade_INFO;
 
-CREATE TABLE TRADE_INFO (
-                            MARKET varchar(255) NOT NULL,
-                            TRADE_DATE varchar(255) NOT NULL,
-                            TRADE_PRICE double DEFAULT NULL,
-                            OPENING_PRICE double DEFAULT NULL,
-                            HIGH_PRICE double DEFAULT NULL,
-                            LOW_PRICE double DEFAULT NULL,
-                            RSI double DEFAULT NULL,
-                            MACD double DEFAULT NULL,
-                            MACD_EMA_SHORT double DEFAULT NULL,
-                            MACD_EMA_LONG double DEFAULT NULL,
-                            MACD_SIGNAL double DEFAULT NULL,
-                            MACD_SIGNAL_HISTOGRAM double DEFAULT NULL,
-                            ACC_TRADE_PRICE double DEFAULT NULL,
-                            ACC_TRADE_VOLUME double DEFAULT NULL,
-                            ACC_ASK_VOLUME double DEFAULT NULL,
-                            ACCBIDVOLUME double DEFAULT NULL,
-                            PRIMARY KEY (`market`,`trade_Date`)
+CREATE TABLE trade_info (
+                            market varchar(255) not null,
+                            trade_date varchar(255) not NULL,
+                            trade_price double DEFAULT NULL,
+                            opening_price double DEFAULT NULL,
+                            high_price double DEFAULT NULL,
+                            low_price double DEFAULT NULL,
+                            cci double DEFAULT NULL,
+                            bb_avg double DEFAULT NULL,
+                            bb_up double DEFAULT NULL,
+                            bb_down double DEFAULT NULL,
+                            rsi double DEFAULT NULL,
+                            macd double DEFAULT NULL,
+                            macd_ema_short double DEFAULT NULL,
+                            macd_ema_long double DEFAULT NULL,
+                            macd_signal double DEFAULT NULL,
+                            macd_signal_histogram double DEFAULT NULL,
+                            acc_trade_price double DEFAULT NULL,
+                            acc_trade_volume double DEFAULT NULL,
+                            acc_ask_volume double DEFAULT NULL,
+                            acc_bid_volume double DEFAULT NULL,
+                            PRIMARY KEY (market,trade_date)
 ) ;
 
 DROP TABLE COIN;

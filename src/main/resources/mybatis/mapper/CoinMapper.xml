@@ -29,12 +29,12 @@
     <insert id="insertBulkTradeInfo" parameterType="java.util.List">
         insert into trade_info
             (market,trade_date,trade_price,OPENING_PRICE,HIGH_PRICE,LOW_PRICE
-            ,rsi,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram
+            ,cci,bb_avg,bb_up,bb_down,rsi,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram
             ,ACC_TRADE_PRICE,acc_trade_volume)
         values
         <foreach collection="list" item="item" separator=",">
             (#{item.market},#{item.tradeDate},#{item.tradePrice},#{item.openingPrice},#{item.highPrice},#{item.lowPrice}
-            ,#{item.rsi},#{item.macd},#{item.macdEmaShort},#{item.macdEmaLong},#{item.macdSignal},#{item.macdSignalHistogram}
+            ,#{item.cci},#{item.bbAvg},#{item.bbUp},#{item.bbDown},#{item.rsi},#{item.macd},#{item.macdEmaShort},#{item.macdEmaLong},#{item.macdSignal},#{item.macdSignalHistogram}
             ,#{item.accTradePrice},#{item.accTradeVolume})
         </foreach>
         ON DUPLICATE KEY UPDATE
@@ -42,12 +42,16 @@
         ,OPENING_PRICE = values (OPENING_PRICE)
         ,HIGH_PRICE = values (HIGH_PRICE)
         ,LOW_PRICE = values (LOW_PRICE)
-        ,rsi = values(rsi)
-        ,macd = values(macd)
-        ,macd_ema_short = values(macd_ema_short)
-        ,macd_ema_long = values(macd_ema_long)
-        ,macd_signal = values(macd_signal)
-        ,macd_signal_histogram = values(macd_signal_histogram)
+        ,cci = values (cci)
+        ,bb_avg = values (bb_avg)
+        ,bb_up = values (bb_up)
+        ,bb_down = values (bb_down)
+        ,rsi = values (rsi)
+        ,macd = values (macd)
+        ,macd_ema_short = values (macd_ema_short)
+        ,macd_ema_long = values (macd_ema_long)
+        ,macd_signal = values (macd_signal)
+        ,macd_signal_histogram = values (macd_signal_histogram)
         ,ACC_TRADE_PRICE = values (ACC_TRADE_PRICE)
         ,acc_trade_volume = values(acc_trade_volume)
     </insert>

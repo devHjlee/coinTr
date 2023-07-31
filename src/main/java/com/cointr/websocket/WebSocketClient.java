@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -45,8 +46,13 @@ public class WebSocketClient {
             return;
         }
         status = WsStatus.START;
-        List<CoinDto> markets = coinService.selectCoins();
+        //List<CoinDto> markets = coinService.selectCoins();
 
+        //임시
+        CoinDto coinDto = new CoinDto();
+        coinDto.setMarket("KRW-BTG");
+        List<CoinDto> markets = new ArrayList<>();
+        markets.add(coinDto);
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();

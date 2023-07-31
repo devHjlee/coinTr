@@ -3,6 +3,7 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.CoinIndex;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.repository.CoinRepository;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +25,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class CoinServiceTest {
     @Autowired
     private CoinService coinService;
+    @Autowired
+    private CoinRepository coinRepository;
 
     @Test
     void 코인전체저장() {
@@ -39,18 +43,22 @@ class CoinServiceTest {
 
     @Test
     void 코인별RSI() {
-        coinService.getRSI("KRW-KNC");
+        coinService.getRSI("KRW-BTG");
     }
 
     @Test
     void 코인별MACD() {
-        coinService.getMACD("KRW-KNC");
+        coinService.getMACD("KRW-BTG");
+    }
+
+    @Test
+    void 볼린저밴드() {
+        coinService.getBollingerBand("KRW-BTG");
     }
 
     @Test
     void 일봉캔들_저장() {
-        List<CoinDto> coinDtoList = coinService.selectCoins();
-        coinService.dayCandleSave("KRW-BTC");
+        coinService.dayCandleSave("KRW-BTG");
     }
 
     @Test
@@ -87,4 +95,5 @@ class CoinServiceTest {
                 .fromJson(jsonArray, listType);
         coinService.updateTechnicalIndicator(tradeInfoDto.get(0));
     }
+
 }
