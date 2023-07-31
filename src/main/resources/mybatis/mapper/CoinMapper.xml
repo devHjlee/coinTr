@@ -31,7 +31,7 @@
             (market,trade_date,trade_price,OPENING_PRICE,HIGH_PRICE,LOW_PRICE
             ,cci,bb_avg,bb_up,bb_down,rsi
             ,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram
-            ,adx,p_sar
+            ,adx,p_sar,aroon_up,aroon_down,aroon_oscillator
             ,ACC_TRADE_PRICE,acc_trade_volume
             ,ACC_ASK_VOLUME,ACC_BID_VOLUME)
         values
@@ -39,7 +39,7 @@
             (#{item.market},#{item.tradeDate},#{item.tradePrice},#{item.openingPrice},#{item.highPrice},#{item.lowPrice}
             ,#{item.cci},#{item.bbAvg},#{item.bbUp},#{item.bbDown},#{item.rsi}
             ,#{item.macd},#{item.macdEmaShort},#{item.macdEmaLong},#{item.macdSignal},#{item.macdSignalHistogram}
-            ,#{item.adx},#{item.pSar}
+            ,#{item.adx},#{item.pSar},#{item.aroonUp},#{item.aroonDown},#{item.aroonOscillator}
             ,#{item.accTradePrice},#{item.accTradeVolume}
             ,#{item.accAskVolume},#{item.accBidVolume})
         </foreach>
@@ -60,6 +60,9 @@
         ,macd_signal_histogram = values (macd_signal_histogram)
         ,adx = values (adx)
         ,p_sar = values (p_sar)
+        ,aroon_up = values (aroon_up)
+        ,aroon_down = values (aroon_down)
+        ,aroon_oscillator = values (aroon_oscillator)
         ,ACC_TRADE_PRICE = values (ACC_TRADE_PRICE)
         ,acc_trade_volume = values(acc_trade_volume)
         ,acc_ask_volume = values(acc_ask_volume)

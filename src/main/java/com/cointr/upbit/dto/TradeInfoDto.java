@@ -75,4 +75,12 @@ public class TradeInfoDto {
     @Comment("PARABOLIC_SAR")
     double pSar;
 
+    @Comment("AROON_UP")
+    double aroonUp;
+
+    @Comment("AROON_DOWN")
+    double aroonDown;
+
+    @Comment("AROON_OSCILLATOR")
+    double aroonOscillator;
 }

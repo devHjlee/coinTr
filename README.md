@@ -9,8 +9,8 @@ https://github.com/TakahikoKawasaki/nv-websocket-client
 * RSI (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
 * MACD (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
 * CCI (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-* ADX (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-* Aroon (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
+* ADX (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals) : 검증필요
+* Aroon (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals) : 검증필요
 * ParabolicSar (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
 
 알림기능

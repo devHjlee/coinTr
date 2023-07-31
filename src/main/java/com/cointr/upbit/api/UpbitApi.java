@@ -145,4 +145,18 @@ public class UpbitApi {
         }
 
     }
+
+    /**
+     * Aroon 계산
+     * @param tradeInfoDtoList
+     */
+    public void getAroon(List<TradeInfoDto> tradeInfoDtoList) {
+        Aroon aroon = new Aroon();
+        try {
+            aroon.calculateAroonOscillator(tradeInfoDtoList,14);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 }

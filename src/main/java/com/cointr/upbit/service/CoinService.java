@@ -60,6 +60,7 @@ public class CoinService {
             upbitApi.getBollingerBand(tradeInfoDtoList);
             upbitApi.getADX(tradeInfoDtoList);
             upbitApi.getPSar(tradeInfoDtoList);
+            upbitApi.getAroon(tradeInfoDtoList);
             coinRepository.insertBulkTradeInfo(tradeInfoDtoList);
         }
 
@@ -83,6 +84,7 @@ public class CoinService {
         upbitApi.getBollingerBand(tradeInfoDtoList);
         upbitApi.getADX(tradeInfoDtoList);
         upbitApi.getPSar(tradeInfoDtoList);
+        upbitApi.getAroon(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         coinRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
@@ -132,6 +134,12 @@ public class CoinService {
         List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
         upbitApi.getPSar(tradeInfoDtos);
     }
+
+    public void getAroon(String market) {
+        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
+        upbitApi.getAroon(tradeInfoDtos);
+    }
+
     /**
      * 웹소켓을 통해 받은 정보를 Trade_info 테이블에 저장
      * @param tradeInfoDto
