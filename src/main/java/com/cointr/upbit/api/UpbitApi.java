@@ -159,4 +159,25 @@ public class UpbitApi {
         }
 
     }
+
+    /**
+     * Stochastic 계산
+     * @param tradeInfoDtoList
+     */
+    public void getStochastics(List<TradeInfoDto> tradeInfoDtoList) {
+        StochasticsOscilator stochasticsOscilator = new StochasticsOscilator();
+        int n = 5; // Fast %K를 계산하는 데 사용되는 기간
+        int m = 3; // Slow %K를 계산하는 데 사용되는 기간
+        int t = 3; // Slow %D를 계산하는 데 사용되는 기간
+        for (int i = 0; i < tradeInfoDtoList.size(); i++) {
+            double fastK = stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
+            double fastD = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+            double slowK = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+            double slowD = stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
+            tradeInfoDtoList.get(i).setFastK(fastK);
+            tradeInfoDtoList.get(i).setFastD(fastD);
+            tradeInfoDtoList.get(i).setSlowK(slowK);
+            tradeInfoDtoList.get(i).setSlowD(slowD);
+        }
+    }
 }

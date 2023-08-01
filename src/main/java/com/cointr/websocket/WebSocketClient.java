@@ -24,9 +24,6 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static org.thymeleaf.util.StringUtils.substring;
-
-
 @Slf4j
 @Component
 @RequiredArgsConstructor

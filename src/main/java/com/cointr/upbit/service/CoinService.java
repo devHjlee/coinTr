@@ -61,6 +61,7 @@ public class CoinService {
             upbitApi.getADX(tradeInfoDtoList);
             upbitApi.getPSar(tradeInfoDtoList);
             upbitApi.getAroon(tradeInfoDtoList);
+            upbitApi.getStochastics(tradeInfoDtoList);
             coinRepository.insertBulkTradeInfo(tradeInfoDtoList);
         }
 
@@ -85,6 +86,7 @@ public class CoinService {
         upbitApi.getADX(tradeInfoDtoList);
         upbitApi.getPSar(tradeInfoDtoList);
         upbitApi.getAroon(tradeInfoDtoList);
+        upbitApi.getStochastics(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         coinRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
@@ -95,8 +97,8 @@ public class CoinService {
      * @param market
      */
     public void getBollingerBand(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getBollingerBand(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getBollingerBand(tradeInfoDtoList);
     }
     /**
      * 코인에 대한 RSI
@@ -104,8 +106,8 @@ public class CoinService {
      * @return CoinIndex
      */
     public void getRSI(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getRSI(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getRSI(tradeInfoDtoList);
     }
 
     /**
@@ -113,8 +115,8 @@ public class CoinService {
      * @param market
      */
     public void getMACD(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getMACD(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getMACD(tradeInfoDtoList);
     }
 
     /**
@@ -122,8 +124,8 @@ public class CoinService {
      * @param market
      */
     public void getADX(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getMACD(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getMACD(tradeInfoDtoList);
     }
 
     /**
@@ -131,13 +133,19 @@ public class CoinService {
      * @param market
      */
     public void getPSAR(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getPSar(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getPSar(tradeInfoDtoList);
     }
 
     public void getAroon(String market) {
-        List<TradeInfoDto> tradeInfoDtos = coinRepository.selectTradeInfo(market);
-        upbitApi.getAroon(tradeInfoDtos);
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        upbitApi.getAroon(tradeInfoDtoList);
+    }
+
+    public void getStochastics(String market) {
+        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+        upbitApi.getStochastics(tradeInfoDtoList);
     }
 
     /**

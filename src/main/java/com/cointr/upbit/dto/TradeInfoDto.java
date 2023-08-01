@@ -83,4 +83,17 @@ public class TradeInfoDto {
 
     @Comment("AROON_OSCILLATOR")
     double aroonOscillator;
+
+    @Comment("Stochastic FastK")
+    double fastK;
+
+    @Comment("Stochastic FastD")
+    double fastD;
+
+    @Comment("Stochastic SlowK")
+    double slowK;
+
+    @Comment("Stochastic SlowK")
+    double slowD;
+
 }

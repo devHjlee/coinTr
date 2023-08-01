@@ -65,6 +65,13 @@ class CoinServiceTest {
     }
 
     @Test
+    void 코인_Aroon() {}
+
+    @Test
+    void 코인_Stochastics() {
+        coinService.getStochastics("KRW-BTG");
+    }
+    @Test
     void 코인_일봉캔들_저장() {
         coinService.dayCandleSave("KRW-BTG");
     }
