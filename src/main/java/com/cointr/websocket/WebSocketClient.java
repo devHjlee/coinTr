@@ -1,5 +1,8 @@
 package com.cointr.websocket;
 
+import com.cointr.upbit.dto.CoinDto;
+import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.service.CoinService;
 import com.google.gson.*;
 
 import lombok.RequiredArgsConstructor;
@@ -10,23 +13,22 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.context.ApplicationEventPublisher;
+
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
-import static org.thymeleaf.util.StringUtils.substring;
-
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class WebSocketClient {
-
+    private final CoinService coinService;
     private final OkHttpClient client = new OkHttpClient();
     private WebSocket ws = null;
     private enum WsStatus{
@@ -34,60 +36,64 @@ public class WebSocketClient {
     }
     WsStatus status = WsStatus.STOP;
 
-    //@PostConstruct
+    //todo : 으음.. 여러웹소켓은...?
+    @PostConstruct
     public void connect() throws InterruptedException {
         if(status.equals(WsStatus.START)) {
             return;
         }
         status = WsStatus.START;
-        //List<String> markets = coinCodeRepository.findMarket();
-        //String[] markets = new String[]{"KRW-BTC","KRW-NEO","KRW-STX","KRW-XLM","KRW-HUNT","KRW-MOC","KRW-FCT2","KRW-ETH"};
-        String[] markets = new String[]{"KRW-BTC"};
+        //List<CoinDto> markets = coinService.selectCoins();
+
+        //임시
+        CoinDto coinDto = new CoinDto();
+        coinDto.setMarket("KRW-BTG");
+        List<CoinDto> markets = new ArrayList<>();
+        markets.add(coinDto);
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
-        for (String market : markets) {
-            codesObj.add(market);
+
+        for (CoinDto market : markets) {
+            codesObj.add(market.getMarket());
         }
+
         root.add(new JsonObject());
         root.get(0).getAsJsonObject().addProperty("ticket", UUID.randomUUID().toString());
         type.addProperty("type", "ticker");
         type.add("codes", codesObj);
         root.add(type);
 
-        type = new JsonObject();
-        type.addProperty("type", "trade");
-        type.add("codes", codesObj);
-        root.add(type);
-
-        Request request = new Request.Builder()
+         Request request = new Request.Builder()
                 .url("wss://api.upbit.com/websocket/v1")
                 .addHeader("options", root.toString())
-                //.addHeader("options", "")
-                .build();
+                 .build();
         log.info(root.toString());
         ws = client.newWebSocket(request, new WebSocketListener() {
+
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull okhttp3.Response response) {
-                // WebSocket connection opened
                 log.info("WebSocket Open!!!");
                 webSocket.send(Objects.requireNonNull(webSocket.request().header("options")));
             }
+
             @Override
             public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
-                //publisher.publishEvent(new OnMessageEvent(bytes.string(StandardCharsets.UTF_8)));
                 JsonObject jsonObject = new Gson().fromJson(bytes.string(StandardCharsets.UTF_8), JsonObject.class);
-                log.info(jsonObject.toString());
-            }
-            @Override
-            public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
-                // Text message received
-                //System.out.println("Received message: " + text);
+                jsonObject.addProperty("market",jsonObject.get("code").getAsString());
+                TradeInfoDto tradeInfoDto = new GsonBuilder()
+                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
+                        .create()
+                        .fromJson(jsonObject, TradeInfoDto.class);
+
+                coinService.updateTechnicalIndicator(tradeInfoDto);
             }
 
             @Override
+            public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) { }
+
+            @Override
             public void onClosed(@NotNull WebSocket webSocket, int code, @NotNull String reason) {
-                // WebSocket connection closed
                 log.info("Connection closed: " + reason);
             }
 
@@ -99,7 +105,6 @@ public class WebSocketClient {
             }
         });
 
-        // Wait for the connection to be established
         client.dispatcher().executorService().awaitTermination(5, TimeUnit.SECONDS);
     }
 

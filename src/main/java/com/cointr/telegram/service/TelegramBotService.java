@@ -1,5 +1,8 @@
 package com.cointr.telegram.service;
 
+import com.cointr.upbit.dto.CoinIndex;
+import com.cointr.upbit.service.CoinService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -7,22 +10,29 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
+//todo 굳이 서비스로 만들어야하나?
 @Service
 public class TelegramBotService extends TelegramLongPollingBot {
-    public TelegramBotService() {
+    private final CoinService coinService;
+
+    public TelegramBotService(CoinService coinService) {
         super(new DefaultBotOptions(),"6019178496:AAHSxoXyh0OQwR37_BOuD-4cixHaO7_fTCY");
+        this.coinService = coinService;
+
     }
+
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
             String chatId = update.getMessage().getChatId().toString();
             String messageText = update.getMessage().getText();
 
-            // 메시지를 받았을 때 원하는 작업을 수행하도록 구현합니다.
-            // 예: 받은 메시지에 따라 다른 답변을 보내거나 기능을 수행합니다.
-
-            sendMessage(chatId, "Received: " + messageText);
+            if(update.getMessage().getText().contains("KRW-")) {
+                //CoinIndex coinIndex = coinService.getRSI(messageText);
+                //sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
+            }else {
+                sendMessage(chatId, "Received: " + messageText);
+            }
         }
     }
 

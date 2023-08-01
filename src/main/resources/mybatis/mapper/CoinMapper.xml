@@ -2,11 +2,88 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cointr.upbit.repository.CoinRepository">
 
+    <insert id="insertBulkCoin" parameterType="java.util.List">
+        insert into coin (market,korean_name)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.market},#{item.koreanName})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        korean_name = values (korean_name)
+    </insert>
+
     <select id="findAll" resultType="com.cointr.upbit.dto.CoinDto">
         select * from coin
     </select>
 
-    <insert id="coinSave" parameterMap="com">
+    <select id="selectTradeInfo" parameterType="java.lang.String" resultType="com.cointr.upbit.dto.TradeInfoDto">
+        select * from trade_info where market = #{market} order by trade_date desc limit 200
+    </select>
 
+    <insert id="insertTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
+        insert into trade_info (market,trade_date,trade_price,acc_trade_volume)
+        values (#{market},#{tradeDate},#{tradePrice},#{accTradeVolume})
+        ON DUPLICATE KEY UPDATE trade_price = #{tradePrice}, acc_trade_volume = #{accTradeVolume}
     </insert>
+
+    <insert id="insertBulkTradeInfo" parameterType="java.util.List">
+        insert into trade_info
+            (market,trade_date,trade_price,OPENING_PRICE,HIGH_PRICE,LOW_PRICE
+            ,cci,bb_avg,bb_up,bb_down,rsi
+            ,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram
+            ,adx,p_sar,aroon_up,aroon_down,aroon_oscillator
+            ,fast_k,fast_d,slow_k,slow_d
+            ,ACC_TRADE_PRICE,acc_trade_volume
+            ,ACC_ASK_VOLUME,ACC_BID_VOLUME)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.market},#{item.tradeDate},#{item.tradePrice},#{item.openingPrice},#{item.highPrice},#{item.lowPrice}
+            ,#{item.cci},#{item.bbAvg},#{item.bbUp},#{item.bbDown},#{item.rsi}
+            ,#{item.macd},#{item.macdEmaShort},#{item.macdEmaLong},#{item.macdSignal},#{item.macdSignalHistogram}
+            ,#{item.adx},#{item.pSar},#{item.aroonUp},#{item.aroonDown},#{item.aroonOscillator}
+            ,#{item.fastK},#{item.fastD},#{item.slowK},#{item.slowD}
+            ,#{item.accTradePrice},#{item.accTradeVolume}
+            ,#{item.accAskVolume},#{item.accBidVolume})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        trade_price = values (trade_price)
+        ,OPENING_PRICE = values (OPENING_PRICE)
+        ,HIGH_PRICE = values (HIGH_PRICE)
+        ,LOW_PRICE = values (LOW_PRICE)
+        ,cci = values (cci)
+        ,bb_avg = values (bb_avg)
+        ,bb_up = values (bb_up)
+        ,bb_down = values (bb_down)
+        ,rsi = values (rsi)
+        ,macd = values (macd)
+        ,macd_ema_short = values (macd_ema_short)
+        ,macd_ema_long = values (macd_ema_long)
+        ,macd_signal = values (macd_signal)
+        ,macd_signal_histogram = values (macd_signal_histogram)
+        ,adx = values (adx)
+        ,p_sar = values (p_sar)
+        ,aroon_up = values (aroon_up)
+        ,aroon_down = values (aroon_down)
+        ,aroon_oscillator = values (aroon_oscillator)
+        ,fast_k = values (fast_k)
+        ,fast_d = values (fast_d)
+        ,slow_k = values (slow_k)
+        ,slow_d = values (slow_d)
+        ,ACC_TRADE_PRICE = values (ACC_TRADE_PRICE)
+        ,acc_trade_volume = values(acc_trade_volume)
+        ,acc_ask_volume = values(acc_ask_volume)
+        ,acc_bid_volume = values(acc_bid_volume)
+    </insert>
+
+    <delete id="deleteTradeInfo">
+        delete from trade_info
+    </delete>
+
+    <update id="updateTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
+        update trade_info
+        set trade_price = #{tradePrice}
+            ,acc_trade_volume = #{accTradeVolume}
+        where market = #{market}
+        and tradeDate = #{tradeDate}
+    </update>
 </mapper>
