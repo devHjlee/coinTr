@@ -17,4 +17,10 @@ https://github.com/TakahikoKawasaki/nv-websocket-client
 * 텔레그램
 
 알림조건
-*  
+* 이건 블라인드에 물어봐야지
+
+GUI
+* JavaFX 애플리케이션을 따로 구성하여 coinTrade 와 http 통신
+* 서버상태 표시
+* 검색조건식 컨트롤
+* 
