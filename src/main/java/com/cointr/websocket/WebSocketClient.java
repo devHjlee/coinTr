@@ -16,11 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +35,8 @@ public class WebSocketClient {
     }
     WsStatus status = WsStatus.STOP;
 
-    //todo : 으음.. 여러웹소켓은...?
-    @PostConstruct
+
+//    @PostConstruct
     public void connect() throws InterruptedException {
         if(status.equals(WsStatus.START)) {
             return;

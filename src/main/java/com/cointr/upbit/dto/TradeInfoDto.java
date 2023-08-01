@@ -2,11 +2,13 @@ package com.cointr.upbit.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.Comment;
 
 
 @Getter
 @Setter
+@ToString
 public class TradeInfoDto {
 
     @Comment("코인 코드")

@@ -73,11 +73,13 @@ public class CoinService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(tradeInfoDto.getMarket());
+
         if(tradeInfoDtoList.get(0).getTradeDate().equals(tradeInfoDto.getTradeDate())) {
             tradeInfoDtoList.set(0,tradeInfoDto);
         }else {
             tradeInfoDtoList.add(0,tradeInfoDto);
         }
+
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.getRSI(tradeInfoDtoList);
         upbitApi.getMACD(tradeInfoDtoList);
