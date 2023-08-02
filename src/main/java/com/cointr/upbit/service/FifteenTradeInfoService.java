@@ -18,7 +18,7 @@ public class FifteenTradeInfoService {
     private final UpbitApi upbitApi;
 
     /**
-     * 코인에 대한 일별 거래내역 저장
+     * 코인에 대한 15분별거래내역 저장
      * @param market
      */
     public void fifteenCandleSave(String market) {
@@ -30,16 +30,9 @@ public class FifteenTradeInfoService {
         }
         List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"minutes",15);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
-        //todo 공통으로 만들어라
+
         if(tradeInfoDtoList.size() > 26) {
-            upbitApi.getMACD(tradeInfoDtoList);
-            upbitApi.getRSI(tradeInfoDtoList);
-            upbitApi.getCCI(tradeInfoDtoList);
-            upbitApi.getBollingerBand(tradeInfoDtoList);
-            upbitApi.getADX(tradeInfoDtoList);
-            upbitApi.getPSar(tradeInfoDtoList);
-            upbitApi.getAroon(tradeInfoDtoList);
-            upbitApi.getStochastics(tradeInfoDtoList);
+            upbitApi.calculateIndicators(tradeInfoDtoList);
             fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList);
         }
 
@@ -67,21 +60,27 @@ public class FifteenTradeInfoService {
 
         log.info("tradeDate :" + tradeInfoDto.getTradeTime());
 
+        //todo 로우 하이 계산해서 넣어줘야한다 : 검증필요
+        //같은 시간대에 데이터가 존재 시 고가,저가 금액 조정
         if(tradeInfoDtoList.get(0).getTradeDate().equals(tradeInfoDto.getTradeDate())) {
+            //이전 데이터 값의 하이랑 비교해서 높으면 하이 변경, 로우 비교해서 낮으면 로우변경
+            if(tradeInfoDtoList.get(0).getHighPrice() < tradeInfoDto.getTradePrice()) {
+                tradeInfoDto.setHighPrice(tradeInfoDto.getTradePrice());
+            }
+            if(tradeInfoDtoList.get(0).getLowPrice() > tradeInfoDto.getTradePrice()) {
+                tradeInfoDto.setLowPrice(tradeInfoDto.getTradePrice());
+            }
             tradeInfoDtoList.set(0,tradeInfoDto);
         }else {
+            // 새로운 데이터일 경우 시작,고가,저가에 현재가 입력
+            tradeInfoDto.setHighPrice(tradeInfoDto.getTradePrice());
+            tradeInfoDto.setLowPrice(tradeInfoDto.getTradePrice());
+            tradeInfoDto.setOpeningPrice(tradeInfoDto.getTradePrice());
             tradeInfoDtoList.add(0,tradeInfoDto);
         }
 
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
-        upbitApi.getRSI(tradeInfoDtoList);
-        upbitApi.getMACD(tradeInfoDtoList);
-        upbitApi.getCCI(tradeInfoDtoList);
-        upbitApi.getBollingerBand(tradeInfoDtoList);
-        upbitApi.getADX(tradeInfoDtoList);
-        upbitApi.getPSar(tradeInfoDtoList);
-        upbitApi.getAroon(tradeInfoDtoList);
-        upbitApi.getStochastics(tradeInfoDtoList);
+        upbitApi.calculateIndicators(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));

@@ -2,6 +2,7 @@ package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.repository.CoinRepository;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -20,55 +21,14 @@ import java.util.List;
 class DayTradeInfoServiceTest {
     @Autowired
     private DayTradeInfoService dayTradeInfoService;
-
-    @Test
-    void 코인전체저장() {
-        dayTradeInfoService.coinSaveAll();
-    }
-
-    @Test
-    void 전체코인목록() {
-        List<CoinDto> coinDtoList = dayTradeInfoService.selectCoins();
-        for(CoinDto coinDto : coinDtoList) {
-            System.out.println(coinDto.getMarket());
-        }
-    }
-
-    @Test
-    void 코인_RSI() {
-        dayTradeInfoService.getRSI("KRW-BTG");
-    }
-
-    @Test
-    void 코인_MACD() {
-        dayTradeInfoService.getMACD("KRW-BTG");
-    }
-
-    @Test
-    void 코인_볼린저밴드() {
-        dayTradeInfoService.getBollingerBand("KRW-BTG");
-    }
-
-    @Test
-    void 코인_ADX() {
-        dayTradeInfoService.getBollingerBand("KRW-BTG");
-    }
-
-    @Test
-    void 코인_PSAR() {
-        dayTradeInfoService.getPSAR("KRW-BTG");
-    }
-
-    @Test
-    void 코인_Aroon() {}
-
-    @Test
-    void 코인_Stochastics() {
-        dayTradeInfoService.getStochastics("KRW-BTG");
-    }
+    @Autowired
+    private CoinRepository coinRepository;
     @Test
     void 코인_일봉캔들_저장() {
-        dayTradeInfoService.dayCandleSave("KRW-BTG");
+        List<CoinDto> coinDtoList = coinRepository.findAll();
+        for(CoinDto coinDto : coinDtoList) {
+            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+        }
     }
 
     @Test

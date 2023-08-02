@@ -2,6 +2,7 @@ package com.cointr.websocket;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
 import com.cointr.upbit.service.FifteenTradeInfoService;
 import com.google.gson.*;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class NvWebSocket {
+    private final CoinService coinService;
     private final DayTradeInfoService dayTradeInfoService;
     private final FifteenTradeInfoService fifteenTradeInfoService;
     private static final String SERVER = "wss://api.upbit.com/websocket/v1";
@@ -36,7 +38,7 @@ public class NvWebSocket {
         }
 
         status = WsStatus.START;
-        List<CoinDto> markets = dayTradeInfoService.selectCoins();
+        List<CoinDto> markets = coinService.selectCoin();
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();

@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -73,12 +74,22 @@ public class UpbitApi {
                 .create()
                 .fromJson(jsonArray, listType);
     }
+    public void calculateIndicators(List<TradeInfoDto> tradeInfoDtoList) {
+        getMACD(tradeInfoDtoList);
+        getRSI(tradeInfoDtoList);
+        getCCI(tradeInfoDtoList);
+        getBollingerBand(tradeInfoDtoList);
+        getADX(tradeInfoDtoList);
+        getPSar(tradeInfoDtoList);
+        getAroon(tradeInfoDtoList);
+        getStochastics(tradeInfoDtoList);
+    }
 
     /**
      * CommodityChannelIndex 계산
      * @param tradeInfoDtoList
      */
-    public void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
         CommodityChannelIndex cci = new CommodityChannelIndex();
         try {
             cci.calculate(tradeInfoDtoList,20);
@@ -92,7 +103,7 @@ public class UpbitApi {
      * 볼린저밴드 계산
      * @param tradeInfoDtoList
      */
-    public void getBollingerBand(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getBollingerBand(List<TradeInfoDto> tradeInfoDtoList) {
         BollingerBand bollingerBand= new BollingerBand();
         bollingerBand.calculate(tradeInfoDtoList,20,2);
 
@@ -102,7 +113,7 @@ public class UpbitApi {
      * @param tradeInfoDtoList
      * @return double
      */
-    public void getRSI(List<TradeInfoDto> tradeInfoDtoList){
+    private void getRSI(List<TradeInfoDto> tradeInfoDtoList){
         RelativeStrengthIndex relativeStrengthIndex = new RelativeStrengthIndex();
 
         try {
@@ -117,7 +128,7 @@ public class UpbitApi {
      * MACD 계산
      * @param tradeInfoDtoList
      */
-    public void getMACD(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getMACD(List<TradeInfoDto> tradeInfoDtoList) {
         MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence();
         try {
             macd.calculate(tradeInfoDtoList,12,26,9);
@@ -131,7 +142,7 @@ public class UpbitApi {
      * ADX 계산
      * @param tradeInfoDtoList
      */
-    public void getADX(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getADX(List<TradeInfoDto> tradeInfoDtoList) {
         AverageDirectionalIndex adx = new AverageDirectionalIndex();
         try {
             adx.calculate(tradeInfoDtoList,14);
@@ -145,7 +156,7 @@ public class UpbitApi {
      * ParabolicSar 계산
      * @param tradeInfoDtoList
      */
-    public void getPSar(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getPSar(List<TradeInfoDto> tradeInfoDtoList) {
         ParabolicSar pSar = new ParabolicSar();
         try {
             pSar.calculate(tradeInfoDtoList);
@@ -159,7 +170,7 @@ public class UpbitApi {
      * Aroon 계산
      * @param tradeInfoDtoList
      */
-    public void getAroon(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getAroon(List<TradeInfoDto> tradeInfoDtoList) {
         Aroon aroon = new Aroon();
         try {
             aroon.calculateAroonOscillator(tradeInfoDtoList,14);
@@ -173,16 +184,21 @@ public class UpbitApi {
      * Stochastic 계산
      * @param tradeInfoDtoList
      */
-    public void getStochastics(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getStochastics(List<TradeInfoDto> tradeInfoDtoList) {
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         StochasticsOscilator stochasticsOscilator = new StochasticsOscilator();
         int n = 5; // Fast %K를 계산하는 데 사용되는 기간
         int m = 3; // Slow %K를 계산하는 데 사용되는 기간
         int t = 3; // Slow %D를 계산하는 데 사용되는 기간
         for (int i = 0; i < tradeInfoDtoList.size(); i++) {
-            double fastK = stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
-            double fastD = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-            double slowK = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-            double slowD = stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
+            double fastK = (Double.isNaN(stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n))) ? 0.0 : stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
+            double fastD = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+            double slowK = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+            double slowD = (Double.isNaN(stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t))) ? 0.0 : stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
+//            double fastK = stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
+//            double fastD = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+//            double slowK = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
+//            double slowD = stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
             tradeInfoDtoList.get(i).setFastK(fastK);
             tradeInfoDtoList.get(i).setFastD(fastD);
             tradeInfoDtoList.get(i).setSlowK(slowK);
