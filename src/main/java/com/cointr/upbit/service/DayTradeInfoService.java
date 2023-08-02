@@ -56,7 +56,6 @@ public class DayTradeInfoService {
 
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.calculateIndicators(tradeInfoDtoList);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }

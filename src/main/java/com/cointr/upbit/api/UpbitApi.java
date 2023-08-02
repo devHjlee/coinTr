@@ -82,7 +82,7 @@ public class UpbitApi {
         getADX(tradeInfoDtoList);
         getPSar(tradeInfoDtoList);
         getAroon(tradeInfoDtoList);
-        getStochastics(tradeInfoDtoList);
+        getStochastics(tradeInfoDtoList);//todo asc desc 확인필요 tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
     }
 
     /**

@@ -58,8 +58,6 @@ public class FifteenTradeInfoService {
         }
         tradeInfoDto.setTradeDate(tradeInfoDto.getTradeDate()+tradeInfoDto.getTradeTime().substring(0,2)+tradeTime);
 
-        log.info("tradeDate :" + tradeInfoDto.getTradeTime());
-
         //todo 로우 하이 계산해서 넣어줘야한다 : 검증필요
         //같은 시간대에 데이터가 존재 시 고가,저가 금액 조정
         if(tradeInfoDtoList.get(0).getTradeDate().equals(tradeInfoDto.getTradeDate())) {
@@ -81,7 +79,6 @@ public class FifteenTradeInfoService {
 
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.calculateIndicators(tradeInfoDtoList);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
