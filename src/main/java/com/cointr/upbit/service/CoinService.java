@@ -158,4 +158,13 @@ public class CoinService {
     public int insertTradeInfo(TradeInfoDto tradeInfoDto) {
         return coinRepository.insertTradeInfo(tradeInfoDto);
     }
+
+
+    //todo api 테스트를 위한 임시
+    public List<TradeInfoDto> getIndicators(String market) {
+        return coinRepository.selectTradeInfo(market);
+    }
+    public List<TradeInfoDto> getVolumes() {
+        return coinRepository.selectTradeVolumes();
+    }
 }

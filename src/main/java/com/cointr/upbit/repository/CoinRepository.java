@@ -22,4 +22,8 @@ public interface CoinRepository {
     void deleteTradeInfo();
 
     int updateTradeInfo(TradeInfoDto tradeInfoDto);
+
+
+    //todo api 테스트를 위한 임시
+    List<TradeInfoDto> selectTradeVolumes();
 }
