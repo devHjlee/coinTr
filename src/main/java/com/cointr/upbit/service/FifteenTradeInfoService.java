@@ -44,7 +44,7 @@ public class FifteenTradeInfoService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoRepository.selectTradeInfo(tradeInfoDto.getMarket());
-        //todo : 초도 넣어서 다시 계산
+        //todo : 초도 넣어서 다시 계산 ??
         int convTime =  Integer.parseInt(tradeInfoDto.getTradeTime().substring(2,4));
         String tradeTime = "";
         if (convTime >= 0 && convTime < 15) {
