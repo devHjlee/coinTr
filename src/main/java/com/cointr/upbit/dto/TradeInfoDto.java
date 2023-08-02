@@ -17,6 +17,9 @@ public class TradeInfoDto {
     @Comment("거래 일자")
     String tradeDate;
 
+    @Comment("거래 시간")
+    String tradeTime;
+
     @Comment("현재가")
     double tradePrice;
 

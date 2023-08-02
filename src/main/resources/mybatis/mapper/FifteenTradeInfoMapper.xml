@@ -1,33 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cointr.upbit.repository.DayTradeInfoRepository">
-
-    <insert id="insertBulkCoin" parameterType="java.util.List">
-        insert into coin (market,korean_name)
-        values
-        <foreach collection="list" item="item" separator=",">
-            (#{item.market},#{item.koreanName})
-        </foreach>
-        ON DUPLICATE KEY UPDATE
-        korean_name = values (korean_name)
-    </insert>
-
-    <select id="findAll" resultType="com.cointr.upbit.dto.CoinDto">
-        select * from coin
-    </select>
+<mapper namespace="com.cointr.upbit.repository.FifteenTradeInfoRepository">
 
     <select id="selectTradeInfo" parameterType="java.lang.String" resultType="com.cointr.upbit.dto.TradeInfoDto">
-        select * from trade_info where market = #{market} order by trade_date desc limit 200
+        select * from trade_info_fifteen where market = #{market} order by trade_date desc limit 200
     </select>
 
-    <insert id="insertTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
-        insert into trade_info (market,trade_date,trade_price,acc_trade_volume)
-        values (#{market},#{tradeDate},#{tradePrice},#{accTradeVolume})
-        ON DUPLICATE KEY UPDATE trade_price = #{tradePrice}, acc_trade_volume = #{accTradeVolume}
-    </insert>
-
     <insert id="insertBulkTradeInfo" parameterType="java.util.List">
-        insert into trade_info
+        insert into trade_info_fifteen
             (market,trade_date,trade_price,OPENING_PRICE,HIGH_PRICE,LOW_PRICE
             ,cci,bb_avg,bb_up,bb_down,rsi
             ,macd,macd_ema_short,macd_ema_long,macd_signal,macd_signal_histogram
@@ -74,19 +54,6 @@
         ,acc_ask_volume = values(acc_ask_volume)
         ,acc_bid_volume = values(acc_bid_volume)
     </insert>
-
-    <delete id="deleteTradeInfo">
-        delete from trade_info
-    </delete>
-
-    <update id="updateTradeInfo" parameterType="com.cointr.upbit.dto.TradeInfoDto">
-        update trade_info
-        set trade_price = #{tradePrice}
-            ,acc_trade_volume = #{accTradeVolume}
-        where market = #{market}
-        and tradeDate = #{tradeDate}
-    </update>
-
 
     <!-- 임시 -->
     <select id="selectTradeVolumes" resultType="com.cointr.upbit.dto.TradeInfoDto">

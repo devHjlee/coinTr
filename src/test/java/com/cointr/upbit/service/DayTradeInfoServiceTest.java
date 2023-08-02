@@ -1,9 +1,7 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.CoinIndex;
 import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.repository.CoinRepository;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -15,25 +13,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 //todo : 코드 다시 작성
 @SpringBootTest
-class CoinServiceTest {
+class DayTradeInfoServiceTest {
     @Autowired
-    private CoinService coinService;
+    private DayTradeInfoService dayTradeInfoService;
 
     @Test
     void 코인전체저장() {
-        coinService.coinSaveAll();
+        dayTradeInfoService.coinSaveAll();
     }
 
     @Test
     void 전체코인목록() {
-        List<CoinDto> coinDtoList = coinService.selectCoins();
+        List<CoinDto> coinDtoList = dayTradeInfoService.selectCoins();
         for(CoinDto coinDto : coinDtoList) {
             System.out.println(coinDto.getMarket());
         }
@@ -41,27 +36,27 @@ class CoinServiceTest {
 
     @Test
     void 코인_RSI() {
-        coinService.getRSI("KRW-BTG");
+        dayTradeInfoService.getRSI("KRW-BTG");
     }
 
     @Test
     void 코인_MACD() {
-        coinService.getMACD("KRW-BTG");
+        dayTradeInfoService.getMACD("KRW-BTG");
     }
 
     @Test
     void 코인_볼린저밴드() {
-        coinService.getBollingerBand("KRW-BTG");
+        dayTradeInfoService.getBollingerBand("KRW-BTG");
     }
 
     @Test
     void 코인_ADX() {
-        coinService.getBollingerBand("KRW-BTG");
+        dayTradeInfoService.getBollingerBand("KRW-BTG");
     }
 
     @Test
     void 코인_PSAR() {
-        coinService.getPSAR("KRW-BTG");
+        dayTradeInfoService.getPSAR("KRW-BTG");
     }
 
     @Test
@@ -69,11 +64,11 @@ class CoinServiceTest {
 
     @Test
     void 코인_Stochastics() {
-        coinService.getStochastics("KRW-BTG");
+        dayTradeInfoService.getStochastics("KRW-BTG");
     }
     @Test
     void 코인_일봉캔들_저장() {
-        coinService.dayCandleSave("KRW-BTG");
+        dayTradeInfoService.dayCandleSave("KRW-BTG");
     }
 
     @Test
@@ -108,7 +103,7 @@ class CoinServiceTest {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-        coinService.updateTechnicalIndicator(tradeInfoDto.get(0));
+        dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto.get(0));
     }
 
 }

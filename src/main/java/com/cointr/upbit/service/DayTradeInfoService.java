@@ -2,7 +2,7 @@ package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.repository.CoinRepository;
+import com.cointr.upbit.repository.DayTradeInfoRepository;
 import com.cointr.upbit.api.UpbitApi;
 
 import lombok.RequiredArgsConstructor;
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CoinService {
-    private final CoinRepository coinRepository;
+public class DayTradeInfoService {
+    private final DayTradeInfoRepository dayTradeInfoRepository;
     private final UpbitApi upbitApi;
 
     /**
@@ -29,7 +29,7 @@ public class CoinService {
         List<CoinDto> coinDtos = upbitApi.getCoinList();
         coinDtos.stream().filter(x-> !x.getMarket().contains("KRW-")).collect(Collectors.toList()).forEach(coinDtos::remove);
 
-        coinRepository.insertBulkCoin(coinDtos);
+        dayTradeInfoRepository.insertBulkCoin(coinDtos);
     }
 
     /**
@@ -37,7 +37,7 @@ public class CoinService {
      * @return CoinDto
      */
     public List<CoinDto> selectCoins() {
-        return coinRepository.findAll();
+        return dayTradeInfoRepository.findAll();
     }
 
     /**
@@ -51,7 +51,7 @@ public class CoinService {
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market);
+        List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"day",0);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         if(tradeInfoDtoList.size() > 26) {
             upbitApi.getMACD(tradeInfoDtoList);
@@ -62,17 +62,17 @@ public class CoinService {
             upbitApi.getPSar(tradeInfoDtoList);
             upbitApi.getAroon(tradeInfoDtoList);
             upbitApi.getStochastics(tradeInfoDtoList);
-            coinRepository.insertBulkTradeInfo(tradeInfoDtoList);
+            dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList);
         }
 
     }
 
     /**
-     * 기술적지표 업데이트
+     * 웹소켓을 통해 받은 데이터를 기술적지표 계산 후 업데이트
      * @param tradeInfoDto
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(tradeInfoDto.getMarket());
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(tradeInfoDto.getMarket());
 
         if(tradeInfoDtoList.get(0).getTradeDate().equals(tradeInfoDto.getTradeDate())) {
             tradeInfoDtoList.set(0,tradeInfoDto);
@@ -91,7 +91,7 @@ public class CoinService {
         upbitApi.getStochastics(tradeInfoDtoList);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
-        coinRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
+        dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
 
     /**
@@ -99,7 +99,7 @@ public class CoinService {
      * @param market
      */
     public void getBollingerBand(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getBollingerBand(tradeInfoDtoList);
     }
     /**
@@ -108,7 +108,7 @@ public class CoinService {
      * @return CoinIndex
      */
     public void getRSI(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getRSI(tradeInfoDtoList);
     }
 
@@ -117,7 +117,7 @@ public class CoinService {
      * @param market
      */
     public void getMACD(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getMACD(tradeInfoDtoList);
     }
 
@@ -126,7 +126,7 @@ public class CoinService {
      * @param market
      */
     public void getADX(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getMACD(tradeInfoDtoList);
     }
 
@@ -135,17 +135,17 @@ public class CoinService {
      * @param market
      */
     public void getPSAR(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getPSar(tradeInfoDtoList);
     }
 
     public void getAroon(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         upbitApi.getAroon(tradeInfoDtoList);
     }
 
     public void getStochastics(String market) {
-        List<TradeInfoDto> tradeInfoDtoList = coinRepository.selectTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.selectTradeInfo(market);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.getStochastics(tradeInfoDtoList);
     }
@@ -156,15 +156,15 @@ public class CoinService {
      * @return
      */
     public int insertTradeInfo(TradeInfoDto tradeInfoDto) {
-        return coinRepository.insertTradeInfo(tradeInfoDto);
+        return dayTradeInfoRepository.insertTradeInfo(tradeInfoDto);
     }
 
 
     //todo api 테스트를 위한 임시
     public List<TradeInfoDto> getIndicators(String market) {
-        return coinRepository.selectTradeInfo(market);
+        return dayTradeInfoRepository.selectTradeInfo(market);
     }
     public List<TradeInfoDto> getVolumes() {
-        return coinRepository.selectTradeVolumes();
+        return dayTradeInfoRepository.selectTradeVolumes();
     }
 }

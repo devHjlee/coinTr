@@ -43,18 +43,27 @@ public class UpbitApi {
      * @param market
      * @return List<TradeInfoDto>
      */
-    public List<TradeInfoDto> getCandle(String market) {
+    public List<TradeInfoDto> getCandle(String market, String type,int candleTime) {
         RestTemplate restTemplate = new RestTemplate();
         Type listType = new TypeToken<ArrayList<TradeInfoDto>>(){}.getType();
-        String url = "https://api.upbit.com/v1/candles/days?market="+market+"&count=200";
+        String url = "";
+
+        if("day".equals(type)) {
+            url = "https://api.upbit.com/v1/candles/days?market="+market+"&count=200";
+        }else if ("minutes".equals(type)) {
+            url = "https://api.upbit.com/v1/candles/minutes/"+candleTime+"?market="+market+"&count=200";
+        }
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
 
         JsonArray jsonArray = new GsonBuilder().create().fromJson(responseEntity.getBody(),JsonArray.class);
         jsonArray.forEach(jsonElement -> {
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-
-            jsonObject.addProperty("trade_date",jsonObject.get("candle_date_time_utc").getAsString().replaceAll("-", "").substring(0, 8));
+            if("day".equals(type)) {
+                jsonObject.addProperty("trade_date", jsonObject.get("candle_date_time_utc").getAsString().replaceAll("-", "").substring(0, 8));
+            }else if ("minutes".equals(type)) {
+                jsonObject.addProperty("trade_date", jsonObject.get("candle_date_time_utc").getAsString().replaceAll("[^0-9]", "").substring(0, 12));
+            }
             jsonObject.addProperty("acc_trade_price",jsonObject.get("candle_acc_trade_price").getAsString());
             jsonObject.addProperty("acc_trade_volume",jsonObject.get("candle_acc_trade_volume").getAsString());
         });

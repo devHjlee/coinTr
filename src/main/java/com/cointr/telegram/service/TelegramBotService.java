@@ -1,8 +1,6 @@
 package com.cointr.telegram.service;
 
-import com.cointr.upbit.dto.CoinIndex;
-import com.cointr.upbit.service.CoinService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cointr.upbit.service.DayTradeInfoService;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -13,11 +11,11 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 //todo 굳이 서비스로 만들어야하나?
 @Service
 public class TelegramBotService extends TelegramLongPollingBot {
-    private final CoinService coinService;
+    private final DayTradeInfoService dayTradeInfoService;
 
-    public TelegramBotService(CoinService coinService) {
+    public TelegramBotService(DayTradeInfoService dayTradeInfoService) {
         super(new DefaultBotOptions(),"6019178496:AAHSxoXyh0OQwR37_BOuD-4cixHaO7_fTCY");
-        this.coinService = coinService;
+        this.dayTradeInfoService = dayTradeInfoService;
 
     }
 

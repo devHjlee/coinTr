@@ -1,7 +1,7 @@
 package com.cointr.upbit.controller;
 
 import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.service.CoinService;
+import com.cointr.upbit.service.DayTradeInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,14 +13,14 @@ import java.util.List;
 @RequestMapping("/api/v1/coin")
 @RequiredArgsConstructor
 public class CoinController {
-    private final CoinService coinService;
+    private final DayTradeInfoService dayTradeInfoService;
 
     @GetMapping("/indicatros")
     public List<TradeInfoDto> getIndicators(String market) {
-        return coinService.getIndicators(market);
+        return dayTradeInfoService.getIndicators(market);
     }
     @GetMapping("/volumes")
     public List<TradeInfoDto> getVolumes() {
-        return coinService.getVolumes();
+        return dayTradeInfoService.getVolumes();
     }
 }
