@@ -33,6 +33,7 @@ public class NvWebSocket {
         if(status.equals(WsStatus.START)) {
             return;
         }
+
         status = WsStatus.START;
         List<CoinDto> markets = coinService.selectCoins();
         JsonArray root = new JsonArray();
@@ -48,8 +49,7 @@ public class NvWebSocket {
         type.addProperty("type", "ticker");
         type.add("codes", codesObj);
         root.add(type);
-        log.info(root.toString());
-        System.out.println("Start get data from upbit");
+
         ws = new WebSocketFactory()
                 .setConnectionTimeout(TIMEOUT)
                 .createSocket(SERVER)
@@ -57,8 +57,6 @@ public class NvWebSocket {
 
                     // binary message arrived from the server
                     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
-                        String str = new String(binary);
-                        System.out.println(str);
                         JsonObject jsonObject = new Gson().fromJson(new String(binary), JsonObject.class);
                         jsonObject.addProperty("market",jsonObject.get("code").getAsString());
                         TradeInfoDto tradeInfoDto = new GsonBuilder()
