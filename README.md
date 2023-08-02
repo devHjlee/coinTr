@@ -1,7 +1,8 @@
 websocket client 단순한 라이브러리인데 버전문제로 안되서 아쉽
-https://github.com/TakahikoKawasaki/nv-websocket-client
+
 
 구현 목록(ing)
+* 웹소켓 : nv-websocket-client(https://github.com/TakahikoKawasaki/nv-websocket-client)  [okhttp3 였으나 버그로 변경]  
 
 지표
 * STOCHASTIC

@@ -16,11 +16,10 @@ import org.jetbrains.annotations.NotNull;
 
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -36,8 +35,8 @@ public class WebSocketClient {
     }
     WsStatus status = WsStatus.STOP;
 
-    //todo : 으음.. 여러웹소켓은...?
-    @PostConstruct
+
+//    @PostConstruct
     public void connect() throws InterruptedException {
         if(status.equals(WsStatus.START)) {
             return;
@@ -63,18 +62,15 @@ public class WebSocketClient {
         type.addProperty("type", "ticker");
         type.add("codes", codesObj);
         root.add(type);
-
-         Request request = new Request.Builder()
-                .url("wss://api.upbit.com/websocket/v1")
-                .addHeader("options", root.toString())
-                 .build();
+        Request re = new Request.Builder().url("wss://api.upbit.com/websocket/v1").build();
+        Request request = new Request.Builder().url("wss://api.upbit.com/websocket/v1").addHeader("options", root.toString()).build();
         log.info(root.toString());
-        ws = client.newWebSocket(request, new WebSocketListener() {
+        ws = client.newWebSocket(re, new WebSocketListener() {
 
             @Override
             public void onOpen(@NotNull WebSocket webSocket, @NotNull okhttp3.Response response) {
                 log.info("WebSocket Open!!!");
-                webSocket.send(Objects.requireNonNull(webSocket.request().header("options")));
+                webSocket.send(root.toString());
             }
 
             @Override
