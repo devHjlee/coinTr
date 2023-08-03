@@ -2,7 +2,7 @@ package com.cointr.websocket;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.service.CoinService;
+import com.cointr.upbit.service.DayTradeInfoService;
 import com.google.gson.*;
 
 import lombok.RequiredArgsConstructor;
@@ -22,12 +22,12 @@ import java.util.List;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
+//todo 삭제예정 또는 전체 주석
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class WebSocketClient {
-    private final CoinService coinService;
+    private final DayTradeInfoService dayTradeInfoService;
     private final OkHttpClient client = new OkHttpClient();
     private WebSocket ws = null;
     private enum WsStatus{
@@ -82,7 +82,7 @@ public class WebSocketClient {
                         .create()
                         .fromJson(jsonObject, TradeInfoDto.class);
 
-                coinService.updateTechnicalIndicator(tradeInfoDto);
+                dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
             }
 
             @Override

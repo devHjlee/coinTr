@@ -1,7 +1,6 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.CoinIndex;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
 import com.google.gson.FieldNamingPolicy;
@@ -15,67 +14,26 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 //todo : 코드 다시 작성
 @SpringBootTest
-class CoinServiceTest {
+class DayTradeInfoServiceTest {
     @Autowired
-    private CoinService coinService;
-
+    private DayTradeInfoService dayTradeInfoService;
+    @Autowired
+    private CoinRepository coinRepository;
     @Test
-    void 코인전체저장() {
-        coinService.coinSaveAll();
-    }
-
-    @Test
-    void 전체코인목록() {
-        List<CoinDto> coinDtoList = coinService.selectCoins();
+    void 전체코인_일봉캔들_저장() {
+        List<CoinDto> coinDtoList = coinRepository.findAll();
         for(CoinDto coinDto : coinDtoList) {
-            System.out.println(coinDto.getMarket());
+            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
         }
     }
-
     @Test
-    void 코인_RSI() {
-        coinService.getRSI("KRW-BTG");
+    void 한개코인_일봉캔들_저장() {
+        dayTradeInfoService.dayCandleSave("KRW-KNC");
     }
-
-    @Test
-    void 코인_MACD() {
-        coinService.getMACD("KRW-BTG");
-    }
-
-    @Test
-    void 코인_볼린저밴드() {
-        coinService.getBollingerBand("KRW-BTG");
-    }
-
-    @Test
-    void 코인_ADX() {
-        coinService.getBollingerBand("KRW-BTG");
-    }
-
-    @Test
-    void 코인_PSAR() {
-        coinService.getPSAR("KRW-BTG");
-    }
-
-    @Test
-    void 코인_Aroon() {}
-
-    @Test
-    void 코인_Stochastics() {
-        coinService.getStochastics("KRW-BTG");
-    }
-    @Test
-    void 코인_일봉캔들_저장() {
-        coinService.dayCandleSave("KRW-BTG");
-    }
-
     @Test
     void updateTechnicalIndicator() {
         String jsonData = "[\n" +
@@ -108,7 +66,7 @@ class CoinServiceTest {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-        coinService.updateTechnicalIndicator(tradeInfoDto.get(0));
+        dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto.get(0));
     }
 
 }
