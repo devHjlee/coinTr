@@ -33,7 +33,6 @@ public class DayTradeInfoService {
             e.printStackTrace();
         }
         List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"day",0);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         if(tradeInfoDtoList.size() > 26) {
             upbitApi.calculateIndicators(tradeInfoDtoList);
             dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList);
@@ -54,8 +53,9 @@ public class DayTradeInfoService {
             tradeInfoDtoList.add(0,tradeInfoDto);
         }
 
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.calculateIndicators(tradeInfoDtoList);
+        //최상위 데이터 하나만 변경해야 하기에 desc 정렬
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }

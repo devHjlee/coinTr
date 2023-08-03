@@ -75,14 +75,20 @@ public class UpbitApi {
                 .fromJson(jsonArray, listType);
     }
     public void calculateIndicators(List<TradeInfoDto> tradeInfoDtoList) {
-        getMACD(tradeInfoDtoList);
-        getRSI(tradeInfoDtoList);
-        getCCI(tradeInfoDtoList);
-        getBollingerBand(tradeInfoDtoList);
-        getADX(tradeInfoDtoList);
-        getPSar(tradeInfoDtoList);
-        getAroon(tradeInfoDtoList);
-        getStochastics(tradeInfoDtoList);//todo asc desc 확인필요 tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        //대부분의 기술적 대표 계산시 데이터 asc 정렬이 필요
+        try {
+            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+            getMACD(tradeInfoDtoList);
+            getRSI(tradeInfoDtoList);
+            getCCI(tradeInfoDtoList);
+            getBollingerBand(tradeInfoDtoList);
+            getADX(tradeInfoDtoList);
+            getPSar(tradeInfoDtoList);
+            getAroon(tradeInfoDtoList);
+            getStochastics(tradeInfoDtoList);//todo asc desc 확인필요 tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        }catch (Exception e) {
+            log.info("calculateIndicators Exception :"+e.getMessage());
+        }
     }
 
     /**

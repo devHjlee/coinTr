@@ -24,13 +24,16 @@ class DayTradeInfoServiceTest {
     @Autowired
     private CoinRepository coinRepository;
     @Test
-    void 코인_일봉캔들_저장() {
+    void 전체코인_일봉캔들_저장() {
         List<CoinDto> coinDtoList = coinRepository.findAll();
         for(CoinDto coinDto : coinDtoList) {
             dayTradeInfoService.dayCandleSave(coinDto.getMarket());
         }
     }
-
+    @Test
+    void 한개코인_일봉캔들_저장() {
+        dayTradeInfoService.dayCandleSave("KRW-KNC");
+    }
     @Test
     void updateTechnicalIndicator() {
         String jsonData = "[\n" +

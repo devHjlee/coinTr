@@ -29,7 +29,6 @@ public class FifteenTradeInfoService {
             e.printStackTrace();
         }
         List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"minutes",15);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
 
         if(tradeInfoDtoList.size() > 26) {
             upbitApi.calculateIndicators(tradeInfoDtoList);
@@ -44,7 +43,6 @@ public class FifteenTradeInfoService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoRepository.selectTradeInfo(tradeInfoDto.getMarket());
-        //todo : 초도 넣어서 다시 계산 ??
         int convTime =  Integer.parseInt(tradeInfoDto.getTradeTime().substring(2,4));
         String tradeTime = "";
         if (convTime >= 0 && convTime < 15) {
@@ -64,9 +62,13 @@ public class FifteenTradeInfoService {
             //이전 데이터 값의 하이랑 비교해서 높으면 하이 변경, 로우 비교해서 낮으면 로우변경
             if(tradeInfoDtoList.get(0).getHighPrice() < tradeInfoDto.getTradePrice()) {
                 tradeInfoDto.setHighPrice(tradeInfoDto.getTradePrice());
+            }else {
+                tradeInfoDto.setHighPrice(tradeInfoDtoList.get(0).getHighPrice());
             }
             if(tradeInfoDtoList.get(0).getLowPrice() > tradeInfoDto.getTradePrice()) {
                 tradeInfoDto.setLowPrice(tradeInfoDto.getTradePrice());
+            }else {
+                tradeInfoDto.setLowPrice(tradeInfoDtoList.get(0).getLowPrice());
             }
             tradeInfoDtoList.set(0,tradeInfoDto);
         }else {
@@ -77,9 +79,9 @@ public class FifteenTradeInfoService {
             tradeInfoDtoList.add(0,tradeInfoDto);
         }
 
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
         upbitApi.calculateIndicators(tradeInfoDtoList);
-
+        //최상위 데이터 하나만 변경해야 하기에 desc 정렬
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
         fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
 

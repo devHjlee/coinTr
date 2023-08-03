@@ -7,18 +7,21 @@
 지표
 문제점 의문점
 * 일봉 기준으로 지표는 해결됨
-* 분봉으로 변경시 분 기준 로우 하이 금액을 다른 프로젝트들은 어케 갖고옴? 이걸로인해 안맞는 지표가 생김 - 해결
+* 분봉으로 변경시 분 기준 로우 하이 금액을 다른 프로젝트들은 어케 갖고옴? 이걸로인해 안맞는 지표가 생김
 * 로우 하이 금액이 들어가는 지표 표시
 
+  (ChatGPT)
 * STOCHASTIC
 * 볼린저밴드
-* RSI (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-* MACD (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-* CCI (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals) : 분봉 안맞음
-* ADX (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals) : 검증필요
-* Aroon (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals) : 검증필요
-* ParabolicSar (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-
+  (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
+* RSI 
+* MACD 
+* CCI  : 고가,저가
+* ADX  : 고가,저가
+* Aroon  : 고가,저가
+* ParabolicSar : 고가,저가
+* EMA : 확인해라
+  
 알림기능
 * 텔레그램
 
@@ -26,7 +29,7 @@
 * 이건 블라인드에 물어봐야지
 
 GUI
-* JavaFX 애플리케이션을 따로 구성하여 coinTrade 와 http 통신
+* 파이썬 애플리케이션을 따로 구성하여 coinTrade 와 http 통신
 * 서버상태 표시
 * 검색조건식 컨트롤
 
