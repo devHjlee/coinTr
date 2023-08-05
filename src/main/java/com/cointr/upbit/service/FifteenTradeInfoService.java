@@ -14,9 +14,9 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class FifteenTradeInfoService {
     private final FifteenTradeInfoRepository fifteenTradeInfoRepository;
+    private final RedisService redisService;
     private final UpbitApi upbitApi;
 
     /**
@@ -35,8 +35,7 @@ public class FifteenTradeInfoService {
         try {
             if (tradeInfoDtoList.size() > 26) {
                 upbitApi.calculateIndicators(tradeInfoDtoList);
-                int rs = fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList);
-                System.out.println("RESULT :" + rs);
+                redisService.saveDataToRedis(market+":F",tradeInfoDtoList);
             }
         }catch (Exception e) {
             log.info("fifteenCandleSave :"+e.getMessage());
