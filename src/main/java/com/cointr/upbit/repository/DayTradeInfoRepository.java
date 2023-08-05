@@ -12,8 +12,4 @@ public interface DayTradeInfoRepository {
     List<TradeInfoDto> selectTradeInfo(String market);
 
     void insertBulkTradeInfo(List<TradeInfoDto> tradeInfoDtos);
-
-
-    //todo api 테스트를 위한 임시
-    List<TradeInfoDto> selectTradeVolumes();
 }

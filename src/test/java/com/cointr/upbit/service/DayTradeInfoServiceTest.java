@@ -32,7 +32,7 @@ class DayTradeInfoServiceTest {
     }
     @Test
     void 한개코인_일봉캔들_저장() {
-        dayTradeInfoService.dayCandleSave("KRW-KNC");
+        dayTradeInfoService.dayCandleSave("KRW-BTC");
     }
     @Test
     void updateTechnicalIndicator() {

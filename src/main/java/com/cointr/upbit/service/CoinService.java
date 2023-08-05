@@ -2,6 +2,7 @@ package com.cointr.upbit.service;
 
 import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.CoinDto;
+import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,5 +30,10 @@ public class CoinService {
 
     public List<CoinDto> selectCoin() {
         return coinRepository.findAll();
+    }
+
+
+    public List<TradeInfoDto> getTradePrice(String market) {
+        return coinRepository.selectTradePrices(market);
     }
 }

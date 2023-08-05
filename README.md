@@ -45,39 +45,22 @@ GUI
  * 어떤 지표 , 입력값
 
 
-프로그램 구매해봤던 사람들한테 지표 입력 어떤식으로 하는지?
-키움증권 조건검색같은 기능인지?
-어떠한 기능들이 있는지?
 
-임시저장
-<html>
-  <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
 
-function drawChart() {
-var data = google.visualization.arrayToDataTable([
-['Mon', 100, 180, 150, 200], // 저 ,현, 시, 고
-['Tue', 31, 38, 55, 66],
-['Wed', 50, 55, 77, 80],
-['Thu', 77, 77, 66, 50],
-['Fri', 68, 66, 22, 15]
-// Treat first row as data as well.
-], true);
+차트와 보조지표를 이용해 현물을 하는사람?
+구현한 보조지표 :
+* STOCHASTIC
+* 볼린저밴드
+* RSI
+* MACD
+* CCI
+* ADX
+* Aroon
+* ParabolicSar
 
-    var options = {
-      legend:'none'
-    };
+더필요한 보조지표
+ 
+자동매매 프로그램들은 알림조건
+ex) RSI > 10 and MACD > 0 and CCI > 0
 
-    var chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
-
-    chart.draw(data, options);
-}
-</script>
-  </head>
-  <body>
-    <div id="chart_div" style="width: 900px; height: 500px;"></div>
-  </body>
-</html>
+사용자ui 에 차트가 트레이닝뷰 인지?

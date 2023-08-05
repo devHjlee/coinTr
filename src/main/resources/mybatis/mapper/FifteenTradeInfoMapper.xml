@@ -55,20 +55,4 @@
         ,acc_bid_volume = values(acc_bid_volume)
     </insert>
 
-    <!-- 임시 -->
-    <select id="selectTradeVolumes" resultType="com.cointr.upbit.dto.TradeInfoDto">
-    SELECT
-        curInfo.market ,curInfo.acc_trade_volume ,lastInfo.acc_trade_volume
-    FROM trade_info curInfo
-             inner join (
-        SELECT
-            market,sum(acc_trade_volume) AS acc_trade_volume
-        FROM trade_info
-        where trade_date between '20230730' and '20230730'
-        GROUP BY market
-    ) lastInfo
-    ON curInfo.market = lastInfo.market
-    and curInfo.acc_trade_volume > lastInfo.acc_trade_volume
-    WHERE trade_date ='20230731'
-    </select>
 </mapper>

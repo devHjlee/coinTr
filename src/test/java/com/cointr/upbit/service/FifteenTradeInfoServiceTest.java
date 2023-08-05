@@ -20,11 +20,12 @@ class FifteenTradeInfoServiceTest {
     void fifteenCandleSave() {
         List<CoinDto> coinDtoList = coinRepository.findAll();
         for(CoinDto coinDto : coinDtoList) {
+            System.out.println("START:" + coinDto.getMarket());
             fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
         }
     }
     @Test
     void 한개코인_15분봉저장() {
-        fifteenTradeInfoService.fifteenCandleSave("KRW-KNC");
+        fifteenTradeInfoService.fifteenCandleSave("KRW-JST");
     }
 }

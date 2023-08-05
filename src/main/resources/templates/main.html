@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <style>
+        /* 스타일 추가 */
+        #container_wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex; /* 추가 */
+            flex-direction: row; /* 추가 */
+        }
+        #chart_container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        #chart_div, #curve_chart {
+            width: 900px;
+            height: 500px;
+        }
+        .tg  {border-collapse:collapse;border-color:#9ABAD9;border-spacing:0;}
+        .tg td{background-color:#EBF5FF;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#444;
+            font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:10px 5px;word-break:normal;}
+        .tg th{background-color:#409cff;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#fff;
+            font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+        .tg .tg-0lax{text-align:left;vertical-align:top}
+    </style>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+        google.charts.setOnLoadCallback(drawChart2);
+        var chart;
+        var options;
+        function drawChart() {
+
+            options = {
+                legend:'none'
+            };
+
+            chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
+
+        }
+        var chart2;
+        var options2;
+        function drawChart2() {
+            options2 = {
+                title: 'RSI',
+                legend: { position: 'bottom' }
+            };
+            chart2 = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        }
+        function fetchData() {
+            var coin = $('#coin').val();
+            $.ajax({
+                url: "/api/v1/coin/prices?market="+coin, // 서버의 데이터를 반환하는 엔드포인트 URL
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    chart.draw(google.visualization.arrayToDataTable(data.prices,true), options);
+                    chart2.draw(google.visualization.arrayToDataTable(data.rsi), options2);
+                    $('#tPrice').text(data.currentPrice.tradePrice);
+                    $('#tHigh').text(data.currentPrice.highPrice);
+                    $('#tLow').text(data.currentPrice.lowPrice);
+                    $('#tAdx').text(data.currentPrice.adx);
+                    $('#tRsi').text(data.currentPrice.rsi);
+                    $('#tCci').text(data.currentPrice.cci);
+                    $('#tBb').text(data.currentPrice.bbAvg);
+                    $('#tMacd').text(data.currentPrice.macd);
+                    $('#tPsar').text(data.currentPrice.psar);
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
+        setInterval(function() { fetchData(); }, 500);
+    </script>
+    <title></title>
+</head>
+<body>
+<div id="container_wrapper">
+    <div id="chart_container">
+        <div id="chart_div"></div>
+        <div id="curve_chart"></div>
+    </div>
+    <div id="controls">
+
+    </div>
+    <div id="table_container">
+        <select id="coin">
+            <!-- Option 요소들 -->
+            <option value="KRW-BTC">BTC</option>
+            <option value="KRW-BTG">BTG</option>
+            <option value="KRW-RFR">RFR</option>
+            <option value="KRW-STMX">STMX</option>
+            <!-- ... 추가 Option 요소들 ... -->
+        </select>
+    <table class="tg">
+        <thead>
+        <tr>
+            <th class="tg-0lax">현재가</th>
+            <th class="tg-0lax">고가</th>
+            <th class="tg-0lax">저가</th>
+            <th class="tg-0lax">RSI</th>
+            <th class="tg-0lax">CCI</th>
+            <th class="tg-0lax">macd</th>
+            <th class="tg-0lax">BB</th>
+            <th class="tg-0lax">ADX</th>
+            <th class="tg-0lax">PSar</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="tg-0lax" id="tPrice"></td>
+            <td class="tg-0lax" id="tHigh"></td>
+            <td class="tg-0lax" id="tLow"></td>
+            <td class="tg-0lax" id="tRsi"></td>
+            <td class="tg-0lax" id="tCci"></td>
+            <td class="tg-0lax" id="tMacd"></td>
+            <td class="tg-0lax" id="tBb"></td>
+            <td class="tg-0lax" id="tAdx"></td>
+            <td class="tg-0lax" id="tPsar"></td>
+        </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+</body>
+</html>

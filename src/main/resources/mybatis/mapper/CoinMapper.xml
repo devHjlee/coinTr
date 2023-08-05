@@ -16,4 +16,7 @@
         select * from coin
     </select>
 
+    <select id="selectTradePrices" resultType="com.cointr.upbit.dto.TradeInfoDto">
+        select * from trade_info_fifteen where market = #{market} order by trade_date desc limit 20
+    </select>
 </mapper>

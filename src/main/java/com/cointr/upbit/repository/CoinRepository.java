@@ -12,4 +12,6 @@ public interface CoinRepository {
     void insertBulkCoin(List<CoinDto> coinDtos);
 
     List<CoinDto> findAll();
+
+    List<TradeInfoDto> selectTradePrices(String market);
 }

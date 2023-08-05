@@ -60,11 +60,4 @@ public class DayTradeInfoService {
         dayTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0,1));
     }
 
-    //todo api 테스트를 위한 임시
-    public List<TradeInfoDto> getIndicators(String market) {
-        return dayTradeInfoRepository.selectTradeInfo(market);
-    }
-    public List<TradeInfoDto> getVolumes() {
-        return dayTradeInfoRepository.selectTradeVolumes();
-    }
 }
