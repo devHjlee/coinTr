@@ -40,16 +40,20 @@ class DayTradeInfoServiceTest {
             fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
         }
         //dayTradeInfoService.dayCandleSave("KRW-STMX");
-        //fifteenTradeInfoService.fifteenCandleSave("KRW-STMX");
-        List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-STMX");
-        List<TradeInfoDto> rs2 = dayTradeInfoService.findTradeInfo("KRW-STMX");
-        rs2.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-        System.out.println("dlgudwo");
-        for(int i = 0; i < 5; i++) {
-            System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
-            System.out.println(rs.get(i).getTradeDate()+":"+rs.get(i).getRsi());
-        }
+        //fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
+        //List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
+        //List<TradeInfoDto> rs2 = dayTradeInfoService.findTradeInfo("KRW-STMX");
+        //rs2.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+//        for(TradeInfoDto dto : rs) {
+//            System.out.println(dto.getTradePrice());
+//        }
+//        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+
+//        System.out.println("dlgudwo");
+//        for(int i = 0; i < 20; i++) {
+//            //System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
+//            System.out.println(rs.get(i).getTradeDate()+":"+rs.get(i).getRsi());
+//        }
     }
 
     @Test
