@@ -5,6 +5,7 @@ import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.FifteenTradeInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,8 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FifteenTradeInfoService {
     private final FifteenTradeInfoRepository fifteenTradeInfoRepository;
-    private final RedisService redisService;
     private final UpbitApi upbitApi;
+
+    public List<TradeInfoDto> findTradeInfo(String market) {
+        return fifteenTradeInfoRepository.findTradeInfo(market);
+    }
 
     /**
      * 코인에 대한 15분별거래내역 저장
@@ -26,16 +30,16 @@ public class FifteenTradeInfoService {
     public void fifteenCandleSave(String market) {
 
         try {
-            Thread.sleep(100);
+            Thread.sleep(80);
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
         List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"minutes",15);
-        log.info(market +":"+tradeInfoDtoList.size());
+
         try {
             if (tradeInfoDtoList.size() > 26) {
                 upbitApi.calculateIndicators(tradeInfoDtoList);
-                redisService.saveDataToRedis(market+":F",tradeInfoDtoList);
+                fifteenTradeInfoRepository.saveTradeInfo(market,tradeInfoDtoList);
             }
         }catch (Exception e) {
             log.info("fifteenCandleSave :"+e.getMessage());
@@ -49,7 +53,10 @@ public class FifteenTradeInfoService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         try {
-            List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoRepository.selectTradeInfo(tradeInfoDto.getMarket());
+            List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoRepository.findTradeInfo(tradeInfoDto.getMarket());
+            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+
+            log.info(tradeInfoDto.toString());
             int convTime = Integer.parseInt(tradeInfoDto.getTradeTime().substring(2, 4));
             String tradeTime = "";
             if (convTime >= 0 && convTime < 15) {
@@ -85,11 +92,8 @@ public class FifteenTradeInfoService {
                 tradeInfoDto.setOpeningPrice(tradeInfoDto.getTradePrice());
                 tradeInfoDtoList.add(0, tradeInfoDto);
             }
-
             upbitApi.calculateIndicators(tradeInfoDtoList);
-            //최상위 데이터 하나만 변경해야 하기에 desc 정렬
-            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-            fifteenTradeInfoRepository.insertBulkTradeInfo(tradeInfoDtoList.subList(0, 1));
+            fifteenTradeInfoRepository.saveTradeInfo(tradeInfoDto.getMarket(),tradeInfoDtoList);
         } catch (Exception e) {
             log.info(e.getMessage());
         }

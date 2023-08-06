@@ -50,7 +50,7 @@ public class CommodityChannelIndex {
             meanDev[i] = meanDeviation;
 
             if (meanDeviation > 0) {
-                this.cci[i] = NumberFormatter.round((tp[i] - sma[i]) / (0.015 * meanDeviation));
+                this.cci[i] = (tp[i] - sma[i]) / (0.015 * meanDeviation);
             }
             tradeInfoDtoList.get(i).setCci(this.cci[i]);
         }

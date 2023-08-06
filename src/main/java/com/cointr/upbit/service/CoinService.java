@@ -6,8 +6,10 @@ import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,23 +19,20 @@ import java.util.stream.Collectors;
 public class CoinService {
     private final UpbitApi upbitApi;
     private final CoinRepository coinRepository;
+
     /**
      * 전체 코인 목록 저장(원화만)
      */
     public void coinSaveAll() {
 
-        List<CoinDto> coinDtos = upbitApi.getCoinList();
-        coinDtos.stream().filter(x-> !x.getMarket().contains("KRW-")).collect(Collectors.toList()).forEach(coinDtos::remove);
+        List<CoinDto> coinDtoList = upbitApi.getCoinList();
+        coinDtoList.stream().filter(x-> !x.getMarket().contains("KRW-")).collect(Collectors.toList()).forEach(coinDtoList::remove);
 
-        coinRepository.insertBulkCoin(coinDtos);
+        coinRepository.coinSaveAll(coinDtoList);
     }
 
-    public List<CoinDto> selectCoin() {
-        return coinRepository.findAll();
+    public List<CoinDto> findAllCoin() {
+        return coinRepository.findAllCoin();
     }
 
-
-    public List<TradeInfoDto> getTradePrice(String market) {
-        return coinRepository.selectTradePrices(market);
-    }
 }

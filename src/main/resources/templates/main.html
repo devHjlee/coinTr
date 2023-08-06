@@ -29,11 +29,27 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
+        google.charts.load('current', {'packages':['corechart','table']});
         google.charts.setOnLoadCallback(drawChart);
         google.charts.setOnLoadCallback(drawChart2);
+        google.charts.setOnLoadCallback(drawTable);
+        google.charts.setOnLoadCallback(drawTable2);
         var chart;
         var options;
+        var table;
+        function drawTable() {
+
+
+            table = new google.visualization.Table(document.getElementById('table_div'));
+
+
+        }
+        function drawTable2() {
+
+            table2 = new google.visualization.Table(document.getElementById('table_div2'));
+
+
+        }
         function drawChart() {
 
             options = {
@@ -77,16 +93,70 @@
                 }
             });
         }
-        setInterval(function() { fetchData(); }, 500);
+        function search() {
+            var coin = $('#coin').val();
+            $.ajax({
+                url: "/api/v1/coin/prices2?market="+coin, // 서버의 데이터를 반환하는 엔드포인트 URL
+                type: "GET",
+                dataType: "json",
+                success: function (jsonResponse) {
+                    data = new google.visualization.DataTable();
+                    data.addColumn('string', 'tradeDate');
+                    data.addColumn('number', 'tradePrice');
+                    data.addColumn('number', 'lowPrice');
+                    data.addColumn('number', 'highPrice');
+                    data.addColumn('number', 'rsi');
+                    data.addColumn('number', 'cci');
+                    data.addColumn('number', 'bbAvg');
+                    data.addColumn('number', 'macd');
+                    data.addColumn('number', 'adx');
+                    data.addColumn('number', 'pSar');
+
+                    jsonResponse.forEach(function(vo) {
+                        data.addRow([vo.tradeDate, vo.tradePrice, vo.lowPrice, vo.highPrice, vo.rsi, vo.cci,vo.bbAvg,vo.macd,vo.adx,vo.pSar]);
+                    });
+                    table.draw(data, {showRowNumber: true, width: '100%', height: '100%'});
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+            $.ajax({
+                url: "/api/v1/coin/prices3?market="+coin, // 서버의 데이터를 반환하는 엔드포인트 URL
+                type: "GET",
+                dataType: "json",
+                success: function (jsonResponse) {
+                    data2 = new google.visualization.DataTable();
+                    data2.addColumn('string', 'tradeDate');
+                    data2.addColumn('number', 'tradePrice');
+                    data2.addColumn('number', 'lowPrice');
+                    data2.addColumn('number', 'highPrice');
+                    data2.addColumn('number', 'rsi');
+                    data2.addColumn('number', 'cci');
+                    data2.addColumn('number', 'bbAvg');
+                    data2.addColumn('number', 'macd');
+                    data2.addColumn('number', 'adx');
+                    data2.addColumn('number', 'pSar');
+                    jsonResponse.forEach(function(vo) {
+                        data2.addRow([vo.tradeDate, vo.tradePrice, vo.lowPrice, vo.highPrice, vo.rsi, vo.cci,vo.bbAvg,vo.macd,vo.adx,vo.pSar]);
+                    });
+                    table2.draw(data2, {showRowNumber: true, width: '100%', height: '100%'});
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
+        //setInterval(function() { fetchData(); }, 500);
     </script>
     <title></title>
 </head>
 <body>
 <div id="container_wrapper">
-    <div id="chart_container">
-        <div id="chart_div"></div>
-        <div id="curve_chart"></div>
-    </div>
+<!--    <div id="chart_container">-->
+<!--        <div id="chart_div"></div>-->
+<!--        <div id="curve_chart"></div>-->
+<!--    </div>-->
     <div id="controls">
 
     </div>
@@ -97,6 +167,9 @@
             <option value="KRW-BTG">BTG</option>
             <option value="KRW-RFR">RFR</option>
             <option value="KRW-STMX">STMX</option>
+            <option value="KRW-CRE">CRE</option>
+            <option value="KRW-SC">SC</option>
+            <option value="KRW-XRP">XRP</option>
             <!-- ... 추가 Option 요소들 ... -->
         </select>
     <table class="tg">
@@ -127,6 +200,9 @@
         </tr>
         </tbody>
     </table>
+        <div id="table_div"></div>
+        <button id="search" onclick="search()">AAA</button>
+        <div id="table_div2"></div>
     </div>
 </div>
 </body>

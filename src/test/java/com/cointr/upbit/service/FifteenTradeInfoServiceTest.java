@@ -1,5 +1,6 @@
 package com.cointr.upbit.service;
 
+import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
@@ -10,35 +11,35 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Comparator;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class FifteenTradeInfoServiceTest {
     @Autowired
     private FifteenTradeInfoService fifteenTradeInfoService;
     @Autowired
-    private RedisService redisService;
-    @Autowired
     private CoinRepository coinRepository;
+    @Autowired
+    private UpbitApi upbitApi;
     @Test
     void fifteenCandleSave() {
-        List<CoinDto> coinDtoList = coinRepository.findAll();
+        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
         for(CoinDto coinDto : coinDtoList) {
-            System.out.println("START:" + coinDto.getMarket());
             fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
         }
     }
 
     @Test
-    void testRedis(){
-        List<TradeInfoDto> rs = redisService.getDataFromRedis("KRW-BTC");
-        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-        for(TradeInfoDto tradeInfoDto : rs) {
-            System.out.println(tradeInfoDto.toString());
-        }
-    }
-    @Test
     void 한개코인_15분봉저장() {
-        fifteenTradeInfoService.fifteenCandleSave("KRW-JST");
+        fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
+    }
+
+    @Test
+    void getRsi() {
+        List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
+
+        upbitApi.calculateIndicators(rs);
+        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        for(int i = 0; i < 5; i++) {
+            System.out.println(rs.get(i).getRsi());
+        }
     }
 }

@@ -11,10 +11,13 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 //todo : 코드 다시 작성
 @SpringBootTest
@@ -22,10 +25,36 @@ class DayTradeInfoServiceTest {
     @Autowired
     private DayTradeInfoService dayTradeInfoService;
     @Autowired
+    private FifteenTradeInfoService fifteenTradeInfoService;
+    @Autowired
     private CoinRepository coinRepository;
+    @Autowired
+    private CoinService coinService;
+
+    @Test
+    void 코인전체저장() {
+        coinService.coinSaveAll();
+        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
+        for(CoinDto coinDto : coinDtoList) {
+            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
+        }
+        //dayTradeInfoService.dayCandleSave("KRW-STMX");
+        //fifteenTradeInfoService.fifteenCandleSave("KRW-STMX");
+        List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-STMX");
+        List<TradeInfoDto> rs2 = dayTradeInfoService.findTradeInfo("KRW-STMX");
+        rs2.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        System.out.println("dlgudwo");
+        for(int i = 0; i < 5; i++) {
+            System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
+            System.out.println(rs.get(i).getTradeDate()+":"+rs.get(i).getRsi());
+        }
+    }
+
     @Test
     void 전체코인_일봉캔들_저장() {
-        List<CoinDto> coinDtoList = coinRepository.findAll();
+        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
         for(CoinDto coinDto : coinDtoList) {
             dayTradeInfoService.dayCandleSave(coinDto.getMarket());
         }

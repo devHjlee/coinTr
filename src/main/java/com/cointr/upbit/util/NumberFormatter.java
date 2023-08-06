@@ -1,6 +1,7 @@
 package com.cointr.upbit.util;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public class NumberFormatter {
 
@@ -8,12 +9,11 @@ public class NumberFormatter {
     }
 
     public static double round(double value) {
-        return NumberFormatter.round(value, 2);
+        return NumberFormatter.round(value, 3);
     }
 
     public static double round(double value, int numberOfDigitsAfterDecimalPoint) {
-        BigDecimal bigDecimal = new BigDecimal(value);
-        bigDecimal = bigDecimal.setScale(numberOfDigitsAfterDecimalPoint, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bigDecimal = new BigDecimal(value).setScale(numberOfDigitsAfterDecimalPoint, RoundingMode.HALF_UP);
         return bigDecimal.doubleValue();
     }
 

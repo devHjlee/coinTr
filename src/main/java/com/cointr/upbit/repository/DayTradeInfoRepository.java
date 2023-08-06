@@ -2,14 +2,23 @@ package com.cointr.upbit.repository;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Mapper
-public interface DayTradeInfoRepository {
+@Repository
+@RequiredArgsConstructor
+public class DayTradeInfoRepository {
+    private final RedisTemplate<String, List<TradeInfoDto>> redisTemplate;
 
-    List<TradeInfoDto> selectTradeInfo(String market);
+    public List<TradeInfoDto> findTradeInfo(String market){
+        return redisTemplate.opsForValue().get(market+"_DAY");
+    }
 
-    void insertBulkTradeInfo(List<TradeInfoDto> tradeInfoDtos);
+    public void saveTradeInfo(String market, List<TradeInfoDto> tradeInfoDtoList) {
+        redisTemplate.opsForValue().set(market+"_DAY",tradeInfoDtoList);
+    }
 }
