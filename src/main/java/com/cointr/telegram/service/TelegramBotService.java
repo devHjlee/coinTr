@@ -39,7 +39,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
         return "newsBot";
     }
 
-    private void sendMessage(String chatId, String message) {
+    public void sendMessage(String chatId, String message) {
         SendMessage sendMessage = new SendMessage(chatId, message);
         try {
             execute(sendMessage);

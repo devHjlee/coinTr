@@ -56,7 +56,6 @@ public class FifteenTradeInfoService {
             List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoRepository.findTradeInfo(tradeInfoDto.getMarket());
             tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
-            log.info(tradeInfoDto.toString());
             int convTime = Integer.parseInt(tradeInfoDto.getTradeTime().substring(2, 4));
             String tradeTime = "";
             if (convTime >= 0 && convTime < 15) {
