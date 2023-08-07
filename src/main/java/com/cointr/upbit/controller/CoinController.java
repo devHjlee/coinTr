@@ -1,5 +1,7 @@
 package com.cointr.upbit.controller;
 
+import com.cointr.scheduler.CoinScheduledTask;
+import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
