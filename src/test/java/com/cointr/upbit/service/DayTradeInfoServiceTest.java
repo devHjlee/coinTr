@@ -33,12 +33,12 @@ class DayTradeInfoServiceTest {
 
     @Test
     void 코인전체저장() {
-        coinService.coinSaveAll();
-        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
-        for(CoinDto coinDto : coinDtoList) {
-            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
-            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
-        }
+//        coinService.coinSaveAll();
+//        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
+//        for(CoinDto coinDto : coinDtoList) {
+//            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+//            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
+//        }
         //dayTradeInfoService.dayCandleSave("KRW-STMX");
         //fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
         //List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
