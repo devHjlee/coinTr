@@ -1,5 +1,6 @@
 package com.cointr.upbit.controller;
 
+import com.cointr.scheduler.CoinScheduledTask;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
@@ -17,10 +18,15 @@ import java.util.*;
 @RequestMapping("/api/v1/coin")
 @RequiredArgsConstructor
 public class CoinController {
-
+    private final CoinScheduledTask coinScheduledTask;
     private final CoinService coinService;
     private final FifteenTradeInfoService fifteenTradeInfoService;
     private final DayTradeInfoService dayTradeInfoService;
+
+    @GetMapping("/shced")
+    public void startSched() {
+        coinScheduledTask.scheduleTask();
+    }
 
     @GetMapping("/prices")
     public Map<String,Object> getPrices(@RequestParam String market) {
