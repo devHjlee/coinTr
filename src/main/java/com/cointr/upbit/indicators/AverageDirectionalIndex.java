@@ -109,7 +109,7 @@ public class AverageDirectionalIndex {
             this.directionalIndex(i);
             this.averageDirectionalIndex(i);
 
-            tradeInfoDtoList.get(i).setAdx(this.adx[i]);
+            tradeInfoDtoList.get(i).setAdx(NumberFormatter.round(this.adx[i],2));
 
         }
 
@@ -141,7 +141,7 @@ public class AverageDirectionalIndex {
      */
     private double positiveDirectionalMovement(double high, double previousHigh, double low, double previousLow) {
         if ((high - previousHigh) > (previousLow - low)) {
-            return NumberFormatter.round(Math.max((high - previousHigh), 0));
+            return Math.max((high - previousHigh), 0);
         } else {
             return 0;
         }
@@ -161,7 +161,7 @@ public class AverageDirectionalIndex {
      */
     private double negativeDirectionalMovement(double high, double previousHigh, double low, double previousLow) {
         if ((previousLow - low) > (high - previousHigh)) {
-            return NumberFormatter.round(Math.max((previousLow - low), 0));
+            return Math.max((previousLow - low), 0);
         } else {
             return 0;
         }
@@ -179,14 +179,13 @@ public class AverageDirectionalIndex {
                 sum = sum + this.tr[idx - i];
             }
 
-            this.trPeriod[idx] = NumberFormatter.round(sum);
+            this.trPeriod[idx] = sum;
 
         } else if (idx > period) {
 
             // Use previous TR Period to build on current TR Period
             double prevTrPeriod = this.trPeriod[idx - 1];
-            this.trPeriod[idx] = NumberFormatter
-                    .round(prevTrPeriod - (prevTrPeriod / this.period) + this.tr[idx]);
+            this.trPeriod[idx] = prevTrPeriod - (prevTrPeriod / this.period) + this.tr[idx];
 
         } else {
 
@@ -200,13 +199,11 @@ public class AverageDirectionalIndex {
 
         if (idx == this.period) {
             // Determine First value of the given period
-            this.posDmPeriod[idx] = NumberFormatter
-                    .round(Arrays.stream(Arrays.copyOfRange(this.posDM1, 0, this.period + 1)).sum());
+            this.posDmPeriod[idx] = Arrays.stream(Arrays.copyOfRange(this.posDM1, 0, this.period + 1)).sum();
         } else if (idx > this.period) {
             // Determine remaining values beyond the first value
             double prevPosDmPeriod = this.posDmPeriod[idx - 1];
-            this.posDmPeriod[idx] = NumberFormatter
-                    .round(prevPosDmPeriod - (prevPosDmPeriod / this.period) + this.posDM1[idx]);
+            this.posDmPeriod[idx] = prevPosDmPeriod - (prevPosDmPeriod / this.period) + this.posDM1[idx];
 
         } else {
             // values for less then the given period
@@ -218,12 +215,10 @@ public class AverageDirectionalIndex {
     private void negativeDirectionalMovementPeriod(int idx) {
 
         if (idx == this.period) {
-            this.negDmPeriod[idx] = NumberFormatter
-                    .round(Arrays.stream(Arrays.copyOfRange(this.negDM1, 0, this.period + 1)).sum());
+            this.negDmPeriod[idx] = Arrays.stream(Arrays.copyOfRange(this.negDM1, 0, this.period + 1)).sum();
         } else if (idx > this.period) {
             double prevNegDmPeriod = this.negDmPeriod[idx - 1];
-            this.negDmPeriod[idx] = NumberFormatter
-                    .round(prevNegDmPeriod - (prevNegDmPeriod / this.period) + this.negDM1[idx]);
+            this.negDmPeriod[idx] = prevNegDmPeriod - (prevNegDmPeriod / this.period) + this.negDM1[idx];
         } else {
             this.negDmPeriod[idx] = 0;
         }
@@ -236,7 +231,7 @@ public class AverageDirectionalIndex {
         double trPeriod = this.trPeriod[idx];
 
         if (trPeriod > 0)
-            this.posDiPeriod[idx] = NumberFormatter.round(100 * (posDmPeriod / trPeriod));
+            this.posDiPeriod[idx] = 100 * (posDmPeriod / trPeriod);
         else
             this.posDiPeriod[idx] = 0;
     }
@@ -246,19 +241,17 @@ public class AverageDirectionalIndex {
         double trPeriod = this.trPeriod[idx];
 
         if (trPeriod > 0)
-            this.negDiPeriod[idx] = NumberFormatter.round(100 * (negDmPeriod / trPeriod));
+            this.negDiPeriod[idx] = 100 * (negDmPeriod / trPeriod);
         else
             this.negDiPeriod[idx] = 0;
     }
 
     private void directionalDiffPeriod(int idx) {
-        this.diDiffPeriod[idx] = NumberFormatter
-                .round(Math.abs(this.posDiPeriod[idx] - this.negDiPeriod[idx]));
+        this.diDiffPeriod[idx] = Math.abs(this.posDiPeriod[idx] - this.negDiPeriod[idx]);
     }
 
     private void directionalSumPeriod(int idx) {
-        this.diSumPeriod[idx] = NumberFormatter
-                .round(Math.abs(this.posDiPeriod[idx] + this.negDiPeriod[idx]));
+        this.diSumPeriod[idx] =Math.abs(this.posDiPeriod[idx] + this.negDiPeriod[idx]);
     }
 
     private void directionalIndex(int idx) {
@@ -266,7 +259,7 @@ public class AverageDirectionalIndex {
         double diSumPeriod = this.diSumPeriod[idx];
 
         if (diSumPeriod > 0)
-            this.dx[idx] = NumberFormatter.round(100 * (diDiffPeriod / diSumPeriod));
+            this.dx[idx] = 100 * (diDiffPeriod / diSumPeriod);
         else
             this.dx[idx] = 0;
     }
@@ -281,9 +274,9 @@ public class AverageDirectionalIndex {
                 data[i] = this.dx[currentIdx];
             }
 
-            adx[idx] = NumberFormatter.round(Arrays.stream(data).average().getAsDouble());
+            adx[idx] = Arrays.stream(data).average().getAsDouble();
         } else if( idx > (this.period + 13)) {
-            adx[idx] = NumberFormatter.round(  ((this.adx[idx-1] * 13) + this.dx[idx]) / this.period);
+            adx[idx] =   ((this.adx[idx-1] * 13) + this.dx[idx]) / this.period;
         } else {
             adx[idx] = 0;
         }
