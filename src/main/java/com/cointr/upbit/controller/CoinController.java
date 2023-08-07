@@ -1,5 +1,6 @@
 package com.cointr.upbit.controller;
 
+import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
@@ -21,6 +22,11 @@ public class CoinController {
     private final CoinService coinService;
     private final FifteenTradeInfoService fifteenTradeInfoService;
     private final DayTradeInfoService dayTradeInfoService;
+
+    @GetMapping("/coins")
+    public List<CoinDto> getCoins() {
+        return coinService.findAllCoin();
+    }
 
     @GetMapping("/prices")
     public Map<String,Object> getPrices(@RequestParam String market) {

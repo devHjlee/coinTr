@@ -42,7 +42,7 @@ public class NvWebSocket {
         List<CoinDto> markets = coinService.findAllCoin();
         int coinCnt = (int)Math.ceil(markets.size()/10.0)*10;
         for(int i = 0; i < (coinCnt/10);i++) {
-            Thread.sleep(100);
+            Thread.sleep(1000);
             webSocketConnet(markets,i);
         }
 
@@ -59,12 +59,10 @@ public class NvWebSocket {
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
 
-        //ORG
         for (CoinDto market : coinDtoList) {
             codesObj.add(market.getMarket());
         }
-        //TEST
-        //codesObj.add("KRW-RFR");
+
         root.add(new JsonObject());
         root.get(0).getAsJsonObject().addProperty("ticket", UUID.randomUUID().toString());
         type.addProperty("type", "ticker");
