@@ -30,8 +30,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart','table']});
-        google.charts.setOnLoadCallback(drawChart);
-        google.charts.setOnLoadCallback(drawChart2);
+        // google.charts.setOnLoadCallback(drawChart);
+        // google.charts.setOnLoadCallback(drawChart2);
         google.charts.setOnLoadCallback(drawTable);
         google.charts.setOnLoadCallback(drawTable2);
         var chart;
@@ -147,6 +147,26 @@
                 }
             });
         }
+        function coinAll() {
+            $.ajax({
+                url: "/api/v1/coin/coins", // 서버의 데이터를 반환하는 엔드포인트 URL
+                type: "GET",
+                dataType: "json",
+                success: function (jsonResponse) {
+                    const selectBox = document.getElementById('coin');
+                    jsonResponse.forEach((item) => {
+                        const option = document.createElement('option');
+                        option.value = item.market; // 옵션의 값으로 id를 설정
+                        option.text = item.koreanName; // 옵션의 텍스트로 name을 설정
+                        selectBox.appendChild(option);
+                    })
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
+        coinAll();
         //setInterval(function() { fetchData(); }, 500);
     </script>
     <title></title>
@@ -163,13 +183,13 @@
     <div id="table_container">
         <select id="coin">
             <!-- Option 요소들 -->
-            <option value="KRW-BTC">BTC</option>
-            <option value="KRW-BTG">BTG</option>
-            <option value="KRW-RFR">RFR</option>
-            <option value="KRW-STMX">STMX</option>
-            <option value="KRW-CRE">CRE</option>
-            <option value="KRW-SC">SC</option>
-            <option value="KRW-XRP">XRP</option>
+<!--            <option value="KRW-BTC">BTC</option>-->
+<!--            <option value="KRW-BTG">BTG</option>-->
+<!--            <option value="KRW-RFR">RFR</option>-->
+<!--            <option value="KRW-STMX">STMX</option>-->
+<!--            <option value="KRW-CRE">CRE</option>-->
+<!--            <option value="KRW-SC">SC</option>-->
+<!--            <option value="KRW-XRP">XRP</option>-->
             <!-- ... 추가 Option 요소들 ... -->
         </select>
     <table class="tg">

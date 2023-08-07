@@ -1,3 +1,10 @@
+테스트 목록
+20230807
+- 데이터저장 : 24시간 지켜보고 데이터 누락시 레디스 추가 ->예상되는 누락 사유는 웹소켓으로 현재가를 받아오는데 거래가 없는 시간에는 웹소켓 데이터가 들어오지 않음 -> 스케줄러추가 
+- RSI : 계산값 정확도 올리기
+
+
+
 구현 목록(ing)
 * 웹소켓 : nv-websocket-client(https://github.com/TakahikoKawasaki/nv-websocket-client)  [okhttp3 였으나 버그로 변경]  
 * 알림 : 텔레그램

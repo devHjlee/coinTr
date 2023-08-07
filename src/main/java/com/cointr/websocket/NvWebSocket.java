@@ -40,11 +40,19 @@ public class NvWebSocket {
     public void connect() throws WebSocketException, IOException, InterruptedException {
         status = WsStatus.START;
         List<CoinDto> markets = coinService.findAllCoin();
-        int coinCnt = (int)Math.ceil(markets.size()/10.0)*10;
-        for(int i = 0; i < (coinCnt/10);i++) {
-            Thread.sleep(100);
-            webSocketConnet(markets,i);
-        }
+        int coinCnt = (int)Math.ceil(markets.size()/10.0);
+        for(int i = 1; i <= coinCnt;i++) {
+            Thread.sleep(1000);
+            int str = i-1;
+            if(i == 1) {
+                webSocketConnet(markets.subList(0,i*10),i);
+            }else if(i == coinCnt) {
+                webSocketConnet(markets.subList(str*10,markets.size()),i);
+            }else {
+                webSocketConnet(markets.subList(str*10,str*10+10),i);
+            }
+
+        }//0,10 ,10,20 ,20,30, 30,40, 40,50,50,60
 
         //TEST
 //        CoinDto coin = new CoinDto();
@@ -59,17 +67,15 @@ public class NvWebSocket {
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
 
-        //ORG
         for (CoinDto market : coinDtoList) {
             codesObj.add(market.getMarket());
         }
-        //TEST
-        //codesObj.add("KRW-RFR");
+
         root.add(new JsonObject());
         root.get(0).getAsJsonObject().addProperty("ticket", UUID.randomUUID().toString());
         type.addProperty("type", "ticker");
-        type.addProperty("isOnlySnapshot", false);
-        type.addProperty("isOnlyRealtime", true);
+//        type.addProperty("isOnlySnapshot", false);
+//        type.addProperty("isOnlyRealtime", true);
         type.add("codes", codesObj);
         root.add(type);
         log.info("webSocketConnet(coinDtoList,scokectNum);");
@@ -104,7 +110,7 @@ public class NvWebSocket {
                             message.append("|");
                             message.append(coin.getMarket());
                         }
-                        telegramBotService.sendMessage("111", message.toString());
+                        telegramBotService.sendMessage("6171495764", message.toString());
                         webSocketConnet(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {
