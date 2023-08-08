@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -19,6 +20,7 @@ public class DayTradeInfoRepository {
     }
 
     public void saveTradeInfo(String market, List<TradeInfoDto> tradeInfoDtoList) {
+        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
         redisTemplate.opsForValue().set(market+"_DAY",tradeInfoDtoList);
     }
 }

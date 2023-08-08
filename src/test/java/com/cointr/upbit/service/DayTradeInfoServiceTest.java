@@ -3,6 +3,7 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
+import com.cointr.upbit.util.DynamicConditionEvaluator;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -32,27 +33,39 @@ class DayTradeInfoServiceTest {
     private CoinService coinService;
 
     @Test
-    void 코인전체저장() {
-//        coinService.coinSaveAll();
-//        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
-//        for(CoinDto coinDto : coinDtoList) {
-//            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
-//            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
-//        }
-        //dayTradeInfoService.dayCandleSave("KRW-STMX");
-        //fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
-        //List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
-        //List<TradeInfoDto> rs2 = dayTradeInfoService.findTradeInfo("KRW-STMX");
-        //rs2.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-//        for(TradeInfoDto dto : rs) {
-//            System.out.println(dto.getTradePrice());
-//        }
-//        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+    void 조건식() {
+        coinService.searchCondition();
+    }
 
+    @Test
+    void 코인전체저장() {
+        coinService.coinSaveAll();
+        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
+        for(CoinDto coinDto : coinDtoList) {
+            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
+        }
+//        dayTradeInfoService.dayCandleSave("KRW-STMX");
+        //fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
+//        DynamicConditionEvaluator dynamicConditionEvaluator = new DynamicConditionEvaluator();
+//        List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
+//        List<TradeInfoDto> rs2 = dayTradeInfoService.findTradeInfo("KRW-STMX");
+//        rs2.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+//        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+//        System.out.println(rs.get(0).getTradeDate()+":"+rs.get(0).getRsi());
+//        TradeInfoDto tr = rs.get(0);
+//        String a = "rsi == 50 and adx > 10 and (cci > 50 and cci < 90)";
+//
+//        boolean aa = dynamicConditionEvaluator.evaluateCondition(a,tr);
+//        String b = "rsi>150 or adx >10";
+//        boolean bb = dynamicConditionEvaluator.evaluateCondition(b,tr);
 //        System.out.println("dlgudwo");
 //        for(int i = 0; i < 20; i++) {
-//            //System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
 //            System.out.println(rs.get(i).getTradeDate()+":"+rs.get(i).getRsi());
+//        }
+//        for(int i = 0; i < 20; i++) {
+//            //System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
+//            System.out.println(rs2.get(i).getTradeDate()+":"+rs2.get(i).getRsi());
 //        }
     }
 

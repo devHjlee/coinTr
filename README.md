@@ -1,7 +1,3 @@
-테스트 목록
-20230807
-- 데이터저장 : 24시간 지켜보고 데이터 누락시 레디스 추가 ->예상되는 누락 사유는 웹소켓으로 현재가를 받아오는데 거래가 없는 시간에는 웹소켓 데이터가 들어오지 않음 -> 스케줄러추가 
-- RSI : 계산값 정확도 올리기
 
 
 
@@ -19,17 +15,18 @@
 * 로우 하이 금액이 들어가는 지표 표시
 
   (ChatGPT)
-* STOCHASTIC
-* 볼린저밴드
+* STOCHASTIC : Fast 기간 2개, Slow 기간 2개
+* 볼린저밴드 : 기간,승수(double)
   (https://github.com/jasonlam604/StockTechnicals/tree/master/src/com/jasonlam604/stocktechnicals)
-* RSI 
-* MACD 
-* CCI  : 고가,저가
-* ADX  : 고가,저가
-* Aroon  : 고가,저가
-* ParabolicSar : 고가,저가
+* RSI : 기간 N
+* MACD : 단기,장기,신호
+* CCI  : 기간 N
+* ADX  : 기간 N
+ 
+* ParabolicSar : 
 * EMA : 확인해라
-  
+* Aroon  :
+
 알림기능
 * 텔레그램
 
@@ -40,8 +37,6 @@ GUI
 * 파이썬 애플리케이션을 따로 구성하여 coinTrade 와 http 통신
 * 서버상태 표시
 * 검색조건식 컨트롤
-
-
 
 
 블라 문의

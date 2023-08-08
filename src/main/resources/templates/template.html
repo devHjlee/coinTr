@@ -9,20 +9,18 @@
             padding: 0;
             font-family: Arial, sans-serif;
         }
+
         /* trade_container와 info_container를 나란히 배치 */
         #container_wrapper {
             display: flex;
         }
+
         /* trade_container와 info_container를 세로 방향으로 배치 */
         #trade_container,
         #info_container {
             display: flex;
             flex-direction: column;
             margin: 10px;
-        }
-        #chart_div, #curve_chart {
-            width: 900px;
-            height: 500px;
         }
         .tg  {border-collapse:collapse;border-color:#9ABAD9;border-spacing:0;}
         .tg td{background-color:#EBF5FF;border-color:#9ABAD9;border-style:solid;border-width:1px;color:#444;
@@ -35,24 +33,34 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart','table']});
-        google.charts.setOnLoadCallback(drawChart);
-        google.charts.setOnLoadCallback(drawChart2);
+        // google.charts.setOnLoadCallback(drawChart);
+        // google.charts.setOnLoadCallback(drawChart2);
         google.charts.setOnLoadCallback(drawTable);
         google.charts.setOnLoadCallback(drawTable2);
         var chart;
         var options;
         var table;
         function drawTable() {
+
+
             table = new google.visualization.Table(document.getElementById('table_div'));
+
+
         }
         function drawTable2() {
+
             table2 = new google.visualization.Table(document.getElementById('table_div2'));
+
+
         }
         function drawChart() {
+
             options = {
                 legend:'none'
             };
+
             chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
+
         }
         var chart2;
         var options2;
@@ -62,6 +70,7 @@
                 legend: { position: 'bottom' }
             };
             chart2 = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
         }
         function fetchData() {
             var coin = $('#coin').val();
@@ -167,7 +176,7 @@
             });
         }
         coinAll();
-        setInterval(function() { fetchData(); }, 500);
+        //setInterval(function() { fetchData(); }, 500);
     </script>
 </head>
 <body>

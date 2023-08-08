@@ -9,6 +9,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.expression.Expression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -75,7 +78,6 @@ public class UpbitApi {
                 .fromJson(jsonArray, listType);
     }
     public void calculateIndicators(List<TradeInfoDto> tradeInfoDtoList) {
-        //대부분의 기술적 대표 계산시 데이터 asc 정렬이 필요
         try {
             tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
             getMACD(tradeInfoDtoList);
@@ -85,7 +87,7 @@ public class UpbitApi {
             getADX(tradeInfoDtoList);
             getPSar(tradeInfoDtoList);
             getAroon(tradeInfoDtoList);
-            getStochastics(tradeInfoDtoList);//todo asc desc 확인필요 tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+            getStochastics(tradeInfoDtoList);
         }catch (Exception e) {
             log.info("calculateIndicators Exception :"+e.getMessage());
         }
@@ -201,14 +203,17 @@ public class UpbitApi {
             double fastD = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
             double slowK = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
             double slowD = (Double.isNaN(stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t))) ? 0.0 : stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
-//            double fastK = stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
-//            double fastD = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-//            double slowK = stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-//            double slowD = stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
             tradeInfoDtoList.get(i).setFastK(fastK);
             tradeInfoDtoList.get(i).setFastD(fastD);
             tradeInfoDtoList.get(i).setSlowK(slowK);
             tradeInfoDtoList.get(i).setSlowD(slowD);
         }
+    }
+
+    public boolean evaluateCondition(String condition, TradeInfoDto data) {
+        SpelExpressionParser parser = new SpelExpressionParser();
+        StandardEvaluationContext context = new StandardEvaluationContext(data);
+        Expression expression = parser.parseExpression(condition);
+        return expression.getValue(context, Boolean.class);
     }
 }
