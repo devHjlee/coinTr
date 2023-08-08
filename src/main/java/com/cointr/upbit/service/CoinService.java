@@ -44,7 +44,7 @@ public class CoinService {
         String b = "rsi>50 && adx >10";
         List<CoinDto> coinDtoList = coinRepository.findAllCoin();
         for(CoinDto coinDto : coinDtoList) {
-            TradeInfoDto tradeInfoDto = dayTradeInfoService.findTradeInfo(coinDto.getMarket()).get(0);
+            TradeInfoDto tradeInfoDto = dayTradeInfoService.findTradeInfo(coinDto.getMarket(),0,-1).get(0);
             if(upbitApi.evaluateCondition(b,tradeInfoDto)) {
                 System.out.println("Market :"+tradeInfoDto.getMarket() +" :RSI :"+tradeInfoDto.getRsi() + ":ADX:"+tradeInfoDto.getAdx());
             }

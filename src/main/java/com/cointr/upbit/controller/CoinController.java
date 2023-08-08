@@ -38,7 +38,7 @@ public class CoinController {
     public Map<String,Object> getPrices(@RequestParam String market) {
         Map<String,Object> resultMap = new HashMap<>();
 
-        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(market,0,-1);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
         List<TradeInfoDto> rs = tradeInfoDtoList.subList(0,20);
         rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
@@ -63,7 +63,7 @@ public class CoinController {
     @GetMapping("/prices2")
     public List<TradeInfoDto> getPrices2(@RequestParam String market) {
 
-        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(market,0,-1);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         return tradeInfoDtoList.subList(0,20);
@@ -72,7 +72,7 @@ public class CoinController {
     @GetMapping("/prices3")
     public List<TradeInfoDto> getPrices3(@RequestParam String market) {
 
-        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoService.findTradeInfo(market);
+        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoService.findTradeInfo(market,0,-1);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         return tradeInfoDtoList.subList(0,20);

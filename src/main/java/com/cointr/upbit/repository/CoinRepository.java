@@ -12,13 +12,17 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class CoinRepository {
-    private final RedisTemplate<String, List<CoinDto>> redisTemplate;
+    private final RedisTemplate<String, CoinDto> redisTemplate;
 
     public void coinSaveAll(List<CoinDto> coinDtoList) {
-        redisTemplate.opsForValue().set("coin",coinDtoList);
+        //redisTemplate.opsForValue().set("coin",coinDtoList);
+        redisTemplate.delete("coin");
+        for(CoinDto coinDto : coinDtoList) {
+            redisTemplate.opsForList().rightPush("coin", coinDto);
+        }
     };
 
     public List<CoinDto> findAllCoin() {
-        return redisTemplate.opsForValue().get("coin");
+        return redisTemplate.opsForList().range("coin", 0, -1);
     }
 }

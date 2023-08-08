@@ -88,6 +88,7 @@ public class UpbitApi {
             getPSar(tradeInfoDtoList);
             getAroon(tradeInfoDtoList);
             getStochastics(tradeInfoDtoList);
+            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
         }catch (Exception e) {
             log.info("calculateIndicators Exception :"+e.getMessage());
         }

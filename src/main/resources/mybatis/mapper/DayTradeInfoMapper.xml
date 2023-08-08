@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.cointr.upbit.repository.DayTradeInfoRepository">
+<mapper namespace="com.cointr.upbit.repository.TradeInfoRepository">
 
     <select id="selectTradeInfo" parameterType="java.lang.String" resultType="com.cointr.upbit.dto.TradeInfoDto">
         select * from trade_info where market = #{market} order by trade_date desc limit 200

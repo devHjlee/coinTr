@@ -3,7 +3,7 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
-import com.cointr.upbit.util.DynamicConditionEvaluator;
+import com.cointr.upbit.repository.TradeInfoRepository;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -12,19 +12,18 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 //todo : 코드 다시 작성
 @SpringBootTest
 class DayTradeInfoServiceTest {
     @Autowired
     private DayTradeInfoService dayTradeInfoService;
+    @Autowired
+    private TradeInfoRepository tradeInfoRepository;
     @Autowired
     private FifteenTradeInfoService fifteenTradeInfoService;
     @Autowired
@@ -39,13 +38,29 @@ class DayTradeInfoServiceTest {
 
     @Test
     void 코인전체저장() {
-        coinService.coinSaveAll();
-        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
-        for(CoinDto coinDto : coinDtoList) {
-            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
-            fifteenTradeInfoService.fifteenCandleSave(coinDto.getMarket());
-        }
-//        dayTradeInfoService.dayCandleSave("KRW-STMX");
+//        coinService.coinSaveAll();
+//        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
+//        for(CoinDto coinDto : coinDtoList) {
+//            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+//            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
+//        }
+        long startTime = System.nanoTime();
+        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
+        long endTime = System.nanoTime();
+        long executionTimeInNanos = endTime - startTime;
+        double executionTimeInSeconds = (double) executionTimeInNanos / 1_000_000_000.0;
+        System.out.println("Method execution time: " + executionTimeInSeconds + " seconds");
+//        long startTime2 = System.nanoTime();
+//
+//
+//        dayTradeInfoService.dayCandleSave2("KRW-BTC");
+//        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoRepository.findTradeInfo2("KRW-BTC");
+//        long endTime2 = System.nanoTime();
+//
+//        long executionTimeInNanos2 = endTime2 - startTime2;
+//        double executionTimeInSeconds2 = (double) executionTimeInNanos2 / 1_000_000_000.0;
+//
+//        System.out.println("Method execution time2: " + executionTimeInSeconds2 + " seconds");
         //fifteenTradeInfoService.fifteenCandleSave("KRW-RFR");
 //        DynamicConditionEvaluator dynamicConditionEvaluator = new DynamicConditionEvaluator();
 //        List<TradeInfoDto> rs = fifteenTradeInfoService.findTradeInfo("KRW-RFR");
