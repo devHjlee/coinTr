@@ -38,18 +38,18 @@ class DayTradeInfoServiceTest {
 
     @Test
     void 코인전체저장() {
-//        coinService.coinSaveAll();
-//        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
-//        for(CoinDto coinDto : coinDtoList) {
-//            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
-//            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
-//        }
-        long startTime = System.nanoTime();
-        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
-        long endTime = System.nanoTime();
-        long executionTimeInNanos = endTime - startTime;
-        double executionTimeInSeconds = (double) executionTimeInNanos / 1_000_000_000.0;
-        System.out.println("Method execution time: " + executionTimeInSeconds + " seconds");
+        coinService.coinSaveAll();
+        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
+        for(CoinDto coinDto : coinDtoList) {
+            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
+        }
+//        long startTime = System.nanoTime();
+//        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
+//        long endTime = System.nanoTime();
+//        long executionTimeInNanos = endTime - startTime;
+//        double executionTimeInSeconds = (double) executionTimeInNanos / 1_000_000_000.0;
+//        System.out.println("Method execution time: " + executionTimeInSeconds + " seconds");
 //        long startTime2 = System.nanoTime();
 //
 //

@@ -46,7 +46,7 @@ public class FifteenTradeInfoService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         String marketKey = "MINUTE_"+tradeInfoDto.getMarket();
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(tradeInfoDto.getMarket(),0,-1);
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         int convTime = Integer.parseInt(tradeInfoDto.getTradeTime().substring(2, 4));
