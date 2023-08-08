@@ -86,7 +86,7 @@ public class FifteenTradeInfoService {
             tradeInfoDto.setOpeningPrice(tradeInfoDto.getTradePrice());
             tradeInfoDtoList.add(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
-            tradeInfoRepository.updateTradeInfo(marketKey,tradeInfoDtoList.get(0));
+            tradeInfoRepository.insertTradeInfo(marketKey,tradeInfoDtoList.get(0));
         }
 
     }
