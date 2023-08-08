@@ -10,5 +10,8 @@ public class MainController {
     public String main(Model model) {
         return "main";
     }
-
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "OK";
+    }
 }
