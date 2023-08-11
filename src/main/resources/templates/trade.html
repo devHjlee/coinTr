@@ -17,15 +17,32 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
+    <style>
+        #chart_div, #curve_chart {
+            width: 800px;
+            height: 500px;
+        }
+    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="vendor/jquery/jquery.min.js"></script>
     <script type="text/javascript">
         google.charts.load('current', {'packages':['corechart','table']});
+        google.charts.setOnLoadCallback(drawChart);
         google.charts.setOnLoadCallback(drawTable);
-        var table,table2;
+
+        var table,table2
+        var options;
+        var chart;
         function drawTable() {
             table = new google.visualization.Table(document.getElementById('table_div'));
             table2 = new google.visualization.Table(document.getElementById('table_div2'));
+
+        }
+        function drawChart() {
+            options = {
+                legend:'none'
+            };
+            chart = new google.visualization.CandlestickChart(document.getElementById('chart_div'));
         }
         function search() {
             //var coin = $('#coin').val();
@@ -87,8 +104,21 @@
                 }
             });
         }
+        function fetchData() {
+            $.ajax({
+                url: "/api/v1/coin/prices?market=KRW-BTC", // 서버의 데이터를 반환하는 엔드포인트 URL
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    chart.draw(google.visualization.arrayToDataTable(data.prices,true), options);
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
         search();
-        //setInterval(function() { fetchData(); }, 500);
+        setInterval(function() { fetchData(); }, 500);
     </script>
 </head>
 
@@ -321,8 +351,18 @@
 
                     <!-- Earnings (Monthly) Card Example -->
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card border-left-primary shadow py-2">
                             <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Earnings (Monthly)</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
                                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
@@ -355,56 +395,22 @@
                         </div>
                     </div>
 
-                    <!-- Earnings (Monthly) Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-info shadow h-100 py-2">
-                            <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                        </div>
-                                        <div class="row no-gutters align-items-center">
-                                            <div class="col-auto">
-                                                <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                            </div>
-                                            <div class="col">
-                                                <div class="progress progress-sm mr-2">
-                                                    <div class="progress-bar bg-info" role="progressbar"
-                                                         style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                         aria-valuemax="100"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-lg-6 mb-4">
 
-                    <!-- Pending Requests Card Example -->
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-warning shadow h-100 py-2">
+                        <!-- Project Card Example -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
+                            </div>
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Pending Requests</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                    </div>
-                                </div>
+                                <div id="chart_div">chart_div</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Content Row -->
-                <div class="row" style="height: auto;">
+                <div class="row">
                     <div class="col-lg-6 mb-4">
 
                         <!-- Project Card Example -->
@@ -413,9 +419,7 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                             </div>
                             <div class="card-body">
-                                <div class="chart-area">
-                                    <div id="table_div">table_div</div>
-                                </div>
+                                <div id="table_div">table_div</div>
                             </div>
                         </div>
                     </div>
@@ -427,9 +431,7 @@
                                 <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
                             </div>
                             <div class="card-body">
-                                <div class="chart-area">
-                                    <div id="table_div2">table_div2</div>
-                                </div>
+                                <div id="table_div2">table_div2</div>
                             </div>
                         </div>
                     </div>
