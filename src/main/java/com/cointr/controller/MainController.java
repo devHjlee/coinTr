@@ -10,5 +10,12 @@ public class MainController {
     public String main(Model model) {
         return "main";
     }
-
+    @GetMapping("/index")
+    public String index(Model model) {
+        return "index";
+    }
+    @GetMapping("/trade")
+    public String trade(Model model) {
+        return "trade";
+    }
 }
