@@ -44,8 +44,8 @@ class DayTradeInfoServiceTest {
 //            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
 //            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
 //        }
-//        dayTradeInfoService.dayCandleSave("KRW-XRP");
-//        fifteenTradeInfoService.minuteCandleSave("KRW-XRP");
+        dayTradeInfoService.dayCandleSave("KRW-SAND");
+        fifteenTradeInfoService.minuteCandleSave("KRW-SAND");
 //        long startTime = System.nanoTime();
 //        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
 //        long endTime = System.nanoTime();

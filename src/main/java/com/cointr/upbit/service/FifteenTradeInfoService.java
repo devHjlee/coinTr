@@ -85,7 +85,11 @@ public class FifteenTradeInfoService {
             if (("ASK").equals(tradeInfoDto.getAskBid())) {
                 tradeInfoDto.setAskPrice(totalAskPrice + (tradeInfoDto.getTradeVolume()*tradeInfoDto.getTradePrice()));
                 tradeInfoDto.setAskVolume(totalAskVolume+tradeInfoDto.getTradeVolume());
+                tradeInfoDto.setBidPrice(totalBidPrice);
+                tradeInfoDto.setBidVolume(totalBidVolume);
             } else {
+                tradeInfoDto.setAskPrice(totalAskPrice);
+                tradeInfoDto.setAskVolume(totalAskVolume);
                 tradeInfoDto.setBidPrice(totalBidPrice + (tradeInfoDto.getTradeVolume()*tradeInfoDto.getTradePrice()));
                 tradeInfoDto.setBidVolume(totalBidVolume+tradeInfoDto.getTradeVolume());
             }
