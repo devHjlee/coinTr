@@ -39,27 +39,27 @@ public class NvWebSocket {
     @PostConstruct
     public void connect() throws WebSocketException, IOException, InterruptedException {
         status = WsStatus.START;
-        List<CoinDto> markets = coinService.findAllCoin();
-        int coinCnt = (int)Math.ceil(markets.size()/10.0);
-        for(int i = 1; i <= coinCnt;i++) {
-            Thread.sleep(1000);
-            int str = i-1;
-            if(i == 1) {
-                webSocketConnet(markets.subList(0,i*10),i);
-            }else if(i == coinCnt) {
-                webSocketConnet(markets.subList(str*10,markets.size()),i);
-            }else {
-                webSocketConnet(markets.subList(str*10,str*10+10),i);
-            }
-
-        }//0,10 ,10,20 ,20,30, 30,40, 40,50,50,60
+//        List<CoinDto> markets = coinService.findAllCoin();
+//        int coinCnt = (int)Math.ceil(markets.size()/10.0);
+//        for(int i = 1; i <= coinCnt;i++) {
+//            Thread.sleep(1000);
+//            int str = i-1;
+//            if(i == 1) {
+//                webSocketConnet(markets.subList(0,i*10),i);
+//            }else if(i == coinCnt) {
+//                webSocketConnet(markets.subList(str*10,markets.size()),i);
+//            }else {
+//                webSocketConnet(markets.subList(str*10,str*10+10),i);
+//            }
+//
+//        }
 
         //TEST
-//        CoinDto coin = new CoinDto();
-//        coin.setMarket("KRW-ELF");
-//        List<CoinDto> testCoin = new ArrayList<>();
-//        testCoin.add(coin);
-//        webSocketConnet(testCoin,0);
+        CoinDto coin = new CoinDto();
+        coin.setMarket("KRW-SAND");
+        List<CoinDto> testCoin = new ArrayList<>();
+        testCoin.add(coin);
+        webSocketConnet(testCoin,0);
     }
 
     public void webSocketConnet(List<CoinDto> coinDtoList,int socketNum) throws IOException, WebSocketException {
@@ -74,8 +74,8 @@ public class NvWebSocket {
         root.add(new JsonObject());
         root.get(0).getAsJsonObject().addProperty("ticket", UUID.randomUUID().toString());
         type.addProperty("type", "ticker");
-//        type.addProperty("isOnlySnapshot", false);
-//        type.addProperty("isOnlyRealtime", true);
+        type.addProperty("isOnlySnapshot", false);
+        type.addProperty("isOnlyRealtime", true);
         type.add("codes", codesObj);
         root.add(type);
 
