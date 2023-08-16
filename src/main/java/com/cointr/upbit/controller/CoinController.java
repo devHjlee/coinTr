@@ -40,7 +40,7 @@ public class CoinController {
                 dayTradeInfoService.dayCandleSave(coinDto.getMarket());
                 fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
             }
-            nvWebSocket.connect();
+            //nvWebSocket.connect();
         } catch (Exception e) {
             return "FAIL";
         }

@@ -13,12 +13,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 @Slf4j
 @Service
 public class TelegramBotService extends TelegramLongPollingBot {
-    private final DayTradeInfoService dayTradeInfoService;
-
     public TelegramBotService(DayTradeInfoService dayTradeInfoService) {
         super(new DefaultBotOptions(),"6019178496:AAHSxoXyh0OQwR37_BOuD-4cixHaO7_fTCY");
-        this.dayTradeInfoService = dayTradeInfoService;
-
     }
 
     @Override
@@ -32,7 +28,7 @@ public class TelegramBotService extends TelegramLongPollingBot {
                 //CoinIndex coinIndex = coinService.getRSI(messageText);
                 //sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
             }else {
-                sendMessage(chatId, "Received: " + messageText);
+                sendMessage("-1001813916001", "Received: " + messageText);
             }
         }
     }
