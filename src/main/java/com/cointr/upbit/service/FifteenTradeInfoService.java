@@ -76,6 +76,19 @@ public class FifteenTradeInfoService {
                 tradeInfoDto.setLowPrice(tradeInfoDtoList.get(0).getLowPrice());
             }
             tradeInfoDto.setOpeningPrice(tradeInfoDtoList.get(0).getOpeningPrice());
+
+            //분봉별 매도 매수 거래량,거래대금
+            double totalAskPrice = tradeInfoDtoList.get(0).getAskPrice();
+            double totalAskVolume = tradeInfoDtoList.get(0).getAskVolume();
+            double totalBidPrice = tradeInfoDtoList.get(0).getBidPrice();
+            double totalBidVolume = tradeInfoDtoList.get(0).getBidVolume();
+            if (("ASK").equals(tradeInfoDto.getAskBid())) {
+                tradeInfoDto.setAskPrice(totalAskPrice + (tradeInfoDto.getTradeVolume()*tradeInfoDto.getTradePrice()));
+                tradeInfoDto.setAskVolume(totalAskVolume+tradeInfoDto.getTradeVolume());
+            } else {
+                tradeInfoDto.setBidPrice(totalBidPrice + (tradeInfoDto.getTradeVolume()*tradeInfoDto.getTradePrice()));
+                tradeInfoDto.setBidVolume(totalBidVolume+tradeInfoDto.getTradeVolume());
+            }
             tradeInfoDtoList.set(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
             tradeInfoRepository.updateTradeInfo(marketKey,tradeInfoDtoList.get(0));
@@ -84,11 +97,23 @@ public class FifteenTradeInfoService {
             tradeInfoDto.setHighPrice(tradeInfoDto.getTradePrice());
             tradeInfoDto.setLowPrice(tradeInfoDto.getTradePrice());
             tradeInfoDto.setOpeningPrice(tradeInfoDto.getTradePrice());
+            if (("ASK").equals(tradeInfoDto.getAskBid())) {
+                tradeInfoDto.setAskPrice(tradeInfoDto.getTradeVolume() * tradeInfoDto.getTradePrice());
+                tradeInfoDto.setAskVolume(tradeInfoDto.getTradeVolume());
+                tradeInfoDto.setBidVolume(0);
+                tradeInfoDto.setBidPrice(0);
+            } else {
+                tradeInfoDto.setAskPrice(0);
+                tradeInfoDto.setAskVolume(0);
+                tradeInfoDto.setBidPrice(tradeInfoDto.getTradeVolume()*tradeInfoDto.getTradePrice());
+                tradeInfoDto.setBidVolume(tradeInfoDto.getTradeVolume());
+            }
             tradeInfoDtoList.add(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
             tradeInfoRepository.insertTradeInfo(marketKey,tradeInfoDtoList.get(0));
         }
-
+        log.info("매도 볼륨 :"+tradeInfoDto.getAskVolume()+" // 매도금액 :"+tradeInfoDto.getAskPrice());
+        log.info("매수 볼륨 :"+tradeInfoDto.getBidVolume()+" // 매수금액 :"+tradeInfoDto.getBidPrice());
     }
 
 }

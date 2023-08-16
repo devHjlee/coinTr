@@ -44,6 +44,21 @@ public class TradeInfoDto {
     @Comment("누적 매수량(웹 소켓만 가능)")
     double accBidVolume;
 
+    @Comment("매수매도구분")
+    String askBid;
+
+    @Comment("거래량")
+    double tradeVolume;
+
+    @Comment("매도 거래대금")
+    double askPrice;
+    @Comment("분별 매도량")
+    double askVolume;
+    @Comment("매수 거래대금")
+    double bidPrice;
+    @Comment("분별 매수량")
+    double bidVolume;
+
     @Comment("CCI")
     double cci;
 
