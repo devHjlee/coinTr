@@ -2,19 +2,22 @@ package com.cointr.upbit.controller;
 
 import com.cointr.scheduler.CoinScheduledTask;
 import com.cointr.upbit.dto.CoinDto;
+import com.cointr.upbit.dto.ConditionDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
 import com.cointr.upbit.service.FifteenTradeInfoService;
 
 import com.cointr.websocket.NvWebSocket;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+
+/**
+ * todo : ErrorCode, RestControllerAdvice 추가 필요
+ */
 
 @RestController
 @RequestMapping("/api/v1/coin")
@@ -34,13 +37,18 @@ public class CoinController {
     @GetMapping("/start")
     public String start() {
         try {
-            coinService.coinSaveAll();
-            List<CoinDto> coinDtoList = coinService.findAllCoin();
-            for (CoinDto coinDto : coinDtoList) {
-                dayTradeInfoService.dayCandleSave(coinDto.getMarket());
-                fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
-            }
-            //nvWebSocket.connect();
+            //List<ConditionDto> conditionDtoList = coinService.findCondition();
+            //if(conditionDtoList.size() < 1) {
+            //  return "조건식 먼저 추가해주세요.";
+            //}
+
+//            coinService.coinSaveAll();
+//            List<CoinDto> coinDtoList = coinService.findAllCoin();
+//            for (CoinDto coinDto : coinDtoList) {
+//                dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+//                fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
+//            }
+            nvWebSocket.connect();
         } catch (Exception e) {
             return "FAIL";
         }
@@ -130,5 +138,17 @@ public class CoinController {
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
         return tradeInfoDtoList.subList(0,20);
+    }
+
+    @PostMapping("/conditionPrice")
+    public List<ConditionDto> saveconditionPrice(@RequestBody VolConditionDto volConditionDto) {
+        coinService.saveConditionPrice(volConditionDto);
+        return coinService.findCondition();
+    }
+
+    @PostMapping("/condition")
+    public List<ConditionDto> saveCondition(@RequestBody ConditionDto conditionDto) {
+        coinService.saveCondition(conditionDto);
+        return coinService.findCondition();
     }
 }

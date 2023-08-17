@@ -78,6 +78,48 @@
                 }
             });
         }
+
+        function conditionPriceSave() {
+            const jsonData = {
+                conditionPrice: $("#conditionPrice").val()
+            };
+
+            $.ajax({
+                url: "/api/v1/coin/conditionPrice",
+                data:JSON.stringify(jsonData),
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (jsonResponse) {
+                    console.log(jsonResponse);
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
+
+        function conditionSave(candleType,conditionType,condition) {
+            const jsonData = {
+                candleType: candleType,
+                conditionType: conditionType,
+                condition: condition
+            };
+
+            $.ajax({
+                url: "/api/v1/coin/condition",
+                data:JSON.stringify(jsonData),
+                type: "POST",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (jsonResponse) {
+                    console.log(jsonResponse);
+                },
+                error: function () {
+                    console.error("Failed to fetch data.");
+                }
+            });
+        }
         function search() {
             var coin = $('#coin').val();
             $.ajax({
@@ -200,33 +242,77 @@
                                 <div class="row no-gutters align-items-center">
 
                                     <div class="col mr-2">
-                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건1"
-                                               aria-label="Search" aria-describedby="basic-addon2" id="trade1">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="거래량"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="conditionPrice">
                                     </div>
-                                    <button class="btn btn-primary" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
-                                        분봉 조건 추가
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionPriceSave()">
+                                        실시간 거래량
                                     </button>
                                 </div>
                                 <p></p>
                                 <div class="row no-gutters align-items-center">
 
                                     <div class="col mr-2">
-                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건2"
-                                               aria-label="Search" aria-describedby="basic-addon2" id="trade2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건A"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="minuteConditionA">
                                     </div>
-                                    <button class="btn btn-primary" type="button" id="dropdownMenuButton2" aria-haspopup="true" aria-expanded="false">
-                                        일봉 조건 추가
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('m','A',$('#minuteConditionA').val())">
+                                        분봉 A조건 추가
                                     </button>
-
                                 </div>
                                 <p></p>
                                 <div class="row no-gutters align-items-center">
-                                    <button class="btn btn-primary" type="button" onclick="start()" aria-haspopup="true" aria-expanded="false">
-                                        알림시작
+
+                                    <div class="col mr-2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건B"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="minuteConditionB">
+                                    </div>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('m','B',$('#minuteConditionB').val())">
+                                        분봉 B조건 추가
                                     </button>
-                                    <div></div>
-                                    <button class="btn btn-primary" type="button" onclick="start()" aria-haspopup="true" aria-expanded="false">
-                                        알림중지
+                                </div>
+                                <p></p>
+                                <div class="row no-gutters align-items-center">
+
+                                    <div class="col mr-2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건C"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="minuteConditionC">
+                                    </div>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('m','C',$('#minuteConditionC').val())">
+                                        분봉 C조건 추가
+                                    </button>
+                                </div>
+                                <p></p>
+                                <div class="row no-gutters align-items-center">
+
+                                    <div class="col mr-2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건A"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="dayConditionA">
+                                    </div>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('d','A',$('#dayConditionA').val())">
+                                        일봉 A조건 추가
+                                    </button>
+                                </div>
+                                <p></p>
+                                <div class="row no-gutters align-items-center">
+
+                                    <div class="col mr-2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건B"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="dayConditionB">
+                                    </div>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('d','B',$('#dayConditionB').val())">
+                                        일봉 B조건 추가
+                                    </button>
+                                </div>
+                                <p></p>
+                                <div class="row no-gutters align-items-center">
+
+                                    <div class="col mr-2">
+                                        <input type="text" class="form-control bg-light border-0 small" placeholder="조건C"
+                                               aria-label="Search" aria-describedby="basic-addon2" id="dayConditionC">
+                                    </div>
+                                    <button class="btn btn-primary" type="button" aria-haspopup="true" aria-expanded="false" onclick="conditionSave('d','C',$('#dayConditionC').val())">
+                                        일봉 C조건 추가
                                     </button>
                                 </div>
                             </div>
@@ -296,7 +382,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; Your Website 2021</span>
+                    <span>Copyright &copy; Hassan 2023</span>
                 </div>
             </div>
         </footer>

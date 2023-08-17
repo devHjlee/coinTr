@@ -32,11 +32,6 @@ class DayTradeInfoServiceTest {
     private CoinService coinService;
 
     @Test
-    void 조건식() {
-        coinService.searchCondition();
-    }
-
-    @Test
     void 코인전체저장() {
 //        coinService.coinSaveAll();
 //        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
@@ -44,8 +39,8 @@ class DayTradeInfoServiceTest {
 //            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
 //            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
 //        }
-//        dayTradeInfoService.dayCandleSave("KRW-ATOM");
-//        fifteenTradeInfoService.minuteCandleSave("KRW-ATOM");
+        dayTradeInfoService.dayCandleSave("KRW-ATOM");
+        fifteenTradeInfoService.minuteCandleSave("KRW-ATOM");
 //        long startTime = System.nanoTime();
 //        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
 //        long endTime = System.nanoTime();

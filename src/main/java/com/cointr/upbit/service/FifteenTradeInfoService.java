@@ -1,8 +1,11 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.api.UpbitApi;
+import com.cointr.upbit.dto.ConditionDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.dto.VolumeInfoDto;
+import com.cointr.upbit.repository.CoinRepository;
 import com.cointr.upbit.repository.TradeInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FifteenTradeInfoService {
     private final TradeInfoRepository tradeInfoRepository;
+    private final CoinRepository coinRepository;
     private final UpbitApi upbitApi;
 
     public List<TradeInfoDto> findTradeInfo(String market,int startIdx, int endIdx) {
@@ -28,7 +32,7 @@ public class FifteenTradeInfoService {
         Map<String, VolumeInfoDto> volumeMap = volumeInfoDtoList.stream()
                 .collect(Collectors.toMap(VolumeInfoDto::getTradeDate, volume -> volume));
 
-        List<TradeInfoDto> mergedList = tradeInfoDtoList.stream()
+        return tradeInfoDtoList.stream()
                 .peek(trade -> {
                     if (volumeMap.containsKey(trade.getTradeDate())) {
                         VolumeInfoDto volume = volumeMap.get(trade.getTradeDate());
@@ -39,8 +43,6 @@ public class FifteenTradeInfoService {
                     }
                 })
                 .collect(Collectors.toList());
-
-        return mergedList;
     }
 
     /**
@@ -68,6 +70,7 @@ public class FifteenTradeInfoService {
      */
     public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
         String marketKey = "MINUTE_"+tradeInfoDto.getMarket();
+        List<ConditionDto> conditionDtoList = coinRepository.findCondition();
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
         tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
 
@@ -98,10 +101,15 @@ public class FifteenTradeInfoService {
                 tradeInfoDto.setLowPrice(tradeInfoDtoList.get(0).getLowPrice());
             }
             tradeInfoDto.setOpeningPrice(tradeInfoDtoList.get(0).getOpeningPrice());
+            tradeInfoDto.setTypeA(tradeInfoDtoList.get(0).getTypeA());
+            tradeInfoDto.setTypeB(tradeInfoDtoList.get(0).getTypeB());
+            tradeInfoDto.setTypeC(tradeInfoDtoList.get(0).getTypeC());
 
             tradeInfoDtoList.set(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
+            upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
             tradeInfoRepository.updateTradeInfo(marketKey,tradeInfoDtoList.get(0));
+
         } else {
             // 새로운 데이터일 경우 시작,고가,저가에 현재가 입력
             tradeInfoDto.setHighPrice(tradeInfoDto.getTradePrice());
@@ -110,6 +118,7 @@ public class FifteenTradeInfoService {
 
             tradeInfoDtoList.add(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
+            upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
             tradeInfoRepository.insertTradeInfo(marketKey,tradeInfoDtoList.get(0));
         }
     }
@@ -122,6 +131,7 @@ public class FifteenTradeInfoService {
         volumeInfoDto.setTradeTime(volumeInfoDto.getTradeTime().replaceAll(":",""));
         String marketKey = "MTV_"+volumeInfoDto.getMarket();
         List<VolumeInfoDto> volumeInfoDtoList = tradeInfoRepository.findVolumeInfo(marketKey,0,0);
+        VolConditionDto volConditionDto = coinRepository.findVolCondition();
 
         if (volumeInfoDtoList.size() > 0 && !volumeInfoDtoList.get(0).getSequentialId().equals(volumeInfoDto.getSequentialId())) {
             int convTime = Integer.parseInt(volumeInfoDto.getTradeTime().substring(2, 4));
@@ -157,8 +167,9 @@ public class FifteenTradeInfoService {
                     volumeInfoDto.setBidPrice(totalBidPrice + (volumeInfoDto.getTradeVolume() * volumeInfoDto.getTradePrice()));
                     volumeInfoDto.setBidVolume(totalBidVolume + volumeInfoDto.getTradeVolume());
                 }
-
+                upbitApi.evaluateConditionPrice(volConditionDto,volumeInfoDto);
                 tradeInfoRepository.updateVolumeInfo(marketKey, volumeInfoDto);
+
             } else {
                 // 새로운 데이터일 경우 시작,고가,저가에 현재가 입력
                 if (("ASK").equals(volumeInfoDto.getAskBid())) {
@@ -172,7 +183,7 @@ public class FifteenTradeInfoService {
                     volumeInfoDto.setBidPrice(volumeInfoDto.getTradeVolume() * volumeInfoDto.getTradePrice());
                     volumeInfoDto.setBidVolume(volumeInfoDto.getTradeVolume());
                 }
-
+                upbitApi.evaluateConditionPrice(volConditionDto,volumeInfoDto);
                 tradeInfoRepository.insertVolumeInfo(marketKey, volumeInfoDto);
             }
         }else {
