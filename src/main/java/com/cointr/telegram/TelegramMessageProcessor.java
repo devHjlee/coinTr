@@ -1,7 +1,7 @@
-package com.cointr.telegram.service;
+package com.cointr.telegram;
 
-import com.cointr.upbit.service.DayTradeInfoService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -9,11 +9,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-//todo 굳이 서비스로 만들어야하나?
 @Slf4j
-@Service
-public class TelegramBotService extends TelegramLongPollingBot {
-    public TelegramBotService(DayTradeInfoService dayTradeInfoService) {
+@Component
+public class TelegramMessageProcessor extends TelegramLongPollingBot {
+    public TelegramMessageProcessor() {
         super(new DefaultBotOptions(),"6019178496:AAHSxoXyh0OQwR37_BOuD-4cixHaO7_fTCY");
     }
 

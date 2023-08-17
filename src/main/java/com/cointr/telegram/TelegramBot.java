@@ -1,4 +1,4 @@
-package com.cointr.telegram.service;
+package com.cointr.telegram;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +12,12 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 @RequiredArgsConstructor
 public class TelegramBot implements CommandLineRunner {
 
-    private final TelegramBotService telegramBotService;
+    private final TelegramMessageProcessor telegramMessageProcessor;
 
     @Override
     public void run(String... args) throws Exception {
-//        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-//        botsApi.registerBot(telegramBotService);
+        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+        botsApi.registerBot(telegramMessageProcessor);
     }
 }
 

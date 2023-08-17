@@ -116,4 +116,12 @@ public class TradeInfoDto {
     @Comment("Stochastic SlowK")
     double slowD;
 
+    @Comment("Type A")
+    String typeA = "N";
+
+    @Comment("Type B")
+    String typeB = "N";
+
+    @Comment("Type C")
+    String typeC = "N";
 }

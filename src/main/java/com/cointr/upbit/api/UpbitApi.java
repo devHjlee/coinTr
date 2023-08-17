@@ -1,13 +1,14 @@
 package com.cointr.upbit.api;
 
-import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.telegram.TelegramMessageProcessor;
+import com.cointr.upbit.dto.*;
 import com.cointr.upbit.indicators.*;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -24,7 +25,9 @@ import java.util.List;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UpbitApi {
+    private final TelegramMessageProcessor telegramMessageProcessor;
 
     public List<CoinDto> getCoinList() {
         RestTemplate restTemplate = new RestTemplate();
@@ -107,7 +110,7 @@ public class UpbitApi {
         }
 
     }
-    
+
     /**
      * 볼린저밴드 계산
      * @param tradeInfoDtoList
@@ -211,10 +214,65 @@ public class UpbitApi {
         }
     }
 
-    public boolean evaluateCondition(String condition, TradeInfoDto data) {
-        SpelExpressionParser parser = new SpelExpressionParser();
-        StandardEvaluationContext context = new StandardEvaluationContext(data);
-        Expression expression = parser.parseExpression(condition);
-        return expression.getValue(context, Boolean.class);
+    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
+        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
+            volumeInfoDto.setAlarmYn("Y");
+            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
+                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
+                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
+            telegramMessageProcessor.sendMessage("-1001813916001", message);
+        }
+    }
+
+
+    public void evaluateCondition(List<ConditionDto> conditionDtoList, TradeInfoDto data, String candleType) {
+        if (conditionDtoList.size() > 0) {
+
+            SpelExpressionParser parser = new SpelExpressionParser();
+            StandardEvaluationContext context = new StandardEvaluationContext(data);
+            for (ConditionDto conditionDto : conditionDtoList) {
+                if (conditionDto.getCandleType().equals(candleType)) {
+                    Expression expression = parser.parseExpression(conditionDto.getCondition());
+                    StringBuilder message = new StringBuilder();
+                    if (Boolean.TRUE.equals(expression.getValue(context, Boolean.class))) {
+                        if ("A".equals(conditionDto.getConditionType()) && !data.getTypeA().equals("Y")) {
+                            data.setTypeA("Y");
+                            message.append("Coin :").append(data.getMarket()).append("\n");
+                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
+                            message.append("-정보-").append("\n");
+                            message.append("RSI :").append(data.getRsi()).append("\n");
+                            message.append("MACD :").append(data.getMacd()).append("\n");
+                            message.append("ADX :").append(data.getAdx()).append("\n");
+                            message.append("CCI :").append(data.getCci()).append("\n");
+
+
+                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                        } else if ("B".equals(conditionDto.getConditionType()) && !data.getTypeB().equals("Y")) {
+                            data.setTypeB("Y");
+                            message.append("Coin :").append(data.getMarket()).append("\n");
+                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
+                            message.append("-정보-").append("\n");
+                            message.append("RSI :").append(data.getRsi()).append("\n");
+                            message.append("MACD :").append(data.getMacd()).append("\n");
+                            message.append("ADX :").append(data.getAdx()).append("\n");
+                            message.append("CCI :").append(data.getCci()).append("\n");
+
+                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                        } else if ("C".equals(conditionDto.getConditionType()) && !data.getTypeC().equals("Y")) {
+                            data.setTypeC("Y");
+                            message.append("Coin :").append(data.getMarket()).append("\n");
+                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
+                            message.append("-정보-").append("\n");
+                            message.append("RSI :").append(data.getRsi()).append("\n");
+                            message.append("MACD :").append(data.getMacd()).append("\n");
+                            message.append("ADX :").append(data.getAdx()).append("\n");
+                            message.append("CCI :").append(data.getCci()).append("\n");
+
+                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                        }
+                    }
+                }
+            }
+        }
     }
 }

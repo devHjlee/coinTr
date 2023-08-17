@@ -1,6 +1,6 @@
 package com.cointr.websocket;
 
-import com.cointr.telegram.service.TelegramBotService;
+import com.cointr.telegram.TelegramMessageProcessor;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.dto.VolumeInfoDto;
@@ -13,12 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
@@ -27,7 +25,7 @@ public class NvWebSocket {
     private final CoinService coinService;
     private final DayTradeInfoService dayTradeInfoService;
     private final FifteenTradeInfoService fifteenTradeInfoService;
-    private final TelegramBotService telegramBotService;
+    private final TelegramMessageProcessor telegramMessageProcessor;
     private static final String SERVER = "wss://api.upbit.com/websocket/v1";
     private static final int TIMEOUT = 5000;
     private enum WsStatus{
@@ -35,36 +33,35 @@ public class NvWebSocket {
     }
     WsStatus status = WsStatus.STOP;
     WebSocket ws = null;
-    // 멤버 변수로 CompletableFuture를 선언
-    //private CompletableFuture<Void> future;
-    @PostConstruct
+
+    //@PostConstruct
     public void connect() throws WebSocketException, IOException, InterruptedException {
         status = WsStatus.START;
-        List<CoinDto> markets = coinService.findAllCoin();
-        int coinCnt = (int)Math.ceil(markets.size()/10.0);
-        for(int i = 1; i <= coinCnt;i++) {
-            Thread.sleep(1000);
-            int str = i-1;
-            if(i == 1) {
-                tradeConnect(markets.subList(0,i*10),i);
-                volumeConnect(markets.subList(0,i*10),i);
-            }else if(i == coinCnt) {
-                tradeConnect(markets.subList(str*10,markets.size()),i);
-                volumeConnect(markets.subList(str*10,markets.size()),i);
-            }else {
-                tradeConnect(markets.subList(str*10,str*10+10),i);
-                volumeConnect(markets.subList(str*10,str*10+10),i);
-            }
-
-        }
+//        List<CoinDto> markets = coinService.findAllCoin();
+//        int coinCnt = (int)Math.ceil(markets.size()/10.0);
+//        for(int i = 1; i <= coinCnt;i++) {
+//            Thread.sleep(1000);
+//            int str = i-1;
+//            if(i == 1) {
+//                tradeConnect(markets.subList(0,i*10),i);
+//                volumeConnect(markets.subList(0,i*10),i);
+//            }else if(i == coinCnt) {
+//                tradeConnect(markets.subList(str*10,markets.size()),i);
+//                volumeConnect(markets.subList(str*10,markets.size()),i);
+//            }else {
+//                tradeConnect(markets.subList(str*10,str*10+10),i);
+//                volumeConnect(markets.subList(str*10,str*10+10),i);
+//            }
+//
+//        }
 
         //TEST
-//        CoinDto coin = new CoinDto();
-//        coin.setMarket("KRW-ATOM");
-//        List<CoinDto> testCoin = new ArrayList<>();
-//        testCoin.add(coin);
-//        tradeConnect(testCoin,0);
-//        volumeConnect(testCoin,0);
+        CoinDto coin = new CoinDto();
+        coin.setMarket("KRW-ATOM");
+        List<CoinDto> testCoin = new ArrayList<>();
+        testCoin.add(coin);
+        tradeConnect(testCoin,0);
+        volumeConnect(testCoin,0);
     }
 
     public void tradeConnect(List<CoinDto> coinDtoList,int socketNum) throws IOException, WebSocketException {
@@ -97,7 +94,7 @@ public class NvWebSocket {
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                                 .create()
                                 .fromJson(jsonObject, TradeInfoDto.class);
-                        //log.info(jsonObject.toString());
+                        log.info(jsonObject.toString());
                         dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
                         fifteenTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
                     }
@@ -115,7 +112,7 @@ public class NvWebSocket {
                             message.append("|");
                             message.append(coin.getMarket());
                         }
-                        telegramBotService.sendMessage("-1001813916001", message.toString());
+                        telegramMessageProcessor.sendMessage("-1001813916001", message.toString());
                         tradeConnect(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {
@@ -175,7 +172,7 @@ public class NvWebSocket {
                             message.append("|");
                             message.append(coin.getMarket());
                         }
-                        telegramBotService.sendMessage("-1001813916001", message.toString());
+                        telegramMessageProcessor.sendMessage("-1001813916001", message.toString());
                         volumeConnect(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {

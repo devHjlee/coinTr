@@ -41,4 +41,7 @@ public class VolumeInfoDto {
 
     @Comment("체결번호")
     String sequentialId;
+
+    @Comment("알림여부")
+    String alarmYn;
 }

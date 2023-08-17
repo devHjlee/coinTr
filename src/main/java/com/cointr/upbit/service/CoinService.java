@@ -2,7 +2,9 @@ package com.cointr.upbit.service;
 
 import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.CoinDto;
+import com.cointr.upbit.dto.ConditionDto;
 import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.repository.CoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +21,6 @@ import java.util.stream.Collectors;
 public class CoinService {
     private final UpbitApi upbitApi;
     private final CoinRepository coinRepository;
-    private final DayTradeInfoService dayTradeInfoService;
-    private final FifteenTradeInfoService fifteenTradeInfoService;
 
     /**
      * 전체 코인 목록 저장(원화만)
@@ -37,20 +37,19 @@ public class CoinService {
         return coinRepository.findAllCoin();
     }
 
-    /**
-     * 저장된 조건에 맞춰 알림 전송
-     */
-    public void searchCondition() {
-        String b = "rsi>50 && adx >10";
-        List<CoinDto> coinDtoList = coinRepository.findAllCoin();
-        for(CoinDto coinDto : coinDtoList) {
-            TradeInfoDto tradeInfoDto = dayTradeInfoService.findTradeInfo(coinDto.getMarket(),0,-1).get(0);
-            if(upbitApi.evaluateCondition(b,tradeInfoDto)) {
-                System.out.println("Market :"+tradeInfoDto.getMarket() +" :RSI :"+tradeInfoDto.getRsi() + ":ADX:"+tradeInfoDto.getAdx());
-            }
-
-        }
-
+    public void saveCondition(ConditionDto conditionDto) {
+        coinRepository.saveCondition(conditionDto);
+    }
+    
+    public List<ConditionDto> findCondition() {
+        return coinRepository.findCondition();
     }
 
+    public void saveConditionPrice(VolConditionDto volConditionDto) {
+        coinRepository.saveConditionPrice(volConditionDto);
+    }
+
+    public VolConditionDto findVolCondition() {
+        return coinRepository.findVolCondition();
+    }
 }
