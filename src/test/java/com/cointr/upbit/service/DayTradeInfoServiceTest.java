@@ -1,7 +1,7 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
 import com.cointr.upbit.repository.TradeInfoRepository;
 import com.google.gson.FieldNamingPolicy;
@@ -119,12 +119,12 @@ class DayTradeInfoServiceTest {
             jsonObject.addProperty("acc_trade_price",jsonObject.get("candle_acc_trade_price").getAsString());
             jsonObject.addProperty("acc_trade_volume",jsonObject.get("candle_acc_trade_volume").getAsString());
         });
-        Type listType = new TypeToken<ArrayList<TradeInfoDto>>(){}.getType();
-        List<TradeInfoDto> tradeInfoDto= new GsonBuilder()
+        Type listType = new TypeToken<ArrayList<PriceInfoDto>>(){}.getType();
+        List<PriceInfoDto> priceInfoDto = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-        dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto.get(0));
+        dayTradeInfoService.updateTechnicalIndicator(priceInfoDto.get(0));
     }
 
 }

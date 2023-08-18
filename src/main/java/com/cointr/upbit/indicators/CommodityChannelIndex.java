@@ -1,7 +1,6 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
-import com.cointr.upbit.util.NumberFormatter;
+import com.cointr.upbit.dto.PriceInfoDto;
 
 import java.util.List;
 
@@ -12,15 +11,15 @@ public class CommodityChannelIndex {
 
     private double[] cci;
 
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int range) throws Exception {
-        double[] close = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getTradePrice)
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, int range) throws Exception {
+        double[] close = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getTradePrice)
                 .toArray();
-        double[] high = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getHighPrice)
+        double[] high = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getHighPrice)
                 .toArray();
-        double[] low = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getLowPrice)
+        double[] low = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getLowPrice)
                 .toArray();
 
         TypicalPrice typicalPrice = new TypicalPrice();
@@ -52,7 +51,7 @@ public class CommodityChannelIndex {
             if (meanDeviation > 0) {
                 this.cci[i] = (tp[i] - sma[i]) / (0.015 * meanDeviation);
             }
-            tradeInfoDtoList.get(i).setCci(this.cci[i]);
+            priceInfoDtoList.get(i).setCci(this.cci[i]);
         }
 
     }

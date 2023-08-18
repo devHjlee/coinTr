@@ -50,9 +50,9 @@ public class UpbitApi {
      * @param market
      * @return List<TradeInfoDto>
      */
-    public List<TradeInfoDto> getCandle(String market, String type,int candleTime) {
+    public List<PriceInfoDto> getCandle(String market, String type, int candleTime) {
         RestTemplate restTemplate = new RestTemplate();
-        Type listType = new TypeToken<ArrayList<TradeInfoDto>>(){}.getType();
+        Type listType = new TypeToken<ArrayList<PriceInfoDto>>(){}.getType();
         String url = "";
 
         if("day".equals(type)) {
@@ -80,18 +80,18 @@ public class UpbitApi {
                 .create()
                 .fromJson(jsonArray, listType);
     }
-    public void calculateIndicators(List<TradeInfoDto> tradeInfoDtoList) {
+    public void calculateIndicators(List<PriceInfoDto> priceInfoDtoList) {
         try {
-            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
-            getMACD(tradeInfoDtoList);
-            getRSI(tradeInfoDtoList);
-            getCCI(tradeInfoDtoList);
-            getBollingerBand(tradeInfoDtoList);
-            getADX(tradeInfoDtoList);
-            getPSar(tradeInfoDtoList);
-            getAroon(tradeInfoDtoList);
-            getStochastics(tradeInfoDtoList);
-            tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+            priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate));
+            getMACD(priceInfoDtoList);
+            getRSI(priceInfoDtoList);
+            getCCI(priceInfoDtoList);
+            getBollingerBand(priceInfoDtoList);
+            getADX(priceInfoDtoList);
+            getPSar(priceInfoDtoList);
+            getAroon(priceInfoDtoList);
+            getStochastics(priceInfoDtoList);
+            priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
         }catch (Exception e) {
             log.info("calculateIndicators Exception :"+e.getMessage());
         }
@@ -99,12 +99,12 @@ public class UpbitApi {
 
     /**
      * CommodityChannelIndex 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getCCI(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getCCI(List<PriceInfoDto> priceInfoDtoList) {
         CommodityChannelIndex cci = new CommodityChannelIndex();
         try {
-            cci.calculate(tradeInfoDtoList,20);
+            cci.calculate(priceInfoDtoList,20);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -113,23 +113,23 @@ public class UpbitApi {
 
     /**
      * 볼린저밴드 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getBollingerBand(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getBollingerBand(List<PriceInfoDto> priceInfoDtoList) {
         BollingerBand bollingerBand= new BollingerBand();
-        bollingerBand.calculate(tradeInfoDtoList,20,2);
+        bollingerBand.calculate(priceInfoDtoList,20,2);
 
     }
     /**
      * RSI 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      * @return double
      */
-    private void getRSI(List<TradeInfoDto> tradeInfoDtoList){
+    private void getRSI(List<PriceInfoDto> priceInfoDtoList){
         RelativeStrengthIndex relativeStrengthIndex = new RelativeStrengthIndex();
 
         try {
-            relativeStrengthIndex.calculate(tradeInfoDtoList,14);
+            relativeStrengthIndex.calculate(priceInfoDtoList,14);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -138,12 +138,12 @@ public class UpbitApi {
 
     /**
      * MACD 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getMACD(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getMACD(List<PriceInfoDto> priceInfoDtoList) {
         MovingAverageConvergenceDivergence macd = new MovingAverageConvergenceDivergence();
         try {
-            macd.calculate(tradeInfoDtoList,12,26,9);
+            macd.calculate(priceInfoDtoList,12,26,9);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -152,12 +152,12 @@ public class UpbitApi {
 
     /**
      * ADX 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getADX(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getADX(List<PriceInfoDto> priceInfoDtoList) {
         AverageDirectionalIndex adx = new AverageDirectionalIndex();
         try {
-            adx.calculate(tradeInfoDtoList,14);
+            adx.calculate(priceInfoDtoList,14);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -166,12 +166,12 @@ public class UpbitApi {
 
     /**
      * ParabolicSar 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getPSar(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getPSar(List<PriceInfoDto> priceInfoDtoList) {
         ParabolicSar pSar = new ParabolicSar();
         try {
-            pSar.calculate(tradeInfoDtoList);
+            pSar.calculate(priceInfoDtoList);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -180,12 +180,12 @@ public class UpbitApi {
 
     /**
      * Aroon 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getAroon(List<TradeInfoDto> tradeInfoDtoList) {
+    private void getAroon(List<PriceInfoDto> priceInfoDtoList) {
         Aroon aroon = new Aroon();
         try {
-            aroon.calculateAroonOscillator(tradeInfoDtoList,14);
+            aroon.calculateAroonOscillator(priceInfoDtoList,14);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -194,23 +194,23 @@ public class UpbitApi {
 
     /**
      * Stochastic 계산
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      */
-    private void getStochastics(List<TradeInfoDto> tradeInfoDtoList) {
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+    private void getStochastics(List<PriceInfoDto> priceInfoDtoList) {
+        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate));
         StochasticsOscilator stochasticsOscilator = new StochasticsOscilator();
         int n = 5; // Fast %K를 계산하는 데 사용되는 기간
         int m = 3; // Slow %K를 계산하는 데 사용되는 기간
         int t = 3; // Slow %D를 계산하는 데 사용되는 기간
-        for (int i = 0; i < tradeInfoDtoList.size(); i++) {
-            double fastK = (Double.isNaN(stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n))) ? 0.0 : stochasticsOscilator.getStochasticFastK(tradeInfoDtoList, i, n);
-            double fastD = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-            double slowK = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(tradeInfoDtoList, i, m);
-            double slowD = (Double.isNaN(stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t))) ? 0.0 : stochasticsOscilator.getStochasticSlowD(tradeInfoDtoList, i, t);
-            tradeInfoDtoList.get(i).setFastK(fastK);
-            tradeInfoDtoList.get(i).setFastD(fastD);
-            tradeInfoDtoList.get(i).setSlowK(slowK);
-            tradeInfoDtoList.get(i).setSlowD(slowD);
+        for (int i = 0; i < priceInfoDtoList.size(); i++) {
+            double fastK = (Double.isNaN(stochasticsOscilator.getStochasticFastK(priceInfoDtoList, i, n))) ? 0.0 : stochasticsOscilator.getStochasticFastK(priceInfoDtoList, i, n);
+            double fastD = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(priceInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(priceInfoDtoList, i, m);
+            double slowK = (Double.isNaN(stochasticsOscilator.getStochasticSlowK(priceInfoDtoList, i, m))) ? 0.0 : stochasticsOscilator.getStochasticSlowK(priceInfoDtoList, i, m);
+            double slowD = (Double.isNaN(stochasticsOscilator.getStochasticSlowD(priceInfoDtoList, i, t))) ? 0.0 : stochasticsOscilator.getStochasticSlowD(priceInfoDtoList, i, t);
+            priceInfoDtoList.get(i).setFastK(fastK);
+            priceInfoDtoList.get(i).setFastD(fastD);
+            priceInfoDtoList.get(i).setSlowK(slowK);
+            priceInfoDtoList.get(i).setSlowD(slowD);
         }
     }
 
@@ -223,28 +223,28 @@ public class UpbitApi {
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
     }
-    public void myCondition(List<TradeInfoDto> tradeInfoDtoList) {
-        if ((tradeInfoDtoList.get(2).getMacdSignal() > tradeInfoDtoList.get(2).getMacd())
-                && (tradeInfoDtoList.get(1).getMacdSignal() > tradeInfoDtoList.get(1).getMacd())
-                &&(tradeInfoDtoList.get(0).getMacdSignal() <= tradeInfoDtoList.get(0).getMacd())
-                && tradeInfoDtoList.get(0).getRsi() < 50
+    public void myCondition(List<PriceInfoDto> priceInfoDtoList) {
+        if ((priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
+                && (priceInfoDtoList.get(1).getMacdSignal() > priceInfoDtoList.get(1).getMacd())
+                &&(priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
+                && priceInfoDtoList.get(0).getRsi() < 50
         ) {
             StringBuilder message = new StringBuilder();
-            tradeInfoDtoList.get(0).setTypeA("Y");
-            message.append("Coin :").append(tradeInfoDtoList.get(0).getMarket()).append("\n");
+            priceInfoDtoList.get(0).setTypeA("Y");
+            message.append("Coin :").append(priceInfoDtoList.get(0).getMarket()).append("\n");
             message.append("-정보-").append("\n");
-            message.append("가격 :").append(tradeInfoDtoList.get(0).getTradePrice()).append("\n");
-            message.append("RSI :").append(tradeInfoDtoList.get(0).getRsi()).append("\n");
-            message.append("MACD :").append(tradeInfoDtoList.get(0).getMacd()).append("\n");
-            message.append("ADX :").append(tradeInfoDtoList.get(0).getAdx()).append("\n");
-            message.append("CCI :").append(tradeInfoDtoList.get(0).getCci()).append("\n");
+            message.append("가격 :").append(priceInfoDtoList.get(0).getTradePrice()).append("\n");
+            message.append("RSI :").append(priceInfoDtoList.get(0).getRsi()).append("\n");
+            message.append("MACD :").append(priceInfoDtoList.get(0).getMacd()).append("\n");
+            message.append("ADX :").append(priceInfoDtoList.get(0).getAdx()).append("\n");
+            message.append("CCI :").append(priceInfoDtoList.get(0).getCci()).append("\n");
 
 
             telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
         }
     }
 
-    public void evaluateCondition(List<ConditionDto> conditionDtoList, TradeInfoDto data, String candleType) {
+    public void evaluateCondition(List<ConditionDto> conditionDtoList, PriceInfoDto data, String candleType) {
         if (conditionDtoList.size() > 0) {
 
             SpelExpressionParser parser = new SpelExpressionParser();

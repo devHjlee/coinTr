@@ -1,6 +1,6 @@
 package com.cointr.upbit.service;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.repository.TradeInfoRepository;
 import com.cointr.upbit.api.UpbitApi;
 
@@ -19,7 +19,7 @@ public class DayTradeInfoService {
     private final TradeInfoRepository tradeInfoRepository;
     private final UpbitApi upbitApi;
 
-    public List<TradeInfoDto> findTradeInfo(String market,int startIdx, int endIdx) {
+    public List<PriceInfoDto> findTradeInfo(String market, int startIdx, int endIdx) {
         return tradeInfoRepository.findTradeInfo("DAY_"+market,startIdx,endIdx);
     }
     /**
@@ -33,31 +33,31 @@ public class DayTradeInfoService {
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<TradeInfoDto> tradeInfoDtoList = upbitApi.getCandle(market,"day",0);
-        if(tradeInfoDtoList.size() > 26) {
-            upbitApi.calculateIndicators(tradeInfoDtoList);
-            tradeInfoRepository.saveAllTradeInfo(marketKey,tradeInfoDtoList);
+        List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"day",0);
+        if(priceInfoDtoList.size() > 26) {
+            upbitApi.calculateIndicators(priceInfoDtoList);
+            tradeInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);
         }
 
     }
 
     /**
      * 웹소켓을 통해 받은 데이터를 기술적지표 계산 후 업데이트
-     * @param tradeInfoDto
+     * @param priceInfoDto
      */
-    public void updateTechnicalIndicator(TradeInfoDto tradeInfoDto) {
-        String marketKey = "DAY_"+tradeInfoDto.getMarket();
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+    public void updateTechnicalIndicator(PriceInfoDto priceInfoDto) {
+        String marketKey = "DAY_"+ priceInfoDto.getMarket();
+        List<PriceInfoDto> priceInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
+        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
-        if(tradeInfoDtoList.get(0).getTradeDate().equals(tradeInfoDto.getTradeDate())) {
-            tradeInfoDtoList.set(0,tradeInfoDto);
-            upbitApi.calculateIndicators(tradeInfoDtoList);
-            tradeInfoRepository.updateTradeInfo(marketKey,tradeInfoDtoList.get(0));
+        if(priceInfoDtoList.get(0).getTradeDate().equals(priceInfoDto.getTradeDate())) {
+            priceInfoDtoList.set(0, priceInfoDto);
+            upbitApi.calculateIndicators(priceInfoDtoList);
+            tradeInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
         }else {
-            tradeInfoDtoList.add(0,tradeInfoDto);
-            upbitApi.calculateIndicators(tradeInfoDtoList);
-            tradeInfoRepository.insertTradeInfo(marketKey,tradeInfoDtoList.get(0));
+            priceInfoDtoList.add(0, priceInfoDto);
+            upbitApi.calculateIndicators(priceInfoDtoList);
+            tradeInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
     }
 

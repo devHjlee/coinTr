@@ -2,10 +2,8 @@ package com.cointr.upbit.repository;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.ConditionDto;
-import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.dto.VolConditionDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 

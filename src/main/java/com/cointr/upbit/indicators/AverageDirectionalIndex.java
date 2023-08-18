@@ -1,6 +1,6 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.util.NumberFormatter;
 import com.cointr.upbit.util.TrueRange;
 
@@ -38,20 +38,20 @@ public class AverageDirectionalIndex {
     /**
      * Calculate ADX (Average Directional Index)
      *
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      * @param period
      * @return
      * @throws Exception
      */
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int period) throws Exception {
-        double[] close = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getTradePrice)
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, int period) throws Exception {
+        double[] close = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getTradePrice)
                 .toArray();
-        double[] high = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getHighPrice)
+        double[] high = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getHighPrice)
                 .toArray();
-        double[] low = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getLowPrice)
+        double[] low = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getLowPrice)
                 .toArray();
         if (period >= high.length)
             throw new Exception("Given period is larger then given data set");
@@ -109,7 +109,7 @@ public class AverageDirectionalIndex {
             this.directionalIndex(i);
             this.averageDirectionalIndex(i);
 
-            tradeInfoDtoList.get(i).setAdx(NumberFormatter.round(this.adx[i],2));
+            priceInfoDtoList.get(i).setAdx(NumberFormatter.round(this.adx[i],2));
 
         }
 

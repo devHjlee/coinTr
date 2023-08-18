@@ -9,7 +9,7 @@ import org.hibernate.annotations.Comment;
 @Getter
 @Setter
 @ToString
-public class TradeInfoDto {
+public class PriceInfoDto {
 
     @Comment("코인 코드")
     String market;

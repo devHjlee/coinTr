@@ -3,15 +3,12 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.ConditionDto;
-import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.repository.CoinRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
