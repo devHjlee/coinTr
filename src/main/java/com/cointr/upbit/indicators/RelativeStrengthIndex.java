@@ -1,6 +1,6 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +24,9 @@ public class RelativeStrengthIndex {
     private double[] avgGain;
     private double[] avgLoss;
 
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int period) throws Exception {
-        double[] prices = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getTradePrice)
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, int period) throws Exception {
+        double[] prices = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getTradePrice)
                 .toArray();
         if (period >= prices.length)
             throw new Exception("Given period is larger then given data set");
@@ -74,7 +74,7 @@ public class RelativeStrengthIndex {
                 //              1 + RS
                 this.rsi[i] = 100 - ( 100 / (1+this.rs[i]));
             }
-            tradeInfoDtoList.get(i).setRsi(this.rsi[i]);
+            priceInfoDtoList.get(i).setRsi(this.rsi[i]);
         }
 
     }

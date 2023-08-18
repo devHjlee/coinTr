@@ -1,6 +1,6 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.util.HighestHigh;
 import com.cointr.upbit.util.LowestLow;
 import com.cointr.upbit.util.NumberFormatter;
@@ -43,12 +43,12 @@ public class Aroon {
         return aroonDown;
     }
 
-    public void calculateAroonOscillator(List<TradeInfoDto> tradeInfoDtoList, int range) {
-        double[] high = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getHighPrice)
+    public void calculateAroonOscillator(List<PriceInfoDto> priceInfoDtoList, int range) {
+        double[] high = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getHighPrice)
                 .toArray();
-        double[] low = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getLowPrice)
+        double[] low = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getLowPrice)
                 .toArray();
 
         double[] aroonUp = this.calculateAroonUp(high, range);
@@ -57,8 +57,8 @@ public class Aroon {
 
         for (int i = range - 1; i < high.length; i++) {
             aroonOscillator[i] = NumberFormatter.round(aroonUp[i] - aroonDown[i]);
-            tradeInfoDtoList.get(i).setAroonUp(aroonUp[i]);
-            tradeInfoDtoList.get(i).setAroonDown(aroonDown[i]);
+            priceInfoDtoList.get(i).setAroonUp(aroonUp[i]);
+            priceInfoDtoList.get(i).setAroonDown(aroonDown[i]);
         }
 
     }

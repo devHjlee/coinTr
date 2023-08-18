@@ -2,7 +2,7 @@ package com.cointr.websocket;
 
 import com.cointr.telegram.TelegramMessageProcessor;
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.VolumeInfoDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
@@ -90,13 +90,13 @@ public class NvWebSocket {
                         //log.info("Socket : "+socketNum+":"+socketNum+":"+socketNum+":"+socketNum+":"+socketNum+":"+socketNum);
                         JsonObject jsonObject = new Gson().fromJson(new String(binary), JsonObject.class);
                         jsonObject.addProperty("market",jsonObject.get("code").getAsString());
-                        TradeInfoDto tradeInfoDto = new GsonBuilder()
+                        PriceInfoDto priceInfoDto = new GsonBuilder()
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                                 .create()
-                                .fromJson(jsonObject, TradeInfoDto.class);
+                                .fromJson(jsonObject, PriceInfoDto.class);
                         log.info(jsonObject.toString());
-                        dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
-                        fifteenTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
+                        dayTradeInfoService.updateTechnicalIndicator(priceInfoDto);
+                        fifteenTradeInfoService.updateTechnicalIndicator(priceInfoDto);
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {

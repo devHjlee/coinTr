@@ -3,7 +3,7 @@ package com.cointr.upbit.controller;
 import com.cointr.scheduler.CoinScheduledTask;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.ConditionDto;
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayTradeInfoService;
@@ -80,17 +80,17 @@ public class CoinController {
 
 
 
-        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
-        List<TradeInfoDto> rs = tradeInfoDtoList.subList(0,30);
-        rs.sort(Comparator.comparing(TradeInfoDto::getTradeDate));
+        List<PriceInfoDto> priceInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
+        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
+        List<PriceInfoDto> rs = priceInfoDtoList.subList(0,30);
+        rs.sort(Comparator.comparing(PriceInfoDto::getTradeDate));
         List<Object[]> prices = new ArrayList<>();
         List<Object[]> rsi = new ArrayList<>();
         Object[] titles = new Object[]{"time","rsi"};
         rsi.add(titles);
-        for (TradeInfoDto tradeInfoDto : rs) {
-            Object[] priceData = new Object[]{tradeInfoDto.getTradeDate().substring(8), tradeInfoDto.getLowPrice(), tradeInfoDto.getTradePrice(),tradeInfoDto.getOpeningPrice(),tradeInfoDto.getHighPrice()};
-            Object[] rsiData = new Object[]{tradeInfoDto.getTradeDate().substring(8),tradeInfoDto.getRsi()};
+        for (PriceInfoDto priceInfoDto : rs) {
+            Object[] priceData = new Object[]{priceInfoDto.getTradeDate().substring(8), priceInfoDto.getLowPrice(), priceInfoDto.getTradePrice(), priceInfoDto.getOpeningPrice(), priceInfoDto.getHighPrice()};
+            Object[] rsiData = new Object[]{priceInfoDto.getTradeDate().substring(8), priceInfoDto.getRsi()};
             prices.add(priceData);
             rsi.add(rsiData);
         }
@@ -101,7 +101,7 @@ public class CoinController {
     }
 
     @GetMapping("/prices2")
-    public List<TradeInfoDto> getPrices2(@RequestParam String market) {
+    public List<PriceInfoDto> getPrices2(@RequestParam String market) {
         List<CoinDto> coinDtoList = coinService.findAllCoin();
         String coin= "";
         Optional<String> filteredMarket = coinDtoList.stream()
@@ -114,14 +114,14 @@ public class CoinController {
         } else {
             coin = filteredMarket.get();
         }
-        List<TradeInfoDto> tradeInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        List<PriceInfoDto> priceInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
+        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
-        return tradeInfoDtoList.subList(0,20);
+        return priceInfoDtoList.subList(0,20);
     }
 
     @GetMapping("/prices3")
-    public List<TradeInfoDto> getPrices3(@RequestParam String market) {
+    public List<PriceInfoDto> getPrices3(@RequestParam String market) {
         List<CoinDto> coinDtoList = coinService.findAllCoin();
         String coin= "";
         Optional<String> filteredMarket = coinDtoList.stream()
@@ -134,10 +134,10 @@ public class CoinController {
         } else {
             coin = filteredMarket.get();
         }
-        List<TradeInfoDto> tradeInfoDtoList = dayTradeInfoService.findTradeInfo(coin,0,-1);
-        tradeInfoDtoList.sort(Comparator.comparing(TradeInfoDto::getTradeDate).reversed());
+        List<PriceInfoDto> priceInfoDtoList = dayTradeInfoService.findTradeInfo(coin,0,-1);
+        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
-        return tradeInfoDtoList.subList(0,20);
+        return priceInfoDtoList.subList(0,20);
     }
 
     @PostMapping("/conditionPrice")

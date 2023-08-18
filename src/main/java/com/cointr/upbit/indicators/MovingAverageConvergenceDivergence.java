@@ -1,7 +1,7 @@
 package com.cointr.upbit.indicators;
 
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ public class MovingAverageConvergenceDivergence {
     private double[] diff;
     private int[] crossover;
 
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int fastPeriod, int slowPeriod,
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, int fastPeriod, int slowPeriod,
                           int signalPeriod) throws Exception {
-        double[] prices = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getTradePrice)
+        double[] prices = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getTradePrice)
                 .toArray();
         this.prices = prices;
         this.macd = new double[prices.length];
@@ -40,9 +40,9 @@ public class MovingAverageConvergenceDivergence {
 
         for (int i = slowPeriod - 1; i < this.prices.length; i++) {
             this.macd[i] = emaShort.getEMA()[i] - emaLong.getEMA()[i];
-            tradeInfoDtoList.get(i).setMacd(this.macd[i]);
-            tradeInfoDtoList.get(i).setMacdEmaShort(emaShort.getEMA()[i]);
-            tradeInfoDtoList.get(i).setMacdEmaLong(emaLong.getEMA()[i]);
+            priceInfoDtoList.get(i).setMacd(this.macd[i]);
+            priceInfoDtoList.get(i).setMacdEmaShort(emaShort.getEMA()[i]);
+            priceInfoDtoList.get(i).setMacdEmaLong(emaLong.getEMA()[i]);
         }
 
         ExponentialMovingAverage signalEma = new ExponentialMovingAverage();
@@ -58,8 +58,8 @@ public class MovingAverageConvergenceDivergence {
             } else {
                 this.crossover[i] = MovingAverageConvergenceDivergence.CROSSOVER_NONE;
             }
-            tradeInfoDtoList.get(i).setMacdSignal(this.signal[i]);
-            tradeInfoDtoList.get(i).setMacdSignalHistogram(this.crossover[i]);
+            priceInfoDtoList.get(i).setMacdSignal(this.signal[i]);
+            priceInfoDtoList.get(i).setMacdSignalHistogram(this.crossover[i]);
         }
 
     }

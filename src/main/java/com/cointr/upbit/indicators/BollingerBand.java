@@ -1,23 +1,23 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 
 import java.util.List;
 
 public class BollingerBand {
 
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, int windowSize, double standardDeviations) {
-        double[] prices = tradeInfoDtoList.stream().mapToDouble(TradeInfoDto::getTradePrice).toArray();
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, int windowSize, double standardDeviations) {
+        double[] prices = priceInfoDtoList.stream().mapToDouble(PriceInfoDto::getTradePrice).toArray();
 
         // 볼린저 밴드 계산
         double[] movingAverages = calculateMovingAverages(prices, windowSize);
         double[] upperBands = calculateUpperBands(movingAverages, prices, windowSize, standardDeviations);
         double[] lowerBands = calculateLowerBands(movingAverages, prices, windowSize, standardDeviations);
 
-        for(int i = 0; i < tradeInfoDtoList.size(); i++) {
-            tradeInfoDtoList.get(i).setBbAvg(movingAverages[i]);
-            tradeInfoDtoList.get(i).setBbUp(upperBands[i]);
-            tradeInfoDtoList.get(i).setBbDown(lowerBands[i]);
+        for(int i = 0; i < priceInfoDtoList.size(); i++) {
+            priceInfoDtoList.get(i).setBbAvg(movingAverages[i]);
+            priceInfoDtoList.get(i).setBbUp(upperBands[i]);
+            priceInfoDtoList.get(i).setBbDown(lowerBands[i]);
         }
     }
 

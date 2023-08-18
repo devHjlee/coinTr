@@ -1,6 +1,6 @@
 package com.cointr.upbit.indicators;
 
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.util.NumberFormatter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,22 +28,22 @@ public class ParabolicSar {
      */
     private boolean[] trendFlip;
 
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList) {
-        this.calculate(tradeInfoDtoList, 0.02, 0.20);
+    public void calculate(List<PriceInfoDto> priceInfoDtoList) {
+        this.calculate(priceInfoDtoList, 0.02, 0.20);
     }
 
     /**
      * Calculate PSAR
-     * @param tradeInfoDtoList
+     * @param priceInfoDtoList
      * @param acceleration used to calculate PSAR
      * @param accelerationMax used to calculate PSAR
      */
-    public void calculate(List<TradeInfoDto> tradeInfoDtoList, double acceleration, double accelerationMax) {
-        double[] high = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getHighPrice)
+    public void calculate(List<PriceInfoDto> priceInfoDtoList, double acceleration, double accelerationMax) {
+        double[] high = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getHighPrice)
                 .toArray();
-        double[] low = tradeInfoDtoList.stream()
-                .mapToDouble(TradeInfoDto::getLowPrice)
+        double[] low = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getLowPrice)
                 .toArray();
 
         this.parabolicSars = new double[high.length];
@@ -132,8 +132,8 @@ public class ParabolicSar {
             parabolicSar = nextSar;
 
         }
-        for(int i = 0; i < tradeInfoDtoList.size(); i++) {
-            tradeInfoDtoList.get(i).setPSar(parabolicSars[i]);
+        for(int i = 0; i < priceInfoDtoList.size(); i++) {
+            priceInfoDtoList.get(i).setPSar(parabolicSars[i]);
         }
 
     }

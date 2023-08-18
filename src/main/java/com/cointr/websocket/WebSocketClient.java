@@ -1,7 +1,7 @@
 package com.cointr.websocket;
 
 import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.TradeInfoDto;
+import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.service.DayTradeInfoService;
 import com.google.gson.*;
 
@@ -77,12 +77,12 @@ public class WebSocketClient {
             public void onMessage(@NotNull WebSocket webSocket, @NotNull ByteString bytes) {
                 JsonObject jsonObject = new Gson().fromJson(bytes.string(StandardCharsets.UTF_8), JsonObject.class);
                 jsonObject.addProperty("market",jsonObject.get("code").getAsString());
-                TradeInfoDto tradeInfoDto = new GsonBuilder()
+                PriceInfoDto priceInfoDto = new GsonBuilder()
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                         .create()
-                        .fromJson(jsonObject, TradeInfoDto.class);
+                        .fromJson(jsonObject, PriceInfoDto.class);
 
-                dayTradeInfoService.updateTechnicalIndicator(tradeInfoDto);
+                dayTradeInfoService.updateTechnicalIndicator(priceInfoDto);
             }
 
             @Override
