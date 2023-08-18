@@ -5,8 +5,8 @@ import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.VolumeInfoDto;
 import com.cointr.upbit.service.CoinService;
-import com.cointr.upbit.service.DayTradeInfoService;
-import com.cointr.upbit.service.FifteenTradeInfoService;
+import com.cointr.upbit.service.DayPriceInfoService;
+import com.cointr.upbit.service.MinutePriceInfoService;
 import com.google.gson.*;
 import com.neovisionaries.ws.client.*;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class NvWebSocket {
     private final CoinService coinService;
-    private final DayTradeInfoService dayTradeInfoService;
-    private final FifteenTradeInfoService fifteenTradeInfoService;
+    private final DayPriceInfoService dayPriceInfoService;
+    private final MinutePriceInfoService minutePriceInfoService;
     private final TelegramMessageProcessor telegramMessageProcessor;
     private static final String SERVER = "wss://api.upbit.com/websocket/v1";
     private static final int TIMEOUT = 5000;
@@ -95,8 +95,8 @@ public class NvWebSocket {
                                 .create()
                                 .fromJson(jsonObject, PriceInfoDto.class);
                         log.info(jsonObject.toString());
-                        dayTradeInfoService.updateTechnicalIndicator(priceInfoDto);
-                        fifteenTradeInfoService.updateTechnicalIndicator(priceInfoDto);
+                        dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
+                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto);
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {
@@ -156,7 +156,7 @@ public class NvWebSocket {
                                 .fromJson(jsonObject, VolumeInfoDto.class);
                         //log.info(jsonObject.toString());
 
-                        fifteenTradeInfoService.updateTradeVolume(volumeInfoDto);
+                        minutePriceInfoService.updateTradeVolume(volumeInfoDto);
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {

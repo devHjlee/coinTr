@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DayTradeInfoService {
+public class DayPriceInfoService {
     private final TradeInfoRepository tradeInfoRepository;
     private final UpbitApi upbitApi;
 

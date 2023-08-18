@@ -6,8 +6,8 @@ import com.cointr.upbit.dto.ConditionDto;
 import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.service.CoinService;
-import com.cointr.upbit.service.DayTradeInfoService;
-import com.cointr.upbit.service.FifteenTradeInfoService;
+import com.cointr.upbit.service.DayPriceInfoService;
+import com.cointr.upbit.service.MinutePriceInfoService;
 
 import com.cointr.websocket.NvWebSocket;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +25,8 @@ import java.util.*;
 public class CoinController {
     private final CoinScheduledTask coinScheduledTask;
     private final CoinService coinService;
-    private final FifteenTradeInfoService fifteenTradeInfoService;
-    private final DayTradeInfoService dayTradeInfoService;
+    private final MinutePriceInfoService minutePriceInfoService;
+    private final DayPriceInfoService dayPriceInfoService;
     private final NvWebSocket nvWebSocket;
 
     @GetMapping("/coins")
@@ -80,7 +80,7 @@ public class CoinController {
 
 
 
-        List<PriceInfoDto> priceInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = minutePriceInfoService.findTradeInfo(coin,0,-1);
         priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
         List<PriceInfoDto> rs = priceInfoDtoList.subList(0,30);
         rs.sort(Comparator.comparing(PriceInfoDto::getTradeDate));
@@ -114,7 +114,7 @@ public class CoinController {
         } else {
             coin = filteredMarket.get();
         }
-        List<PriceInfoDto> priceInfoDtoList = fifteenTradeInfoService.findTradeInfo(coin,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = minutePriceInfoService.findTradeInfo(coin,0,-1);
         priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
         return priceInfoDtoList.subList(0,20);
@@ -134,7 +134,7 @@ public class CoinController {
         } else {
             coin = filteredMarket.get();
         }
-        List<PriceInfoDto> priceInfoDtoList = dayTradeInfoService.findTradeInfo(coin,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = dayPriceInfoService.findTradeInfo(coin,0,-1);
         priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
         return priceInfoDtoList.subList(0,20);

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FifteenTradeInfoService {
+public class MinutePriceInfoService {
     private final TradeInfoRepository tradeInfoRepository;
     private final CoinRepository coinRepository;
     private final UpbitApi upbitApi;
@@ -118,7 +118,8 @@ public class FifteenTradeInfoService {
 
             priceInfoDtoList.add(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            upbitApi.evaluateCondition(conditionDtoList, priceInfoDtoList.get(0),"m");
+            upbitApi.myCondition(priceInfoDtoList);
+            //upbitApi.evaluateCondition(conditionDtoList, priceInfoDtoList.get(0),"m");
             tradeInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
     }
