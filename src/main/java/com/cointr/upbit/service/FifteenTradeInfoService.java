@@ -107,7 +107,8 @@ public class FifteenTradeInfoService {
 
             tradeInfoDtoList.set(0, tradeInfoDto);
             upbitApi.calculateIndicators(tradeInfoDtoList);
-            upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
+            upbitApi.myCondition(tradeInfoDtoList);
+            //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
             tradeInfoRepository.updateTradeInfo(marketKey,tradeInfoDtoList.get(0));
 
         } else {

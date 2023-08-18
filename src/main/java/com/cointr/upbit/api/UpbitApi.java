@@ -223,7 +223,26 @@ public class UpbitApi {
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
     }
+    public void myCondition(List<TradeInfoDto> tradeInfoDtoList) {
+        if ((tradeInfoDtoList.get(2).getMacdSignal() > tradeInfoDtoList.get(2).getMacd())
+                && (tradeInfoDtoList.get(1).getMacdSignal() > tradeInfoDtoList.get(1).getMacd())
+                &&(tradeInfoDtoList.get(0).getMacdSignal() <= tradeInfoDtoList.get(0).getMacd())
+                && tradeInfoDtoList.get(0).getRsi() < 50
+        ) {
+            StringBuilder message = new StringBuilder();
+            tradeInfoDtoList.get(0).setTypeA("Y");
+            message.append("Coin :").append(tradeInfoDtoList.get(0).getMarket()).append("\n");
+            message.append("-정보-").append("\n");
+            message.append("가격 :").append(tradeInfoDtoList.get(0).getTradePrice()).append("\n");
+            message.append("RSI :").append(tradeInfoDtoList.get(0).getRsi()).append("\n");
+            message.append("MACD :").append(tradeInfoDtoList.get(0).getMacd()).append("\n");
+            message.append("ADX :").append(tradeInfoDtoList.get(0).getAdx()).append("\n");
+            message.append("CCI :").append(tradeInfoDtoList.get(0).getCci()).append("\n");
 
+
+            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+        }
+    }
 
     public void evaluateCondition(List<ConditionDto> conditionDtoList, TradeInfoDto data, String candleType) {
         if (conditionDtoList.size() > 0) {
