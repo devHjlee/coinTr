@@ -19,13 +19,13 @@ import java.util.List;
 
 //todo : 코드 다시 작성
 @SpringBootTest
-class DayTradeInfoServiceTest {
+class DayPriceInfoServiceTest {
     @Autowired
-    private DayTradeInfoService dayTradeInfoService;
+    private DayPriceInfoService dayPriceInfoService;
     @Autowired
     private TradeInfoRepository tradeInfoRepository;
     @Autowired
-    private FifteenTradeInfoService fifteenTradeInfoService;
+    private MinutePriceInfoService minutePriceInfoService;
     @Autowired
     private CoinRepository coinRepository;
     @Autowired
@@ -39,8 +39,8 @@ class DayTradeInfoServiceTest {
 //            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
 //            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
 //        }
-        dayTradeInfoService.dayCandleSave("KRW-ATOM");
-        fifteenTradeInfoService.minuteCandleSave("KRW-ATOM");
+        dayPriceInfoService.dayCandleSave("KRW-ATOM");
+        minutePriceInfoService.minuteCandleSave("KRW-ATOM");
 //        long startTime = System.nanoTime();
 //        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
 //        long endTime = System.nanoTime();
@@ -85,12 +85,12 @@ class DayTradeInfoServiceTest {
     void 전체코인_일봉캔들_저장() {
         List<CoinDto> coinDtoList = coinRepository.findAllCoin();
         for(CoinDto coinDto : coinDtoList) {
-            dayTradeInfoService.dayCandleSave(coinDto.getMarket());
+            dayPriceInfoService.dayCandleSave(coinDto.getMarket());
         }
     }
     @Test
     void 한개코인_일봉캔들_저장() {
-        dayTradeInfoService.dayCandleSave("KRW-BTC");
+        dayPriceInfoService.dayCandleSave("KRW-BTC");
     }
     @Test
     void updateTechnicalIndicator() {
@@ -124,7 +124,7 @@ class DayTradeInfoServiceTest {
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-        dayTradeInfoService.updateTechnicalIndicator(priceInfoDto.get(0));
+        dayPriceInfoService.updateTechnicalIndicator(priceInfoDto.get(0));
     }
 
 }

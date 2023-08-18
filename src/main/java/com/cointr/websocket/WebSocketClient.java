@@ -2,7 +2,7 @@ package com.cointr.websocket;
 
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.PriceInfoDto;
-import com.cointr.upbit.service.DayTradeInfoService;
+import com.cointr.upbit.service.DayPriceInfoService;
 import com.google.gson.*;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 public class WebSocketClient {
-    private final DayTradeInfoService dayTradeInfoService;
+    private final DayPriceInfoService dayPriceInfoService;
     private final OkHttpClient client = new OkHttpClient();
     private WebSocket ws = null;
     private enum WsStatus{
@@ -82,7 +82,7 @@ public class WebSocketClient {
                         .create()
                         .fromJson(jsonObject, PriceInfoDto.class);
 
-                dayTradeInfoService.updateTechnicalIndicator(priceInfoDto);
+                dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
             }
 
             @Override
