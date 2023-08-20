@@ -223,17 +223,52 @@ public class UpbitApi {
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
     }
-    public void myCondition(List<PriceInfoDto> priceInfoDtoList) {
+    public boolean myThreeCondition(List<PriceInfoDto> priceInfoDtoList) {
+        //log.info("myCondition");
         if ((priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
                 && (priceInfoDtoList.get(1).getMacdSignal() > priceInfoDtoList.get(1).getMacd())
                 &&(priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
-                && priceInfoDtoList.get(0).getRsi() < 50
+                && priceInfoDtoList.get(0).getRsi() < 70
+                && (priceInfoDtoList.get(0).getBbAvg() <= priceInfoDtoList.get(0).getTradePrice() || priceInfoDtoList.get(0).getBbAvg() <= priceInfoDtoList.get(0).getHighPrice())
+                && ((priceInfoDtoList.get(0).getAccBidVolume()/priceInfoDtoList.get(0).getAccAskVolume())*100 >= 60)
+                && priceInfoDtoList.get(0).getPSar() <= priceInfoDtoList.get(0).getTradePrice()
+                && (priceInfoDtoList.get(0).getAccTradePrice() > 3000000000.0)
+                && !("Y").equals(priceInfoDtoList.get(0).getTypeA())
         ) {
             StringBuilder message = new StringBuilder();
             priceInfoDtoList.get(0).setTypeA("Y");
             message.append("Coin :").append(priceInfoDtoList.get(0).getMarket()).append("\n");
             message.append("-정보-").append("\n");
             message.append("가격 :").append(priceInfoDtoList.get(0).getTradePrice()).append("\n");
+            message.append("BB :").append(priceInfoDtoList.get(0).getBbAvg()).append("\n");
+            message.append("RSI :").append(priceInfoDtoList.get(0).getRsi()).append("\n");
+            message.append("MACD :").append(priceInfoDtoList.get(0).getMacd()).append("\n");
+            message.append("ADX :").append(priceInfoDtoList.get(0).getAdx()).append("\n");
+            message.append("CCI :").append(priceInfoDtoList.get(0).getCci()).append("\n");
+
+
+            //telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+            return true;
+        }
+        return false;
+    }
+    public boolean myFifteenCondition(List<PriceInfoDto> priceInfoDtoList) {
+        //log.info("myCondition");
+        if ((priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
+                && (priceInfoDtoList.get(1).getMacdSignal() > priceInfoDtoList.get(1).getMacd())
+                &&(priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
+                && priceInfoDtoList.get(0).getRsi() < 70
+                && priceInfoDtoList.get(0).getBbAvg() <= priceInfoDtoList.get(0).getTradePrice()
+                && ((priceInfoDtoList.get(0).getAccBidVolume()/priceInfoDtoList.get(0).getAccAskVolume())*100 >= 60)
+                && (priceInfoDtoList.get(0).getAccTradePrice() > 3000000000.0)
+                && !("Y").equals(priceInfoDtoList.get(0).getTypeA())
+        ) {
+            StringBuilder message = new StringBuilder();
+            priceInfoDtoList.get(0).setTypeA("Y");
+            message.append("Coin :").append(priceInfoDtoList.get(0).getMarket()).append("\n");
+            message.append("-정보-").append("\n");
+            message.append("가격 :").append(priceInfoDtoList.get(0).getTradePrice()).append("\n");
+            message.append("BB :").append(priceInfoDtoList.get(0).getBbAvg()).append("\n");
             message.append("RSI :").append(priceInfoDtoList.get(0).getRsi()).append("\n");
             message.append("MACD :").append(priceInfoDtoList.get(0).getMacd()).append("\n");
             message.append("ADX :").append(priceInfoDtoList.get(0).getAdx()).append("\n");
@@ -241,7 +276,9 @@ public class UpbitApi {
 
 
             telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+            return true;
         }
+        return false;
     }
 
     public void evaluateCondition(List<ConditionDto> conditionDtoList, PriceInfoDto data, String candleType) {

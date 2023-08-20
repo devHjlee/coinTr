@@ -1,7 +1,7 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.dto.PriceInfoDto;
-import com.cointr.upbit.repository.TradeInfoRepository;
+import com.cointr.upbit.repository.PriceInfoRepository;
 import com.cointr.upbit.api.UpbitApi;
 
 import lombok.RequiredArgsConstructor;
@@ -16,11 +16,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DayPriceInfoService {
-    private final TradeInfoRepository tradeInfoRepository;
+    private final PriceInfoRepository priceInfoRepository;
     private final UpbitApi upbitApi;
 
     public List<PriceInfoDto> findTradeInfo(String market, int startIdx, int endIdx) {
-        return tradeInfoRepository.findTradeInfo("DAY_"+market,startIdx,endIdx);
+        return priceInfoRepository.findTradeInfo("DAY_"+market,startIdx,endIdx);
     }
     /**
      * 코인에 대한 일별 거래내역 저장
@@ -36,7 +36,7 @@ public class DayPriceInfoService {
         List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"day",0);
         if(priceInfoDtoList.size() > 26) {
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);
+            priceInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);
         }
 
     }
@@ -47,17 +47,17 @@ public class DayPriceInfoService {
      */
     public void updateTechnicalIndicator(PriceInfoDto priceInfoDto) {
         String marketKey = "DAY_"+ priceInfoDto.getMarket();
-        List<PriceInfoDto> priceInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,-1);
         priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
         if(priceInfoDtoList.get(0).getTradeDate().equals(priceInfoDto.getTradeDate())) {
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
+            priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
         }else {
             priceInfoDtoList.add(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
+            priceInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
     }
 

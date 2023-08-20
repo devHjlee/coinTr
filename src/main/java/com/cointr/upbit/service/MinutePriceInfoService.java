@@ -6,7 +6,7 @@ import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.VolConditionDto;
 import com.cointr.upbit.dto.VolumeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
-import com.cointr.upbit.repository.TradeInfoRepository;
+import com.cointr.upbit.repository.PriceInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,13 +20,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class MinutePriceInfoService {
-    private final TradeInfoRepository tradeInfoRepository;
+
+    private final TradeInfoService tradeInfoService;
+    private final PriceInfoRepository priceInfoRepository;
     private final CoinRepository coinRepository;
     private final UpbitApi upbitApi;
 
     public List<PriceInfoDto> findTradeInfo(String market, int startIdx, int endIdx) {
-        List<VolumeInfoDto> volumeInfoDtoList = tradeInfoRepository.findVolumeInfo("MTV_"+market,startIdx,endIdx);
-        List<PriceInfoDto> priceInfoDtoList = tradeInfoRepository.findTradeInfo("MINUTE_"+market,startIdx,endIdx);
+        List<VolumeInfoDto> volumeInfoDtoList = priceInfoRepository.findVolumeInfo("MTV_"+market,startIdx,endIdx);
+        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo("MINUTE_"+market,startIdx,endIdx);
 
         Map<String, VolumeInfoDto> volumeMap = volumeInfoDtoList.stream()
                 .collect(Collectors.toMap(VolumeInfoDto::getTradeDate, volume -> volume));
@@ -55,10 +57,10 @@ public class MinutePriceInfoService {
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"minutes",15);
+        List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"minutes",3);
         if(priceInfoDtoList.size() > 26) {
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);
+            priceInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);
         }
 
     }
@@ -70,20 +72,62 @@ public class MinutePriceInfoService {
     public void updateTechnicalIndicator(PriceInfoDto priceInfoDto) {
         String marketKey = "MINUTE_"+ priceInfoDto.getMarket();
         List<ConditionDto> conditionDtoList = coinRepository.findCondition();
-        List<PriceInfoDto> priceInfoDtoList = tradeInfoRepository.findTradeInfo(marketKey,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,-1);
         priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
         int convTime = Integer.parseInt(priceInfoDto.getTradeTime().substring(2, 4));
         String tradeTime = "";
-        if (convTime >= 0 && convTime < 15) {
+//        if (convTime >= 0 && convTime < 15) {
+//            tradeTime = "00";
+//        } else if (convTime >= 15 && convTime < 30) {
+//            tradeTime = "15";
+//        } else if (convTime >= 30 && convTime < 45) {
+//            tradeTime = "30";
+//        } else {
+//            tradeTime = "45";
+//        }
+        if (convTime >= 0 && convTime < 3) {
             tradeTime = "00";
-        } else if (convTime >= 15 && convTime < 30) {
+        } else if (convTime >= 3 && convTime < 6) {
+            tradeTime = "03";
+        } else if (convTime >= 6 && convTime < 9) {
+            tradeTime = "06";
+        } else if (convTime >= 9 && convTime < 12) {
+            tradeTime = "09";
+        } else if (convTime >= 12 && convTime < 15) {
+            tradeTime = "12";
+        } else if (convTime >= 15 && convTime < 18) {
             tradeTime = "15";
-        } else if (convTime >= 30 && convTime < 45) {
+        } else if (convTime >= 18 && convTime < 21) {
+            tradeTime = "18";
+        } else if (convTime >= 21 && convTime < 24) {
+            tradeTime = "21";
+        } else if (convTime >= 24 && convTime < 27) {
+            tradeTime = "24";
+        } else if (convTime >= 27 && convTime < 30) {
+            tradeTime = "27";
+        } else if (convTime >= 30 && convTime < 33) {
             tradeTime = "30";
-        } else {
+        } else if (convTime >= 33 && convTime < 36) {
+            tradeTime = "33";
+        } else if (convTime >= 36 && convTime < 39) {
+            tradeTime = "36";
+        } else if (convTime >= 39 && convTime < 42) {
+            tradeTime = "39";
+        } else if (convTime >= 42 && convTime < 45) {
+            tradeTime = "42";
+        } else if (convTime >= 45 && convTime < 48) {
             tradeTime = "45";
+        } else if (convTime >= 48 && convTime < 51) {
+            tradeTime = "48";
+        } else if (convTime >= 51 && convTime < 54) {
+            tradeTime = "51";
+        } else if (convTime >= 54 && convTime < 57) {
+            tradeTime = "54";
+        } else if (convTime >= 57 && convTime <= 59) {
+            tradeTime = "57";
         }
+
         priceInfoDto.setTradeDate(priceInfoDto.getTradeDate() + priceInfoDto.getTradeTime().substring(0, 2) + tradeTime);
 
         //같은 시간대에 데이터가 존재 시 고가,저가 금액 조정
@@ -106,9 +150,11 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            upbitApi.myCondition(priceInfoDtoList);
+            //if(upbitApi.myFifteenCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0));
+            if(upbitApi.myThreeCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0));
+            tradeInfoService.sell(priceInfoDtoList.get(0));
             //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
-            tradeInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
+            priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
 
         } else {
             // 새로운 데이터일 경우 시작,고가,저가에 현재가 입력
@@ -118,9 +164,11 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.add(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            upbitApi.myCondition(priceInfoDtoList);
+            //if(upbitApi.myFifteenCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0));
+            if(upbitApi.myThreeCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0));
+            tradeInfoService.sell(priceInfoDtoList.get(0));
             //upbitApi.evaluateCondition(conditionDtoList, priceInfoDtoList.get(0),"m");
-            tradeInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
+            priceInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
     }
 
@@ -131,7 +179,7 @@ public class MinutePriceInfoService {
         volumeInfoDto.setTradeDate(volumeInfoDto.getTradeDate().replaceAll("-",""));
         volumeInfoDto.setTradeTime(volumeInfoDto.getTradeTime().replaceAll(":",""));
         String marketKey = "MTV_"+volumeInfoDto.getMarket();
-        List<VolumeInfoDto> volumeInfoDtoList = tradeInfoRepository.findVolumeInfo(marketKey,0,0);
+        List<VolumeInfoDto> volumeInfoDtoList = priceInfoRepository.findVolumeInfo(marketKey,0,0);
         VolConditionDto volConditionDto = coinRepository.findVolCondition();
 
         if (volumeInfoDtoList.size() > 0 && !volumeInfoDtoList.get(0).getSequentialId().equals(volumeInfoDto.getSequentialId())) {
@@ -169,7 +217,7 @@ public class MinutePriceInfoService {
                     volumeInfoDto.setBidVolume(totalBidVolume + volumeInfoDto.getTradeVolume());
                 }
                 upbitApi.evaluateConditionPrice(volConditionDto,volumeInfoDto);
-                tradeInfoRepository.updateVolumeInfo(marketKey, volumeInfoDto);
+                priceInfoRepository.updateVolumeInfo(marketKey, volumeInfoDto);
 
             } else {
                 // 새로운 데이터일 경우 시작,고가,저가에 현재가 입력
@@ -185,7 +233,7 @@ public class MinutePriceInfoService {
                     volumeInfoDto.setBidVolume(volumeInfoDto.getTradeVolume());
                 }
                 upbitApi.evaluateConditionPrice(volConditionDto,volumeInfoDto);
-                tradeInfoRepository.insertVolumeInfo(marketKey, volumeInfoDto);
+                priceInfoRepository.insertVolumeInfo(marketKey, volumeInfoDto);
             }
         }else {
             if (("ASK").equals(volumeInfoDto.getAskBid())) {
@@ -200,7 +248,7 @@ public class MinutePriceInfoService {
                 volumeInfoDto.setBidVolume(volumeInfoDto.getTradeVolume());
             }
 
-            tradeInfoRepository.insertVolumeInfo(marketKey, volumeInfoDto);
+            priceInfoRepository.insertVolumeInfo(marketKey, volumeInfoDto);
         }
     }
 }

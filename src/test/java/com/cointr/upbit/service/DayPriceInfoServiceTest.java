@@ -3,7 +3,7 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
-import com.cointr.upbit.repository.TradeInfoRepository;
+import com.cointr.upbit.repository.PriceInfoRepository;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -23,7 +23,7 @@ class DayPriceInfoServiceTest {
     @Autowired
     private DayPriceInfoService dayPriceInfoService;
     @Autowired
-    private TradeInfoRepository tradeInfoRepository;
+    private PriceInfoRepository priceInfoRepository;
     @Autowired
     private MinutePriceInfoService minutePriceInfoService;
     @Autowired
