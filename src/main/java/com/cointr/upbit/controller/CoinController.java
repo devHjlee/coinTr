@@ -38,15 +38,15 @@ public class CoinController {
     public String start() {
         try {
 
-//            coinService.coinSaveAll();
-//            List<CoinDto> coinDtoList = coinService.findAllCoin();
-//            for (CoinDto coinDto : coinDtoList) {
+            coinService.coinSaveAll();
+            List<CoinDto> coinDtoList = coinService.findAllCoin();
+            for (CoinDto coinDto : coinDtoList) {
 //                dayPriceInfoService.dayCandleSave(coinDto.getMarket());
-//                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"15");
-//                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"60");
-//            }
-            minutePriceInfoService.minuteCandleSave("KRW-XRP","15");
-            minutePriceInfoService.minuteCandleSave("KRW-XRP","60");
+                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"15");
+                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"60");
+            }
+//            minutePriceInfoService.minuteCandleSave("KRW-XRP","15");
+//            minutePriceInfoService.minuteCandleSave("KRW-XRP","60");
             nvWebSocket.connect();
         } catch (Exception e) {
             return "FAIL";

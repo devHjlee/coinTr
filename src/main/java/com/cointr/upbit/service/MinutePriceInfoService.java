@@ -53,7 +53,7 @@ public class MinutePriceInfoService {
     public void minuteCandleSave(String market, String minute) {
         String marketKey = minute+"_"+market;
         try {
-            Thread.sleep(80);
+            Thread.sleep(90);
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -73,7 +73,6 @@ public class MinutePriceInfoService {
         String marketKey = minute+"_"+ priceInfoDto.getMarket();
         //List<ConditionDto> conditionDtoList = coinRepository.findCondition();
         List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,-1);
-        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
 
         if("15".equals(minute)) {
             int convTime = Integer.parseInt(priceInfoDto.getTradeTime().substring(2, 4));
@@ -93,6 +92,8 @@ public class MinutePriceInfoService {
         }else {
             priceInfoDto.setTradeDate(priceInfoDto.getTradeDate() + priceInfoDto.getTradeTime().substring(0, 2) + "00");
         }
+
+
         //같은 시간대에 데이터가 존재 시 고가,저가 금액 조정
         if (priceInfoDtoList.get(0).getTradeDate().equals(priceInfoDto.getTradeDate())) {
             //이전 데이터 값의 하이랑 비교해서 높으면 하이 변경, 로우 비교해서 낮으면 로우변경
@@ -108,12 +109,12 @@ public class MinutePriceInfoService {
             }
             priceInfoDto.setOpeningPrice(priceInfoDtoList.get(0).getOpeningPrice());
             priceInfoDto.setTypeA(priceInfoDtoList.get(0).getTypeA());
-            priceInfoDto.setTypeB(priceInfoDtoList.get(0).getTypeB());
-            priceInfoDto.setTypeC(priceInfoDtoList.get(0).getTypeC());
-            log.info("========="+minute);
+
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
+
             if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
+
             tradeInfoService.sell(priceInfoDtoList.get(0),minute);
             //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
             priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));

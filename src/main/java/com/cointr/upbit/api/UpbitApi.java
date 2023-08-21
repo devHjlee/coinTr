@@ -215,31 +215,23 @@ public class UpbitApi {
         }
     }
 
-    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
-        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
-            volumeInfoDto.setAlarmYn("Y");
-            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
-                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
-                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
-        }
-    }
-
+    //CCI 가 내리는 추세면 사지말자 && 100넘기면 금지 &&
+    //
     public boolean myCondition(List<PriceInfoDto> priceInfoDtoList) {
         //log.info("myCondition");
-        if ((priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
+        return (priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
                 && (priceInfoDtoList.get(1).getMacdSignal() > priceInfoDtoList.get(1).getMacd())
-                &&(priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
+                && (priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
+
                 && priceInfoDtoList.get(0).getRsi() < 70
+
                 && priceInfoDtoList.get(0).getBbAvg() <= priceInfoDtoList.get(0).getTradePrice()
-                && ((priceInfoDtoList.get(0).getAccBidVolume()/priceInfoDtoList.get(0).getAccAskVolume())*100 >= 60)
+
+                && ((priceInfoDtoList.get(0).getAccBidVolume() / priceInfoDtoList.get(0).getAccAskVolume()) * 100 >= 60)
+
                 && (priceInfoDtoList.get(0).getAccTradePrice() > 3000000000.0)
-                && !("Y").equals(priceInfoDtoList.get(0).getTypeA())
-        ) {
-            priceInfoDtoList.get(0).setTypeA("Y");
-            return true;
-        }
-        return false;
+
+                && !("Y").equals(priceInfoDtoList.get(0).getTypeA());
     }
 
     public void evaluateCondition(List<ConditionDto> conditionDtoList, PriceInfoDto data, String candleType) {
@@ -290,6 +282,17 @@ public class UpbitApi {
                     }
                 }
             }
+        }
+    }
+
+
+    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
+        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
+            volumeInfoDto.setAlarmYn("Y");
+            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
+                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
+                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
+            telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
     }
 }
