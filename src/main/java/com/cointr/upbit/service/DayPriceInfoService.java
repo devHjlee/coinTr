@@ -33,7 +33,7 @@ public class DayPriceInfoService {
         }  catch (InterruptedException e) {
             e.printStackTrace();
         }
-        List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"day",0);
+        List<PriceInfoDto> priceInfoDtoList = upbitApi.getCandle(market,"day","0");
         if(priceInfoDtoList.size() > 26) {
             upbitApi.calculateIndicators(priceInfoDtoList);
             priceInfoRepository.saveAllTradeInfo(marketKey, priceInfoDtoList);

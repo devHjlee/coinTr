@@ -25,7 +25,6 @@ public class NvWebSocket {
     private final CoinService coinService;
     private final DayPriceInfoService dayPriceInfoService;
     private final MinutePriceInfoService minutePriceInfoService;
-    private final TelegramMessageProcessor telegramMessageProcessor;
     private static final String SERVER = "wss://api.upbit.com/websocket/v1";
     private static final int TIMEOUT = 5000;
     private enum WsStatus{
@@ -94,9 +93,10 @@ public class NvWebSocket {
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                                 .create()
                                 .fromJson(jsonObject, PriceInfoDto.class);
-                        //log.info(jsonObject.toString());
-                        dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
-                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto);
+
+                        //dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
+                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto,"15");
+                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto,"60");
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {
@@ -106,13 +106,6 @@ public class NvWebSocket {
                     public void onDisconnected(WebSocket websocket,
                                                WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame,
                                                boolean closedByServer) throws WebSocketException, IOException {
-//                        log.info("Disconnect");
-//                        StringBuilder message = new StringBuilder(socketNum + "번 연결이 끊어졌습니다.");
-//                        for(CoinDto coin : coinDtoList) {
-//                            message.append("|");
-//                            message.append(coin.getMarket());
-//                        }
-//                        telegramMessageProcessor.sendMessage("-1001813916001", message.toString());
                         tradeConnect(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {
@@ -166,13 +159,7 @@ public class NvWebSocket {
                     public void onDisconnected(WebSocket websocket,
                                                WebSocketFrame serverCloseFrame, WebSocketFrame clientCloseFrame,
                                                boolean closedByServer) throws WebSocketException, IOException {
-//                        log.info("volumeConnect Disconnect");
-//                        StringBuilder message = new StringBuilder(socketNum + "번 연결이 끊어졌습니다.");
-//                        for(CoinDto coin : coinDtoList) {
-//                            message.append("|");
-//                            message.append(coin.getMarket());
-//                        }
-//                        telegramMessageProcessor.sendMessage("-1001813916001", message.toString());
+
                         volumeConnect(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {

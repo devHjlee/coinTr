@@ -40,7 +40,7 @@ class DayPriceInfoServiceTest {
 //            fifteenTradeInfoService.minuteCandleSave(coinDto.getMarket());
 //        }
         dayPriceInfoService.dayCandleSave("KRW-ATOM");
-        minutePriceInfoService.minuteCandleSave("KRW-ATOM");
+        minutePriceInfoService.minuteCandleSave("KRW-ATOM","60");
 //        long startTime = System.nanoTime();
 //        List<TradeInfoDto> tradeInfoDtoList2 = dayTradeInfoService.findTradeInfo("KRW-BTC",0,-1);
 //        long endTime = System.nanoTime();

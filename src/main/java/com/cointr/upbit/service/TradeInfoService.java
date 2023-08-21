@@ -18,36 +18,32 @@ public class TradeInfoService {
     private final TradeInfoRepository tradeInfoRepository;
     private final TelegramMessageProcessor telegramMessageProcessor;
 
-    public void buy(PriceInfoDto priceInfoDto) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(priceInfoDto.getMarket());
+    public void buy(PriceInfoDto priceInfoDto,String minute) {
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
         tradeInfoDto.setBuyPrice(priceInfoDto.getTradePrice());
         if(tradeInfoDtoList.isEmpty()) {
 
-            tradeInfoRepository.insertBuyInfo(tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "-정보-" + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-
-
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }else if("Y".equals(tradeInfoDtoList.get(0).getSellYn())) {
 
-            tradeInfoRepository.insertBuyInfo(tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "-정보-" + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-
-
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
 
     }
 
-    public void sell(PriceInfoDto priceInfoDto) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(priceInfoDto.getMarket());
+    public void sell(PriceInfoDto priceInfoDto, String minute) {
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
         if(!tradeInfoDtoList.isEmpty() && "N".equals(tradeInfoDtoList.get(0).getSellYn())) {
             double per =  (priceInfoDto.getTradePrice() /tradeInfoDtoList.get(0).getBuyPrice()) * 100-100;
             if(per >= 1.5 || per <= -1.5) {
@@ -55,7 +51,7 @@ public class TradeInfoService {
                 tradeInfoDtoList.get(0).setSellDate(priceInfoDto.getTradeDate());
                 tradeInfoDtoList.get(0).setSellPrice(priceInfoDto.getTradePrice());
                 tradeInfoDtoList.get(0).setSellYn("Y");
-                tradeInfoRepository.updateSellInfo(tradeInfoDtoList.get(0).getMarket(), tradeInfoDtoList.get(0));
+                tradeInfoRepository.updateSellInfo(minute+"_"+tradeInfoDtoList.get(0).getMarket(), tradeInfoDtoList.get(0));
                 String message = "판매 :" + priceInfoDto.getMarket() + "\n" +
                         "-정보-" + "\n" +
                         "가격 :" + priceInfoDto.getTradePrice() + "\n" +

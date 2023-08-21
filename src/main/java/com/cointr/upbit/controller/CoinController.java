@@ -37,16 +37,13 @@ public class CoinController {
     @GetMapping("/start")
     public String start() {
         try {
-//            List<ConditionDto> conditionDtoList = coinService.findCondition();
-//            if(conditionDtoList.size() < 1) {
-//              return "조건식 먼저 추가해주세요.";
-//            }
 
             coinService.coinSaveAll();
             List<CoinDto> coinDtoList = coinService.findAllCoin();
             for (CoinDto coinDto : coinDtoList) {
                 dayPriceInfoService.dayCandleSave(coinDto.getMarket());
-                minutePriceInfoService.minuteCandleSave(coinDto.getMarket());
+                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"15");
+                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"60");
             }
             nvWebSocket.connect();
         } catch (Exception e) {
