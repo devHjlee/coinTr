@@ -110,7 +110,7 @@ public class MinutePriceInfoService {
             priceInfoDto.setTypeA(priceInfoDtoList.get(0).getTypeA());
             priceInfoDto.setTypeB(priceInfoDtoList.get(0).getTypeB());
             priceInfoDto.setTypeC(priceInfoDtoList.get(0).getTypeC());
-
+            log.info("========="+minute);
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
             if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);

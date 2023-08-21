@@ -36,30 +36,30 @@ public class NvWebSocket {
     //@PostConstruct
     public void connect() throws WebSocketException, IOException, InterruptedException {
         status = WsStatus.START;
-        List<CoinDto> markets = coinService.findAllCoin();
-        int coinCnt = (int)Math.ceil(markets.size()/10.0);
-        for(int i = 1; i <= coinCnt;i++) {
-            Thread.sleep(1000);
-            int str = i-1;
-            if(i == 1) {
-                tradeConnect(markets.subList(0,i*10),i);
-                //volumeConnect(markets.subList(0,i*10),i);
-            }else if(i == coinCnt) {
-                tradeConnect(markets.subList(str*10,markets.size()),i);
-                //volumeConnect(markets.subList(str*10,markets.size()),i);
-            }else {
-                tradeConnect(markets.subList(str*10,str*10+10),i);
-                //volumeConnect(markets.subList(str*10,str*10+10),i);
-            }
-
-        }
+//        List<CoinDto> markets = coinService.findAllCoin();
+//        int coinCnt = (int)Math.ceil(markets.size()/10.0);
+//        for(int i = 1; i <= coinCnt;i++) {
+//            Thread.sleep(1000);
+//            int str = i-1;
+//            if(i == 1) {
+//                tradeConnect(markets.subList(0,i*10),i);
+//                //volumeConnect(markets.subList(0,i*10),i);
+//            }else if(i == coinCnt) {
+//                tradeConnect(markets.subList(str*10,markets.size()),i);
+//                //volumeConnect(markets.subList(str*10,markets.size()),i);
+//            }else {
+//                tradeConnect(markets.subList(str*10,str*10+10),i);
+//                //volumeConnect(markets.subList(str*10,str*10+10),i);
+//            }
+//
+//        }
 
         //TEST
-//        CoinDto coin = new CoinDto();
-//        coin.setMarket("KRW-ATOM");
-//        List<CoinDto> testCoin = new ArrayList<>();
-//        testCoin.add(coin);
-//        tradeConnect(testCoin,0);
+        CoinDto coin = new CoinDto();
+        coin.setMarket("KRW-XRP");
+        List<CoinDto> testCoin = new ArrayList<>();
+        testCoin.add(coin);
+        tradeConnect(testCoin,0);
 //        volumeConnect(testCoin,0);
     }
 
@@ -86,14 +86,13 @@ public class NvWebSocket {
                 .addListener(new WebSocketAdapter() {
 
                     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
-                        //log.info("Socket : "+socketNum+":"+socketNum+":"+socketNum+":"+socketNum+":"+socketNum+":"+socketNum);
                         JsonObject jsonObject = new Gson().fromJson(new String(binary), JsonObject.class);
                         jsonObject.addProperty("market",jsonObject.get("code").getAsString());
                         PriceInfoDto priceInfoDto = new GsonBuilder()
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                                 .create()
                                 .fromJson(jsonObject, PriceInfoDto.class);
-
+                        log.info(jsonObject.toString());
                         //dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
                         minutePriceInfoService.updateTechnicalIndicator(priceInfoDto,"15");
                         minutePriceInfoService.updateTechnicalIndicator(priceInfoDto,"60");

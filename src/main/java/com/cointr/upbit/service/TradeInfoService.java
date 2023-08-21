@@ -19,7 +19,7 @@ public class TradeInfoService {
     private final TelegramMessageProcessor telegramMessageProcessor;
 
     public void buy(PriceInfoDto priceInfoDto,String minute) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_TR_"+priceInfoDto.getMarket());
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
@@ -30,20 +30,20 @@ public class TradeInfoService {
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "-정보-" + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
+            telegramMessageProcessor.sendMessage("6171495764", message);
         }else if("Y".equals(tradeInfoDtoList.get(0).getSellYn())) {
 
             tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "-정보-" + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
+            telegramMessageProcessor.sendMessage("6171495764", message);
         }
 
     }
 
     public void sell(PriceInfoDto priceInfoDto, String minute) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_TR_"+priceInfoDto.getMarket());
         if(!tradeInfoDtoList.isEmpty() && "N".equals(tradeInfoDtoList.get(0).getSellYn())) {
             double per =  (priceInfoDto.getTradePrice() /tradeInfoDtoList.get(0).getBuyPrice()) * 100-100;
             if(per >= 1.5 || per <= -1.5) {
@@ -57,7 +57,7 @@ public class TradeInfoService {
                         "가격 :" + priceInfoDto.getTradePrice() + "\n" +
                         "수익 :" + per;
 
-                telegramMessageProcessor.sendMessage("-1001813916001", message);
+                telegramMessageProcessor.sendMessage("6171495764", message);
             }
         }
     }
