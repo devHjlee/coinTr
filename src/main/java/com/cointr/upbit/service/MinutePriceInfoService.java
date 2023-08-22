@@ -70,6 +70,8 @@ public class MinutePriceInfoService {
      * @param priceInfoDto
      */
     public void updateTechnicalIndicator(PriceInfoDto priceInfoDto, String minute) {
+        //todo 200개일때와 60개일때 시간과 데이터정합성 비교
+        long startTime = System.nanoTime();
         String marketKey = minute+"_"+ priceInfoDto.getMarket();
         //List<ConditionDto> conditionDtoList = coinRepository.findCondition();
         List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,-1);
@@ -132,6 +134,12 @@ public class MinutePriceInfoService {
             //upbitApi.evaluateCondition(conditionDtoList, priceInfoDtoList.get(0),"m");
             priceInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
+        long endTime = System.nanoTime();
+
+        // 실행 시간 계산 및 출력
+        long elapsedTime = endTime - startTime;
+        double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000.0;
+        System.out.println("updateTechnicalIndicator 실행 시간: " + elapsedTimeInSeconds + "초");
     }
 
     /**

@@ -59,18 +59,7 @@ public class TradeInfoService {
 
     public void sell(PriceInfoDto priceInfoDto, String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
-        tradeInfoDtoList.get(0).setCci(priceInfoDto.getCci());
-        tradeInfoDtoList.get(0).setBbAvg(priceInfoDto.getBbAvg());
-        tradeInfoDtoList.get(0).setBbUp(priceInfoDto.getBbUp());
-        tradeInfoDtoList.get(0).setBbDown(priceInfoDto.getBbDown());
-        tradeInfoDtoList.get(0).setRsi(priceInfoDto.getRsi());
-        tradeInfoDtoList.get(0).setMacd(priceInfoDto.getMacd());
-        tradeInfoDtoList.get(0).setMacdEmaShort(priceInfoDto.getMacdEmaShort());
-        tradeInfoDtoList.get(0).setMacdEmaLong(priceInfoDto.getMacdEmaLong());
-        tradeInfoDtoList.get(0).setMacdSignal(priceInfoDto.getMacdSignal());
-        tradeInfoDtoList.get(0).setMacdSignalHistogram(priceInfoDto.getMacdSignalHistogram());
-        tradeInfoDtoList.get(0).setAdx(priceInfoDto.getAdx());
-        tradeInfoDtoList.get(0).setPSar(priceInfoDto.getPSar());
+
         if(!tradeInfoDtoList.isEmpty() && "N".equals(tradeInfoDtoList.get(0).getSellYn())) {
             double per =  (priceInfoDto.getTradePrice() /tradeInfoDtoList.get(0).getBuyPrice()) * 100-100;
             if(per >= 1.5 || per <= -1.5) {

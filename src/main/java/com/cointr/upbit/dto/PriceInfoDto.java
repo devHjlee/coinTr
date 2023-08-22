@@ -116,6 +116,13 @@ public class PriceInfoDto {
     @Comment("Stochastic SlowK")
     double slowD;
 
+    @Comment("단순 MA 5")
+    double sma5;
+
+    @Comment("단순 MA 60")
+    double sma60;
+
+
     @Comment("Type A")
     String typeA = "N";
 

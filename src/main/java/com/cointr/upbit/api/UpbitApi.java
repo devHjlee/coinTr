@@ -92,6 +92,7 @@ public class UpbitApi {
             getPSar(priceInfoDtoList);
             getAroon(priceInfoDtoList);
             getStochastics(priceInfoDtoList);
+            getSMA(priceInfoDtoList);
             priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
         }catch (Exception e) {
             log.info("calculateIndicators Exception :"+e.getMessage());
@@ -198,7 +199,7 @@ public class UpbitApi {
      * @param priceInfoDtoList
      */
     private void getStochastics(List<PriceInfoDto> priceInfoDtoList) {
-        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate));
+        //priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate)); //0822 lhj
         StochasticsOscilator stochasticsOscilator = new StochasticsOscilator();
         int n = 5; // Fast %K를 계산하는 데 사용되는 기간
         int m = 3; // Slow %K를 계산하는 데 사용되는 기간
@@ -213,6 +214,28 @@ public class UpbitApi {
             priceInfoDtoList.get(i).setSlowK(slowK);
             priceInfoDtoList.get(i).setSlowD(slowD);
         }
+    }
+
+    private void getSMA(List<PriceInfoDto> priceInfoDtoList) {
+        double[] prices = priceInfoDtoList.stream()
+                .mapToDouble(PriceInfoDto::getTradePrice)
+                .toArray();
+        SimpleMovingAverage simpleMovingAverage = new SimpleMovingAverage();
+        double[] sma5 = new double[priceInfoDtoList.size()];
+        double[] sma60 = new double[priceInfoDtoList.size()];
+        try {
+            sma5 = simpleMovingAverage.calculate(prices,5).getSMA();
+            sma60 = simpleMovingAverage.calculate(prices,60).getSMA();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        for (int i = 0; i < priceInfoDtoList.size(); i++) {
+            PriceInfoDto priceInfoDto = priceInfoDtoList.get(i);
+            priceInfoDto.setSma5(sma5[i]);
+            priceInfoDto.setSma60(sma60[i]);
+        }
+
     }
 
     //CCI 가 내리는 추세면 사지말자 && 100넘기면 금지 &&
