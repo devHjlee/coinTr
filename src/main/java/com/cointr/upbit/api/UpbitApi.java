@@ -238,6 +238,20 @@ public class UpbitApi {
 
     }
 
+    public boolean smaCondition(List<PriceInfoDto> priceInfoDtoList) {
+        int trueCount = 0;
+        int falseCount = 0;
+
+        for (int i = 4; i > -1; i--) {
+            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) { //5 4, 4 3, 3 2, 2 1, 1 0
+                trueCount++;
+            } else {
+                falseCount++;
+            }
+        }
+        return trueCount > falseCount && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5() && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5();
+    }
+
     //CCI 가 내리는 추세면 사지말자 && 100넘기면 금지 &&
     //
     public boolean myCondition(List<PriceInfoDto> priceInfoDtoList) {

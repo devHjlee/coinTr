@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -20,7 +21,9 @@ public class TradeInfoService {
 
     public void buy(PriceInfoDto priceInfoDto,String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
-        priceInfoDto.setTypeA("Y");
+        if(!Objects.equals(minute, "1H")) {
+            priceInfoDto.setTypeA("Y");
+        }
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());

@@ -16,8 +16,8 @@ public class TelegramBot implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-        botsApi.registerBot(telegramMessageProcessor);
+//        TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+//        botsApi.registerBot(telegramMessageProcessor);
     }
 }
 

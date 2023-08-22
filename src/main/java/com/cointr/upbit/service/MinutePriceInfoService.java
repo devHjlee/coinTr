@@ -70,11 +70,11 @@ public class MinutePriceInfoService {
      * @param priceInfoDto
      */
     public void updateTechnicalIndicator(PriceInfoDto priceInfoDto, String minute) {
-        //todo 200개일때와 60개일때 시간과 데이터정합성 비교
-        long startTime = System.nanoTime();
+
+//        long startTime = System.nanoTime();
         String marketKey = minute+"_"+ priceInfoDto.getMarket();
         //List<ConditionDto> conditionDtoList = coinRepository.findCondition();
-        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,-1);
+        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,200);
 
         if("15".equals(minute)) {
             int convTime = Integer.parseInt(priceInfoDto.getTradeTime().substring(2, 4));
@@ -115,10 +115,13 @@ public class MinutePriceInfoService {
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
 
-            if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
-
-            tradeInfoService.sell(priceInfoDtoList.get(0),minute);
+            if("60".equals(minute)) {
+                if (upbitApi.smaCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0), "1H");
+                if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
+                tradeInfoService.sell(priceInfoDtoList.get(0),minute);
+            }
             //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
+
             priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
 
         } else {
@@ -129,17 +132,22 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.add(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
+
+            if("60".equals(minute)) {
+                if (upbitApi.smaCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0), "1H");
+            }
             if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
             tradeInfoService.sell(priceInfoDtoList.get(0),minute);
+
             //upbitApi.evaluateCondition(conditionDtoList, priceInfoDtoList.get(0),"m");
             priceInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
-        long endTime = System.nanoTime();
-
-        // 실행 시간 계산 및 출력
-        long elapsedTime = endTime - startTime;
-        double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000.0;
-        System.out.println("updateTechnicalIndicator 실행 시간: " + elapsedTimeInSeconds + "초");
+//        long endTime = System.nanoTime();
+//
+//        // 실행 시간 계산 및 출력
+//        long elapsedTime = endTime - startTime;
+//        double elapsedTimeInSeconds = (double) elapsedTime / 1_000_000_000.0;
+//        System.out.println("updateTechnicalIndicator 실행 시간: " + elapsedTimeInSeconds + "초");
     }
 
     /**
