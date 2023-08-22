@@ -42,7 +42,7 @@ public class TradeInfoService {
 
             tradeInfoRepository.insertBuyInfo("TR_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
-                    "-정보-" + "\n" +
+                    "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
             telegramMessageProcessor.sendMessage("-1001813916001", message);
 
@@ -50,7 +50,7 @@ public class TradeInfoService {
 
             tradeInfoRepository.insertBuyInfo("TR_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
-                    "-정보-" + "\n" +
+                    "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
             telegramMessageProcessor.sendMessage("-1001813916001", message);
         }
@@ -80,7 +80,7 @@ public class TradeInfoService {
                 tradeInfoDtoList.get(0).setSellYn("Y");
                 tradeInfoRepository.updateSellInfo("TR_"+minute+"_"+tradeInfoDtoList.get(0).getMarket(), tradeInfoDtoList.get(0));
                 String message = "판매 :" + priceInfoDto.getMarket() + "\n" +
-                        "-정보-" + "\n" +
+                        "캔들 :"+minute + "\n" +
                         "가격 :" + priceInfoDto.getTradePrice() + "\n" +
                         "수익 :" + per;
 
