@@ -64,6 +64,7 @@ public class NvWebSocket {
     }
 
     public void tradeConnect(List<CoinDto> coinDtoList,int socketNum) throws IOException, WebSocketException {
+        log.info("Connect:"+socketNum);
         JsonArray root = new JsonArray();
         JsonObject type = new JsonObject();
         JsonArray codesObj = new JsonArray();
@@ -88,7 +89,7 @@ public class NvWebSocket {
                     public void onBinaryMessage(WebSocket websocket, byte[] binary) {
                         JsonObject jsonObject = new Gson().fromJson(new String(binary), JsonObject.class);
                         jsonObject.addProperty("market",jsonObject.get("code").getAsString());
-                        PriceInfoDto priceInfoDto15 = new GsonBuilder()
+                        PriceInfoDto priceInfoDto240 = new GsonBuilder()
                                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                                 .create()
                                 .fromJson(jsonObject, PriceInfoDto.class);
@@ -100,7 +101,7 @@ public class NvWebSocket {
                         //dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
                         //minutePriceInfoService.updateTechnicalIndicator(priceInfoDto15,"15");
                         minutePriceInfoService.updateTechnicalIndicator(priceInfoDto60,"60");
-                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto60,"240");
+                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto240,"240");
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {
@@ -113,6 +114,7 @@ public class NvWebSocket {
                         tradeConnect(coinDtoList,socketNum);
                     }
                     public void onError(WebSocket websocket, WebSocketException cause) throws WebSocketException, IOException {
+                        tradeConnect(coinDtoList,socketNum);
                         log.info("Error::"+cause.toString());
                     }
                 })

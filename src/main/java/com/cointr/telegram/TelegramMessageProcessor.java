@@ -27,7 +27,7 @@ public class TelegramMessageProcessor extends TelegramLongPollingBot {
                 //CoinIndex coinIndex = coinService.getRSI(messageText);
                 //sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
             }else {
-                sendMessage("-1001813916001", "Received: " + messageText);
+                sendMessage("6171495764", "Received: " + messageText);
             }
         }
     }

@@ -37,9 +37,7 @@ public class TradeInfoService {
     }
     private void buy(PriceInfoDto priceInfoDto,String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
-        if(!Objects.equals(minute, "1H")) {
-            priceInfoDto.setTypeA("Y");
-        }
+        priceInfoDto.setTypeA("Y");
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
@@ -51,7 +49,7 @@ public class TradeInfoService {
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
+            telegramMessageProcessor.sendMessage("6171495764", message);
 
         }else if("Y".equals(tradeInfoDtoList.get(0).getSellYn())) {
 
@@ -59,7 +57,7 @@ public class TradeInfoService {
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
+            telegramMessageProcessor.sendMessage("6171495764", message);
         }
 
     }

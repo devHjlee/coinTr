@@ -242,17 +242,44 @@ public class UpbitApi {
     }
 
     public boolean smaCondition(List<PriceInfoDto> priceInfoDtoList) {
-        int trueCount = 0;
-        int falseCount = 0;
+        boolean compare = true;
 
-        for (int i = 4; i > -1; i--) {
-            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) { //5 4, 4 3, 3 2, 2 1, 1 0
-                trueCount++;
-            } else {
-                falseCount++;
+        if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
+
+        // 1 종가는 5선 보다 위
+        if(priceInfoDtoList.get(1).getSma5() >= priceInfoDtoList.get(1).getTradePrice()) return false;
+
+        // 1 종가는 2종가 보다 위
+        if(priceInfoDtoList.get(2).getTradePrice() > priceInfoDtoList.get(1).getTradePrice()) return false;
+
+        //120 > 60 > 5 선
+        for(int i = 8; i > 0; i--) {
+            if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
+                compare = false;
+                break;
             }
         }
-        return trueCount > falseCount && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5() && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5();
+
+        //8~2 우하향
+        for(int i = 8; i > 2; i--) {
+            if (!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i - 1).getSma120()
+                    && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i - 1).getSma60()
+                    && priceInfoDtoList.get(i).getSma5() > priceInfoDtoList.get(i - 1).getSma5())) {
+                compare = false;
+                break;
+            }
+        }
+
+        //5선 기준 8~2 까지 종가가 아래
+        for(int i = 8; i > 1; i--) {
+
+            if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) {
+                compare = false;
+                break;
+            }
+        }
+        if(compare) log.info("Success");
+        return compare;
     }
 
     public boolean sma240Condition(List<PriceInfoDto> priceInfoDtoList) {
@@ -261,14 +288,14 @@ public class UpbitApi {
         int trueCount120 = 0;
         int falseCount120 = 0;
         for (int i = 4; i > -1; i--) {
-            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) { //5 4, 4 3, 3 2, 2 1, 1 0
+            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) {
                 trueCount60++;
             } else {
                 falseCount60++;
             }
         }
         for (int i = 4; i > -1; i--) {
-            if (priceInfoDtoList.get(i+1).getSma120() > priceInfoDtoList.get(i).getSma120()) { //5 4, 4 3, 3 2, 2 1, 1 0
+            if (priceInfoDtoList.get(i+1).getSma120() > priceInfoDtoList.get(i).getSma120()) {
                 trueCount120++;
             } else {
                 falseCount120++;
@@ -321,7 +348,7 @@ public class UpbitApi {
                             message.append("CCI :").append(data.getCci()).append("\n");
 
 
-                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
                         } else if ("B".equals(conditionDto.getConditionType()) && !data.getTypeB().equals("Y")) {
                             data.setTypeB("Y");
                             message.append("Coin :").append(data.getMarket()).append("\n");
@@ -332,7 +359,7 @@ public class UpbitApi {
                             message.append("ADX :").append(data.getAdx()).append("\n");
                             message.append("CCI :").append(data.getCci()).append("\n");
 
-                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
                         } else if ("C".equals(conditionDto.getConditionType()) && !data.getTypeC().equals("Y")) {
                             data.setTypeC("Y");
                             message.append("Coin :").append(data.getMarket()).append("\n");
@@ -343,7 +370,7 @@ public class UpbitApi {
                             message.append("ADX :").append(data.getAdx()).append("\n");
                             message.append("CCI :").append(data.getCci()).append("\n");
 
-                            telegramMessageProcessor.sendMessage("-1001813916001", String.valueOf(message));
+                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
                         }
                     }
                 }
