@@ -100,7 +100,7 @@ public class NvWebSocket {
                         //dayPriceInfoService.updateTechnicalIndicator(priceInfoDto);
                         //minutePriceInfoService.updateTechnicalIndicator(priceInfoDto15,"15");
                         minutePriceInfoService.updateTechnicalIndicator(priceInfoDto60,"60");
-                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto60,"120");
+                        minutePriceInfoService.updateTechnicalIndicator(priceInfoDto60,"240");
                     }
 
                     public void onTextMessage(WebSocket websocket, String message) {
