@@ -42,7 +42,7 @@ public class CoinController {
             List<CoinDto> coinDtoList = coinService.findAllCoin();
             for (CoinDto coinDto : coinDtoList) {
 //                dayPriceInfoService.dayCandleSave(coinDto.getMarket());
-                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"15");
+                minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"240");
                 minutePriceInfoService.minuteCandleSave(coinDto.getMarket(),"60");
             }
 //            minutePriceInfoService.minuteCandleSave("KRW-XRP","15");

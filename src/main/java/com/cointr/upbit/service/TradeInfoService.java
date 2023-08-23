@@ -29,7 +29,7 @@ public class TradeInfoService {
             //if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
         }
 
-        if("120".equals(minute) && upbitApi.sma120Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute);
+        if("240".equals(minute) && upbitApi.sma240Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute);
 
         //SELL
         sell(priceInfoDtoList.get(0),minute);

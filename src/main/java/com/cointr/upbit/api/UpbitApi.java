@@ -225,9 +225,9 @@ public class UpbitApi {
         double[] sma60 = new double[priceInfoDtoList.size()];
         double[] sma120 = new double[priceInfoDtoList.size()];
         try {
-            sma5 = simpleMovingAverage.calculate(prices,5).getSMA();
-            sma60 = simpleMovingAverage.calculate(prices,60).getSMA();
-            sma120 = simpleMovingAverage.calculate(prices,120).getSMA();
+            if(prices.length > 5) sma5 = simpleMovingAverage.calculate(prices,5).getSMA();
+            if(prices.length > 60) sma60 = simpleMovingAverage.calculate(prices,60).getSMA();
+            if(prices.length > 120) sma120 = simpleMovingAverage.calculate(prices,120).getSMA();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -255,7 +255,7 @@ public class UpbitApi {
         return trueCount > falseCount && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5() && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5();
     }
 
-    public boolean sma120Condition(List<PriceInfoDto> priceInfoDtoList) {
+    public boolean sma240Condition(List<PriceInfoDto> priceInfoDtoList) {
         int trueCount60 = 0;
         int falseCount60 = 0;
         int trueCount120 = 0;
