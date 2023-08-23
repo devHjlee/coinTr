@@ -122,6 +122,8 @@ public class PriceInfoDto {
     @Comment("단순 MA 60")
     double sma60;
 
+    @Comment("단순 MA 120")
+    double sma120;
 
     @Comment("Type A")
     String typeA = "N";

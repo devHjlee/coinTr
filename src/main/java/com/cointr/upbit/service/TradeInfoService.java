@@ -1,6 +1,7 @@
 package com.cointr.upbit.service;
 
 import com.cointr.telegram.TelegramMessageProcessor;
+import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.PriceInfoDto;
 import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.TradeInfoRepository;
@@ -18,7 +19,22 @@ public class TradeInfoService {
 
     private final TradeInfoRepository tradeInfoRepository;
     private final TelegramMessageProcessor telegramMessageProcessor;
+    private final UpbitApi upbitApi;
 
+    public void condition(List<PriceInfoDto> priceInfoDtoList, String minute) {
+
+        //BUY
+        if("60".equals(minute)) {
+            if(upbitApi.smaCondition(priceInfoDtoList)) buy(priceInfoDtoList.get(0), minute);
+            //if(upbitApi.myCondition(priceInfoDtoList)) tradeInfoService.buy(priceInfoDtoList.get(0),minute);
+        }
+
+        if("120".equals(minute) && upbitApi.sma120Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute);
+
+        //SELL
+        sell(priceInfoDtoList.get(0),minute);
+        //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
+    }
     public void buy(PriceInfoDto priceInfoDto,String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
         if(!Objects.equals(minute, "1H")) {
@@ -28,18 +44,6 @@ public class TradeInfoService {
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
         tradeInfoDto.setBuyPrice(priceInfoDto.getTradePrice());
-        tradeInfoDto.setCci(priceInfoDto.getCci());
-        tradeInfoDto.setBbAvg(priceInfoDto.getBbAvg());
-        tradeInfoDto.setBbUp(priceInfoDto.getBbUp());
-        tradeInfoDto.setBbDown(priceInfoDto.getBbDown());
-        tradeInfoDto.setRsi(priceInfoDto.getRsi());
-        tradeInfoDto.setMacd(priceInfoDto.getMacd());
-        tradeInfoDto.setMacdEmaShort(priceInfoDto.getMacdEmaShort());
-        tradeInfoDto.setMacdEmaLong(priceInfoDto.getMacdEmaLong());
-        tradeInfoDto.setMacdSignal(priceInfoDto.getMacdSignal());
-        tradeInfoDto.setMacdSignalHistogram(priceInfoDto.getMacdSignalHistogram());
-        tradeInfoDto.setAdx(priceInfoDto.getAdx());
-        tradeInfoDto.setPSar(priceInfoDto.getPSar());
 
         if(tradeInfoDtoList.isEmpty()) {
 

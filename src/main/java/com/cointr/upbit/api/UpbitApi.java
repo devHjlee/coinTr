@@ -223,9 +223,11 @@ public class UpbitApi {
         SimpleMovingAverage simpleMovingAverage = new SimpleMovingAverage();
         double[] sma5 = new double[priceInfoDtoList.size()];
         double[] sma60 = new double[priceInfoDtoList.size()];
+        double[] sma120 = new double[priceInfoDtoList.size()];
         try {
             sma5 = simpleMovingAverage.calculate(prices,5).getSMA();
             sma60 = simpleMovingAverage.calculate(prices,60).getSMA();
+            sma120 = simpleMovingAverage.calculate(prices,120).getSMA();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -234,6 +236,7 @@ public class UpbitApi {
             PriceInfoDto priceInfoDto = priceInfoDtoList.get(i);
             priceInfoDto.setSma5(sma5[i]);
             priceInfoDto.setSma60(sma60[i]);
+            priceInfoDto.setSma120(sma120[i]);
         }
 
     }
@@ -250,6 +253,32 @@ public class UpbitApi {
             }
         }
         return trueCount > falseCount && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5() && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5();
+    }
+
+    public boolean sma120Condition(List<PriceInfoDto> priceInfoDtoList) {
+        int trueCount60 = 0;
+        int falseCount60 = 0;
+        int trueCount120 = 0;
+        int falseCount120 = 0;
+        for (int i = 4; i > -1; i--) {
+            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) { //5 4, 4 3, 3 2, 2 1, 1 0
+                trueCount60++;
+            } else {
+                falseCount60++;
+            }
+        }
+        for (int i = 4; i > -1; i--) {
+            if (priceInfoDtoList.get(i+1).getSma120() > priceInfoDtoList.get(i).getSma120()) { //5 4, 4 3, 3 2, 2 1, 1 0
+                trueCount120++;
+            } else {
+                falseCount120++;
+            }
+        }
+        return trueCount60 > falseCount60 && trueCount120 > falseCount120
+                && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5()
+                && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5()
+                && priceInfoDtoList.get(0).getSma120() < priceInfoDtoList.get(0).getSma5()
+                && priceInfoDtoList.get(1).getSma120() > priceInfoDtoList.get(1).getSma5();
     }
 
     //CCI 가 내리는 추세면 사지말자 && 100넘기면 금지 &&
@@ -323,13 +352,13 @@ public class UpbitApi {
     }
 
 
-    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
-        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
-            volumeInfoDto.setAlarmYn("Y");
-            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
-                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
-                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
-            telegramMessageProcessor.sendMessage("-1001813916001", message);
-        }
-    }
+//    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
+//        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
+//            volumeInfoDto.setAlarmYn("Y");
+//            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
+//                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
+//                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
+//            telegramMessageProcessor.sendMessage("-1001813916001", message);
+//        }
+//    }
 }
