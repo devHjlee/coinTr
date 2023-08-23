@@ -35,7 +35,7 @@ public class TradeInfoService {
         sell(priceInfoDtoList.get(0),minute);
         //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
     }
-    public void buy(PriceInfoDto priceInfoDto,String minute) {
+    private void buy(PriceInfoDto priceInfoDto,String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
         if(!Objects.equals(minute, "1H")) {
             priceInfoDto.setTypeA("Y");
@@ -64,7 +64,7 @@ public class TradeInfoService {
 
     }
 
-    public void sell(PriceInfoDto priceInfoDto, String minute) {
+    private void sell(PriceInfoDto priceInfoDto, String minute) {
         List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
 
         if(!tradeInfoDtoList.isEmpty() && "N".equals(tradeInfoDtoList.get(0).getSellYn())) {
