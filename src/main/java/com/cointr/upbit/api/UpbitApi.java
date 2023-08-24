@@ -255,8 +255,7 @@ public class UpbitApi {
         //120 > 60 > 5 선
         for(int i = 8; i > 0; i--) {
             if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
-                compare = false;
-                break;
+                return false;
             }
         }
 
@@ -265,8 +264,7 @@ public class UpbitApi {
             if (!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i - 1).getSma120()
                     && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i - 1).getSma60()
                     && priceInfoDtoList.get(i).getSma5() > priceInfoDtoList.get(i - 1).getSma5())) {
-                compare = false;
-                break;
+                return false;
             }
         }
 
@@ -274,11 +272,41 @@ public class UpbitApi {
         for(int i = 8; i > 1; i--) {
 
             if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) {
-                compare = false;
-                break;
+                return false;
             }
         }
-        if(compare) log.info("Success");
+        log.info("Success");
+        return compare;
+    }
+
+    public boolean smaCondition2(List<PriceInfoDto> priceInfoDtoList) {
+        boolean compare = true;
+
+        if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
+
+        if(priceInfoDtoList.get(1).getHighPrice() >= priceInfoDtoList.get(0).getTradePrice()) return false;
+
+        //120 > 60 > 5 선
+        for(int i = 7; i > 0; i--) {
+            System.out.println(priceInfoDtoList.get(i).getSma120() + " ::" + priceInfoDtoList.get(i).getSma60() + "::"+priceInfoDtoList.get(i).getSma5() );
+            if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
+                return false;
+            }
+        }
+
+        //7~2 우하향
+        for(int i = 7; i > 1; i--) {
+            if (!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i - 1).getSma120()
+                    && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i - 1).getSma60()
+                    && priceInfoDtoList.get(i).getSma5() > priceInfoDtoList.get(i - 1).getSma5())) {
+                return false;
+            }
+        }
+        //5선 기준 7~1 까지 종가가 아래
+        for(int i = 7; i > 0; i--) {
+            if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) return false;
+        }
+
         return compare;
     }
 

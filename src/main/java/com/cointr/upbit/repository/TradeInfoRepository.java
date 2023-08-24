@@ -14,15 +14,15 @@ public class TradeInfoRepository {
 
     private final RedisTemplate<String, TradeInfoDto> redisTemplate;
 
-    public List<TradeInfoDto> findTradeInfo(String market) {
-        return redisTemplate.opsForList().range(market,0,0);
+    public List<TradeInfoDto> findTradeInfo(String key) {
+        return redisTemplate.opsForList().range(key,0,0);
     }
 
-    public void insertBuyInfo(String market, TradeInfoDto tradeInfoDto) {
-        redisTemplate.opsForList().leftPush(market, tradeInfoDto);
+    public void insertBuyInfo(String key, TradeInfoDto tradeInfoDto) {
+        redisTemplate.opsForList().leftPush(key, tradeInfoDto);
     }
 
-    public void updateSellInfo(String market, TradeInfoDto tradeInfoDto) {
-        redisTemplate.opsForList().set(market, 0, tradeInfoDto);
+    public void updateSellInfo(String key, TradeInfoDto tradeInfoDto) {
+        redisTemplate.opsForList().set(key, 0, tradeInfoDto);
     }
 }
