@@ -94,7 +94,7 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoService.condition(priceInfoDtoList,minute);
+            if("N".equals(priceInfoDtoList.get(0).getTypeA())||"N".equals(priceInfoDtoList.get(0).getTypeB()) ||"N".equals(priceInfoDtoList.get(0).getTypeC())) tradeInfoService.condition(priceInfoDtoList,minute);
             priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
 
         } else {

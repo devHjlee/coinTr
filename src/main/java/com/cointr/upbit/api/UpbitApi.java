@@ -241,8 +241,14 @@ public class UpbitApi {
 
     }
 
+    public boolean lowPrice(List<PriceInfoDto> priceInfoDtoList) {
+        double firstTradePrice = priceInfoDtoList.get(0).getTradePrice();
+        return priceInfoDtoList.stream()
+                .skip(1)
+                .allMatch(dto -> dto.getTradePrice() > firstTradePrice);
+    }
+
     public boolean smaCondition(List<PriceInfoDto> priceInfoDtoList) {
-        boolean compare = true;
 
         if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
 
@@ -252,8 +258,10 @@ public class UpbitApi {
         // 1 종가는 2종가 보다 위
         if(priceInfoDtoList.get(2).getTradePrice() > priceInfoDtoList.get(1).getTradePrice()) return false;
 
+        if(priceInfoDtoList.get(30).getSma5() <= priceInfoDtoList.get(1).getSma5()) return false;
+
         //120 > 60 > 5 선
-        for(int i = 8; i > 0; i--) {
+        for(int i = 30; i > 0; i--) {
             if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
                 return false;
             }
@@ -276,11 +284,10 @@ public class UpbitApi {
             }
         }
         log.info("Success");
-        return compare;
+        return true;
     }
 
     public boolean smaCondition2(List<PriceInfoDto> priceInfoDtoList) {
-        boolean compare = true;
 
         if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
 
@@ -288,7 +295,6 @@ public class UpbitApi {
 
         //120 > 60 > 5 선
         for(int i = 7; i > 0; i--) {
-            System.out.println(priceInfoDtoList.get(i).getSma120() + " ::" + priceInfoDtoList.get(i).getSma60() + "::"+priceInfoDtoList.get(i).getSma5() );
             if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
                 return false;
             }
@@ -307,7 +313,7 @@ public class UpbitApi {
             if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) return false;
         }
 
-        return compare;
+        return true;
     }
 
     public boolean sma240Condition(List<PriceInfoDto> priceInfoDtoList) {

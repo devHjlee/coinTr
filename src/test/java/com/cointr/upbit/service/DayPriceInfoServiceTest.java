@@ -37,6 +37,27 @@ class DayPriceInfoServiceTest {
     private UpbitApi upbitApi;
     @Test
     void 코인전체저장() {
+        List<PriceInfoDto> priceInfoDtoList = new ArrayList<>();
+
+
+        priceInfoDtoList = priceInfoRepository.findTradeInfo("60_KRW-CRO",0,-1);
+        double firstTradePrice = 69.9;
+        boolean rs = priceInfoDtoList.stream()
+                .skip(1)
+                .allMatch(dto -> dto.getTradePrice() > firstTradePrice);
+
+//        double firstTradePrice = priceInfoDtoList.get(0).getTradePrice();
+//        boolean rs= true;
+//
+//        for (int i = 1; i < priceInfoDtoList.size(); i++) {
+//            double currentTradePrice = priceInfoDtoList.get(i).getTradePrice();
+//            if (currentTradePrice < firstTradePrice) {
+//                // 만약 현재 값이 첫 번째 값보다 작다면 true 반환
+//                rs = false;
+//                break;
+//            }
+//        }
+        System.out.println(rs);
 //        minutePriceInfoService.minuteCandleSave("KRW-XTZ","60");
 //        List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo("60_KRW-XTZ",0,-1);
 //        System.out.println(upbitApi.smaCondition(priceInfoDtoList));
@@ -80,7 +101,7 @@ class DayPriceInfoServiceTest {
 
         //120 > 60 > 5 선
         for(int i = 7; i > 0; i--) {
-            System.out.println(priceInfoDtoList.get(i).getSma120() + " ::" + priceInfoDtoList.get(i).getSma60() + "::"+priceInfoDtoList.get(i).getSma5() );
+
             if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
 //                compare = false;
 //                break;
