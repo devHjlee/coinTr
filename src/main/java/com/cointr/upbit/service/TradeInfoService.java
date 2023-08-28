@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,25 +23,23 @@ public class TradeInfoService {
     private final UpbitApi upbitApi;
 
     public void condition(List<PriceInfoDto> priceInfoDtoList, String minute) {
-
         //BUY
-        if("60".equals(minute)) {
-            if(upbitApi.smaCondition(priceInfoDtoList)) buy(priceInfoDtoList.get(0), minute,"A");
-            if(upbitApi.smaCondition2(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute,"B");
-            if(upbitApi.lowPrice(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute,"C");
-        }
+        if("60".equals(minute) && upbitApi.smaCondition(priceInfoDtoList)) buy(priceInfoDtoList.get(0), minute);
+        if("240".equals(minute) && upbitApi.sma240Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute);
 
-        if("240".equals(minute) && upbitApi.sma240Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute,"A");
-
-        //SELL
-        //sell(priceInfoDtoList.get(0),minute);
-        //upbitApi.evaluateCondition(conditionDtoList,tradeInfoDtoList.get(0),"m");
     }
-    private void buy(PriceInfoDto priceInfoDto,String minute,String key) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(key+"_"+minute+"_"+priceInfoDto.getMarket());
-        if("A".equals(key))priceInfoDto.setTypeA("Y");
-        if("B".equals(key))priceInfoDto.setTypeB("Y");
-        if("C".equals(key))priceInfoDto.setTypeC("Y");
+
+    public List<TradeInfoDto> buyList() {
+        List<TradeInfoDto> tradeInfoDtoList = new ArrayList<>();
+        for(Object key : tradeInfoRepository.findBuyList()) {
+            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("60_"+key));
+            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("240_"+key));
+        }
+        return tradeInfoDtoList;
+    }
+
+    private void buy(PriceInfoDto priceInfoDto,String minute) {
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
@@ -48,21 +47,21 @@ public class TradeInfoService {
 
         if(tradeInfoDtoList.isEmpty()) {
 
-            tradeInfoRepository.insertBuyInfo(key+"_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
-                    "캔들 :"+key+"_"+minute + "\n" +
+                    "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
             telegramMessageProcessor.sendMessage("6171495764", message);
 
         }else if("Y".equals(tradeInfoDtoList.get(0).getSellYn())) {
 
-            tradeInfoRepository.insertBuyInfo(key+"_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
-                    "캔들 :"+key+"_"+minute + "\n" +
+                    "캔들 :"+ minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
             telegramMessageProcessor.sendMessage("6171495764", message);
         }
-
+        tradeInfoRepository.buyCoin(priceInfoDto.getMarket());
     }
 
     private void sell(PriceInfoDto priceInfoDto, String minute) {
