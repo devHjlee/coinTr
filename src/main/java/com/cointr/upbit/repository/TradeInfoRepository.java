@@ -18,7 +18,7 @@ public class TradeInfoRepository {
     public List<TradeInfoDto> findTradeInfo(String key) {
         return redisTemplate.opsForList().range(key,0,0);
     }
-    public Set<Object> findBuyList() {
+    public Set<Object> findTradeList() {
         return redisTemplateString.opsForHash().keys("buy");
     }
     public void buyCoin(String key) {
@@ -27,7 +27,6 @@ public class TradeInfoRepository {
     public void insertBuyInfo(String key, TradeInfoDto tradeInfoDto) {
         redisTemplate.opsForList().leftPush(key, tradeInfoDto);
     }
-
     public void updateSellInfo(String key, TradeInfoDto tradeInfoDto) {
         redisTemplate.opsForList().set(key, 0, tradeInfoDto);
     }

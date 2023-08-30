@@ -23,23 +23,22 @@ public class TradeInfoService {
     private final UpbitApi upbitApi;
 
     public void condition(List<PriceInfoDto> priceInfoDtoList, String minute) {
-        //BUY
         if("60".equals(minute) && upbitApi.smaCondition(priceInfoDtoList)) buy(priceInfoDtoList.get(0), minute);
         if("240".equals(minute) && upbitApi.sma240Condition(priceInfoDtoList)) buy(priceInfoDtoList.get(0),minute);
-
     }
 
-    public List<TradeInfoDto> buyList() {
+    public List<TradeInfoDto> tradeList() {
         List<TradeInfoDto> tradeInfoDtoList = new ArrayList<>();
-        for(Object key : tradeInfoRepository.findBuyList()) {
-            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("60_"+key));
-            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("240_"+key));
+        for(Object key : tradeInfoRepository.findTradeList()) {
+            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("buy_60_"+key));
+            tradeInfoDtoList.addAll(tradeInfoRepository.findTradeInfo("buy_240_"+key));
         }
         return tradeInfoDtoList;
     }
 
     private void buy(PriceInfoDto priceInfoDto,String minute) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo(minute+"_"+priceInfoDto.getMarket());
+        priceInfoDto.setTypeA("Y");
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("buy_"+minute+"_"+priceInfoDto.getMarket());
         TradeInfoDto tradeInfoDto = new TradeInfoDto();
         tradeInfoDto.setMarket(priceInfoDto.getMarket());
         tradeInfoDto.setBuyDate(priceInfoDto.getTradeDate());
@@ -47,7 +46,7 @@ public class TradeInfoService {
 
         if(tradeInfoDtoList.isEmpty()) {
 
-            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo("buy_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "캔들 :"+minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
@@ -55,7 +54,7 @@ public class TradeInfoService {
 
         }else if("Y".equals(tradeInfoDtoList.get(0).getSellYn())) {
 
-            tradeInfoRepository.insertBuyInfo(minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
+            tradeInfoRepository.insertBuyInfo("buy_"+minute+"_"+tradeInfoDto.getMarket(),tradeInfoDto);
             String message = "구매 :" + priceInfoDto.getMarket() + "\n" +
                     "캔들 :"+ minute + "\n" +
                     "가격 :" + priceInfoDto.getTradePrice() + "\n";
@@ -64,8 +63,8 @@ public class TradeInfoService {
         tradeInfoRepository.buyCoin(priceInfoDto.getMarket());
     }
 
-    private void sell(PriceInfoDto priceInfoDto, String minute) {
-        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("TR_"+minute+"_"+priceInfoDto.getMarket());
+    public void sell(PriceInfoDto priceInfoDto, String minute) {
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoRepository.findTradeInfo("buy_"+minute+"_"+priceInfoDto.getMarket());
 
         if(!tradeInfoDtoList.isEmpty() && "N".equals(tradeInfoDtoList.get(0).getSellYn())) {
             double per =  (priceInfoDto.getTradePrice() /tradeInfoDtoList.get(0).getBuyPrice()) * 100-100;
@@ -74,13 +73,13 @@ public class TradeInfoService {
                 tradeInfoDtoList.get(0).setSellDate(priceInfoDto.getTradeDate());
                 tradeInfoDtoList.get(0).setSellPrice(priceInfoDto.getTradePrice());
                 tradeInfoDtoList.get(0).setSellYn("Y");
-                tradeInfoRepository.updateSellInfo("TR_"+minute+"_"+tradeInfoDtoList.get(0).getMarket(), tradeInfoDtoList.get(0));
+                tradeInfoRepository.updateSellInfo("buy_"+minute+"_"+tradeInfoDtoList.get(0).getMarket(), tradeInfoDtoList.get(0));
                 String message = "판매 :" + priceInfoDto.getMarket() + "\n" +
                         "캔들 :"+minute + "\n" +
                         "가격 :" + priceInfoDto.getTradePrice() + "\n" +
                         "수익 :" + per;
 
-                telegramMessageProcessor.sendMessage("-1001813916001", message);
+                telegramMessageProcessor.sendMessage("6171495764", message);
             }
         }
     }

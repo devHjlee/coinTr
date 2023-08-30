@@ -1,4 +1,4 @@
-package com.cointr.controller;
+package com.cointr.upbit.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class MainController {
     @GetMapping("/")
     public String trade(Model model) {
-        return "trade";
+        return "main";
     }
 }
