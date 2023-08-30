@@ -1,14 +1,12 @@
 package com.cointr.upbit.controller;
 
 import com.cointr.scheduler.CoinScheduledTask;
-import com.cointr.upbit.dto.CoinDto;
-import com.cointr.upbit.dto.ConditionDto;
-import com.cointr.upbit.dto.PriceInfoDto;
-import com.cointr.upbit.dto.VolConditionDto;
+import com.cointr.upbit.dto.*;
 import com.cointr.upbit.service.CoinService;
 import com.cointr.upbit.service.DayPriceInfoService;
 import com.cointr.upbit.service.MinutePriceInfoService;
 
+import com.cointr.upbit.service.TradeInfoService;
 import com.cointr.websocket.NvWebSocket;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +23,7 @@ import java.util.*;
 public class CoinController {
     private final CoinScheduledTask coinScheduledTask;
     private final CoinService coinService;
+    private final TradeInfoService tradeInfoService;
     private final MinutePriceInfoService minutePriceInfoService;
     private final DayPriceInfoService dayPriceInfoService;
     private final NvWebSocket nvWebSocket;
@@ -35,7 +34,8 @@ public class CoinController {
     }
 
     @GetMapping("/start")
-    public String start() {
+    public Map<String,String> start() {
+        Map<String,String> result = new HashMap<>();
         try {
 
             coinService.coinSaveAll();
@@ -49,15 +49,32 @@ public class CoinController {
 //            minutePriceInfoService.minuteCandleSave("KRW-XRP","60");
             nvWebSocket.connect();
         } catch (Exception e) {
-            return "FAIL";
+            result.put("status","fail");
+            return result;
         }
-
-        return "SUCCESS";
+        result.put("status","success");
+        return result;
     }
 
+    @GetMapping("/coinInfo")
+    public Map<String,Object> getCoinInfo(@RequestParam String market) {
+        String coin= "";
+        Map<String,Object> rs = new HashMap<>();
+        Optional<String> filteredMarket = coinService.findAllCoin().stream()
+                .filter(vo -> vo.getKoreanName().contains(market))
+                .map(CoinDto::getMarket)
+                .findFirst();
 
+        if (filteredMarket.isPresent()) {
+            coin = filteredMarket.get();
+            rs.put("minute",minutePriceInfoService.findPriceInfo(coin,0,-1).subList(0,20));
+            rs.put("day",dayPriceInfoService.findTradeInfo(coin,0,-1).subList(0,20));
+        }
 
+        rs.put("trade",tradeInfoService.tradeList());
 
+        return rs;
+    }
 
 //    @GetMapping("/shced")
 //    public void startSched() {
@@ -103,55 +120,6 @@ public class CoinController {
 //        return resultMap;
 //    }
 //
-//    @GetMapping("/prices2")
-//    public List<PriceInfoDto> getPrices2(@RequestParam String market) {
-//        List<CoinDto> coinDtoList = coinService.findAllCoin();
-//        String coin= "";
-//        Optional<String> filteredMarket = coinDtoList.stream()
-//                .filter(vo -> vo.getKoreanName().contains(market))
-//                .map(CoinDto::getMarket)
-//                .findFirst();
-//
-//        if (filteredMarket.isEmpty()) {
-//            return null;
-//        } else {
-//            coin = filteredMarket.get();
-//        }
-//        List<PriceInfoDto> priceInfoDtoList = minutePriceInfoService.findTradeInfo(coin,0,-1);
-//        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
-//
-//        return priceInfoDtoList.subList(0,20);
-//    }
-//
-//    @GetMapping("/prices3")
-//    public List<PriceInfoDto> getPrices3(@RequestParam String market) {
-//        List<CoinDto> coinDtoList = coinService.findAllCoin();
-//        String coin= "";
-//        Optional<String> filteredMarket = coinDtoList.stream()
-//                .filter(vo -> vo.getKoreanName().contains(market))
-//                .map(CoinDto::getMarket)
-//                .findFirst();
-//
-//        if (filteredMarket.isEmpty()) {
-//            return null;
-//        } else {
-//            coin = filteredMarket.get();
-//        }
-//        List<PriceInfoDto> priceInfoDtoList = dayPriceInfoService.findTradeInfo(coin,0,-1);
-//        priceInfoDtoList.sort(Comparator.comparing(PriceInfoDto::getTradeDate).reversed());
-//
-//        return priceInfoDtoList.subList(0,20);
-//    }
-//
-//    @PostMapping("/conditionPrice")
-//    public List<ConditionDto> saveconditionPrice(@RequestBody VolConditionDto volConditionDto) {
-//        coinService.saveConditionPrice(volConditionDto);
-//        return coinService.findCondition();
-//    }
-//
-//    @PostMapping("/condition")
-//    public List<ConditionDto> saveCondition(@RequestBody ConditionDto conditionDto) {
-//        coinService.saveCondition(conditionDto);
-//        return coinService.findCondition();
-//    }
+
+
 }

@@ -3,6 +3,7 @@ package com.cointr.upbit.service;
 import com.cointr.upbit.api.UpbitApi;
 import com.cointr.upbit.dto.CoinDto;
 import com.cointr.upbit.dto.PriceInfoDto;
+import com.cointr.upbit.dto.TradeInfoDto;
 import com.cointr.upbit.repository.CoinRepository;
 import com.cointr.upbit.repository.PriceInfoRepository;
 import com.google.gson.FieldNamingPolicy;
@@ -32,13 +33,15 @@ class DayPriceInfoServiceTest {
     private CoinRepository coinRepository;
     @Autowired
     private CoinService coinService;
+    @Autowired
+    private TradeInfoService tradeInfoService;
 
     @Autowired
     private UpbitApi upbitApi;
     @Test
     void 코인전체저장() {
         List<PriceInfoDto> priceInfoDtoList = new ArrayList<>();
-
+        List<TradeInfoDto> tradeInfoDtoList = tradeInfoService.tradeList();
 
         priceInfoDtoList = priceInfoRepository.findTradeInfo("60_KRW-CRO",0,-1);
         double firstTradePrice = 69.9;

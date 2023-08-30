@@ -13,18 +13,18 @@ public class TradeInfoDto {
     String market;
 
     @Comment("매수 일자")
-    String BuyDate;
+    String buyDate;
 
     @Comment("매수가")
-    double BuyPrice;
+    double buyPrice;
 
     @Comment("매도 일자")
-    String SellDate;
+    String sellDate;
 
     @Comment("매도가")
-    double SellPrice;
+    double sellPrice;
 
     @Comment("매도완료")
-    String SellYn = "N";
+    String sellYn = "N";
 
 }
