@@ -19,16 +19,8 @@ public class TelegramMessageProcessor extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String chatId = update.getMessage().getChatId().toString();
-            log.info("chatID:"+chatId);
             String messageText = update.getMessage().getText();
-
-            if(update.getMessage().getText().contains("KRW-")) {
-                //CoinIndex coinIndex = coinService.getRSI(messageText);
-                //sendMessage(chatId, messageText+"-RSI: " + coinIndex.getRsi());
-            }else {
-                sendMessage("6171495764", "Received: " + messageText);
-            }
+            sendMessage("6171495764", "Received: " + messageText);
         }
     }
 
