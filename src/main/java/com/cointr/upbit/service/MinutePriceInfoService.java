@@ -1,33 +1,20 @@
 package com.cointr.upbit.service;
 
 import com.cointr.upbit.api.UpbitApi;
-import com.cointr.upbit.dto.ConditionDto;
 import com.cointr.upbit.dto.PriceInfoDto;
-import com.cointr.upbit.dto.VolConditionDto;
-import com.cointr.upbit.dto.VolumeInfoDto;
-import com.cointr.upbit.repository.CoinRepository;
 import com.cointr.upbit.repository.PriceInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MinutePriceInfoService {
-
-    private final TradeInfoService tradeInfoService;
     private final PriceInfoRepository priceInfoRepository;
     private final UpbitApi upbitApi;
-
-    public List<PriceInfoDto> findPriceInfo(String market, int startIdx, int endIdx) {
-        return priceInfoRepository.findTradeInfo("60_"+market,startIdx,endIdx);
-    }
 
     /**
      * 코인에 대한 분별 거래내역 저장
@@ -55,13 +42,10 @@ public class MinutePriceInfoService {
     public void updateTechnicalIndicator(PriceInfoDto priceInfoDto, String minute) {
 
         String marketKey = minute+"_"+ priceInfoDto.getMarket();
-        //List<ConditionDto> conditionDtoList = coinRepository.findCondition();
         List<PriceInfoDto> priceInfoDtoList = priceInfoRepository.findTradeInfo(marketKey,0,200);
         getTradeDate(priceInfoDto,minute);
 
-        //같은 시간대에 데이터가 존재 시 고가,저가 금액 조정
         if (priceInfoDtoList.get(0).getTradeDate().equals(priceInfoDto.getTradeDate())) {
-            //이전 데이터 값의 하이랑 비교해서 높으면 하이 변경, 로우 비교해서 낮으면 로우변경
             if (priceInfoDtoList.get(0).getHighPrice() < priceInfoDto.getTradePrice()) {
                 priceInfoDto.setHighPrice(priceInfoDto.getTradePrice());
             } else {
@@ -77,12 +61,6 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.set(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-
-            if("N".equals(priceInfoDtoList.get(0).getTypeA())||"N".equals(priceInfoDtoList.get(0).getTypeB()))
-                tradeInfoService.condition(priceInfoDtoList,minute);
-            if("Y".equals(priceInfoDtoList.get(0).getTypeA()) || "Y".equals(priceInfoDtoList.get(0).getTypeB()))
-                tradeInfoService.sell(priceInfoDtoList.get(0),minute);
-
             priceInfoRepository.updateTradeInfo(marketKey, priceInfoDtoList.get(0));
 
         } else {
@@ -93,8 +71,6 @@ public class MinutePriceInfoService {
 
             priceInfoDtoList.add(0, priceInfoDto);
             upbitApi.calculateIndicators(priceInfoDtoList);
-            tradeInfoService.condition(priceInfoDtoList,minute);
-            tradeInfoService.sell(priceInfoDtoList.get(0),minute);
             priceInfoRepository.insertTradeInfo(marketKey, priceInfoDtoList.get(0));
         }
 

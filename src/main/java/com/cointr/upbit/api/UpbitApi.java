@@ -10,9 +10,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.expression.Expression;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +18,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 
 @Slf4j
 @Component
@@ -35,14 +31,12 @@ public class UpbitApi {
         String url = "https://api.upbit.com/v1/market/all";
 
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-
         JsonArray jsonArray = new GsonBuilder().create().fromJson(responseEntity.getBody(),JsonArray.class);
 
         return new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)//JSON CamleCase 로 변환
                 .create()
                 .fromJson(jsonArray, listType);
-
     }
 
     /**
@@ -240,186 +234,4 @@ public class UpbitApi {
         }
 
     }
-
-    public boolean lowPrice(List<PriceInfoDto> priceInfoDtoList) {
-        double firstTradePrice = priceInfoDtoList.get(0).getTradePrice();
-        return priceInfoDtoList.stream()
-                .skip(1)
-                .allMatch(dto -> dto.getTradePrice() > firstTradePrice);
-    }
-
-    public boolean smaCondition(List<PriceInfoDto> priceInfoDtoList) {
-
-        if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
-
-        // 1 종가는 5선 보다 위
-        if(priceInfoDtoList.get(1).getSma5() >= priceInfoDtoList.get(1).getTradePrice()) return false;
-
-        // 1 종가는 2종가 보다 위
-        if(priceInfoDtoList.get(2).getTradePrice() > priceInfoDtoList.get(1).getTradePrice()) return false;
-
-        if(priceInfoDtoList.get(30).getSma5() <= priceInfoDtoList.get(1).getSma5()) return false;
-
-        //120 > 60 > 5 선
-        for(int i = 30; i > 0; i--) {
-            if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
-                return false;
-            }
-        }
-
-        //8~2 우하향
-        for(int i = 8; i > 2; i--) {
-            if (!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i - 1).getSma120()
-                    && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i - 1).getSma60()
-                    && priceInfoDtoList.get(i).getSma5() > priceInfoDtoList.get(i - 1).getSma5())) {
-                return false;
-            }
-        }
-
-        //5선 기준 8~2 까지 종가가 아래
-        for(int i = 8; i > 1; i--) {
-
-            if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) {
-                return false;
-            }
-        }
-        log.info("Success");
-        return true;
-    }
-
-    public boolean smaCondition2(List<PriceInfoDto> priceInfoDtoList) {
-
-        if(priceInfoDtoList.get(0).getSma5() >= priceInfoDtoList.get(0).getTradePrice()) return false;
-
-        if(priceInfoDtoList.get(1).getHighPrice() >= priceInfoDtoList.get(0).getTradePrice()) return false;
-
-        //120 > 60 > 5 선
-        for(int i = 7; i > 0; i--) {
-            if(!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i).getSma60() && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i).getSma5())) {
-                return false;
-            }
-        }
-
-        //7~2 우하향
-        for(int i = 7; i > 1; i--) {
-            if (!(priceInfoDtoList.get(i).getSma120() > priceInfoDtoList.get(i - 1).getSma120()
-                    && priceInfoDtoList.get(i).getSma60() > priceInfoDtoList.get(i - 1).getSma60()
-                    && priceInfoDtoList.get(i).getSma5() > priceInfoDtoList.get(i - 1).getSma5())) {
-                return false;
-            }
-        }
-        //5선 기준 7~1 까지 종가가 아래
-        for(int i = 7; i > 0; i--) {
-            if(!(priceInfoDtoList.get(i).getSma5() >= priceInfoDtoList.get(i).getTradePrice())) return false;
-        }
-
-        return true;
-    }
-
-    public boolean sma240Condition(List<PriceInfoDto> priceInfoDtoList) {
-        int trueCount60 = 0;
-        int falseCount60 = 0;
-        int trueCount120 = 0;
-        int falseCount120 = 0;
-        for (int i = 4; i > -1; i--) {
-            if (priceInfoDtoList.get(i+1).getSma60() > priceInfoDtoList.get(i).getSma60()) {
-                trueCount60++;
-            } else {
-                falseCount60++;
-            }
-        }
-        for (int i = 4; i > -1; i--) {
-            if (priceInfoDtoList.get(i+1).getSma120() > priceInfoDtoList.get(i).getSma120()) {
-                trueCount120++;
-            } else {
-                falseCount120++;
-            }
-        }
-        return trueCount60 > falseCount60 && trueCount120 > falseCount120
-                && priceInfoDtoList.get(0).getSma60() < priceInfoDtoList.get(0).getSma5()
-                && priceInfoDtoList.get(1).getSma60() > priceInfoDtoList.get(1).getSma5()
-                && priceInfoDtoList.get(0).getSma120() < priceInfoDtoList.get(0).getSma5()
-                && priceInfoDtoList.get(1).getSma120() > priceInfoDtoList.get(1).getSma5();
-    }
-
-    //CCI 가 내리는 추세면 사지말자 && 100넘기면 금지 &&
-    //
-    public boolean myCondition(List<PriceInfoDto> priceInfoDtoList) {
-        //log.info("myCondition");
-        return (priceInfoDtoList.get(2).getMacdSignal() > priceInfoDtoList.get(2).getMacd())
-                && (priceInfoDtoList.get(1).getMacdSignal() > priceInfoDtoList.get(1).getMacd())
-                && (priceInfoDtoList.get(0).getMacdSignal() <= priceInfoDtoList.get(0).getMacd())
-
-                && priceInfoDtoList.get(0).getRsi() < 70
-
-                && priceInfoDtoList.get(0).getBbAvg() <= priceInfoDtoList.get(0).getTradePrice()
-
-                && ((priceInfoDtoList.get(0).getAccBidVolume() / priceInfoDtoList.get(0).getAccAskVolume()) * 100 >= 60)
-
-                && (priceInfoDtoList.get(0).getAccTradePrice() > 3000000000.0)
-
-                && !("Y").equals(priceInfoDtoList.get(0).getTypeA());
-    }
-
-    public void evaluateCondition(List<ConditionDto> conditionDtoList, PriceInfoDto data, String candleType) {
-        if (conditionDtoList.size() > 0) {
-
-            SpelExpressionParser parser = new SpelExpressionParser();
-            StandardEvaluationContext context = new StandardEvaluationContext(data);
-            for (ConditionDto conditionDto : conditionDtoList) {
-                if (conditionDto.getCandleType().equals(candleType)) {
-                    Expression expression = parser.parseExpression(conditionDto.getCondition());
-                    StringBuilder message = new StringBuilder();
-                    if (Boolean.TRUE.equals(expression.getValue(context, Boolean.class))) {
-                        if ("A".equals(conditionDto.getConditionType()) && !data.getTypeA().equals("Y")) {
-                            data.setTypeA("Y");
-                            message.append("Coin :").append(data.getMarket()).append("\n");
-                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
-                            message.append("-정보-").append("\n");
-                            message.append("RSI :").append(data.getRsi()).append("\n");
-                            message.append("MACD :").append(data.getMacd()).append("\n");
-                            message.append("ADX :").append(data.getAdx()).append("\n");
-                            message.append("CCI :").append(data.getCci()).append("\n");
-
-
-                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
-                        } else if ("B".equals(conditionDto.getConditionType()) && !data.getTypeB().equals("Y")) {
-                            data.setTypeB("Y");
-                            message.append("Coin :").append(data.getMarket()).append("\n");
-                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
-                            message.append("-정보-").append("\n");
-                            message.append("RSI :").append(data.getRsi()).append("\n");
-                            message.append("MACD :").append(data.getMacd()).append("\n");
-                            message.append("ADX :").append(data.getAdx()).append("\n");
-                            message.append("CCI :").append(data.getCci()).append("\n");
-
-                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
-                        } else if ("C".equals(conditionDto.getConditionType()) && !data.getTypeC().equals("Y")) {
-                            data.setTypeC("Y");
-                            message.append("Coin :").append(data.getMarket()).append("\n");
-                            message.append("알림조건 :").append(conditionDto.getCondition()).append("\n");
-                            message.append("-정보-").append("\n");
-                            message.append("RSI :").append(data.getRsi()).append("\n");
-                            message.append("MACD :").append(data.getMacd()).append("\n");
-                            message.append("ADX :").append(data.getAdx()).append("\n");
-                            message.append("CCI :").append(data.getCci()).append("\n");
-
-                            telegramMessageProcessor.sendMessage("6171495764", String.valueOf(message));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-//    public void evaluateConditionPrice(VolConditionDto volConditionDto, VolumeInfoDto volumeInfoDto) {
-//        if (volConditionDto != null && (volumeInfoDto.getAskPrice()+volumeInfoDto.getBidPrice() > volConditionDto.getConditionPrice()) && !("Y").equals(volumeInfoDto.getAlarmYn())) {
-//            volumeInfoDto.setAlarmYn("Y");
-//            String message = "Coin :" + volumeInfoDto.getMarket() + "\n" +
-//                    "매수금액:" + volumeInfoDto.getBidPrice() + " | 매도금액 :" + volumeInfoDto.getAskPrice() +
-//                    "\n 총 거래금액 :" + (volumeInfoDto.getAskPrice() + volumeInfoDto.getBidPrice());
-//            telegramMessageProcessor.sendMessage("-1001813916001", message);
-//        }
-//    }
 }
